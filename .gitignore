@@ -35,6 +35,7 @@ data/raw/
 *.csv
 *.parquet
 *.duckdb
+!data/mappings/*.csv
 
 # deployment and generated files
 .vercel

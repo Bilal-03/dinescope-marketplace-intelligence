@@ -24,4 +24,12 @@ RFM-style lifecycle segments use transparent ordering signals only. They do not 
 
 ## Known limitations
 
-Restaurant IDs rarely repeat, raw city labels mix locality and metro formats, restaurant ratings cover roughly 41% of rows, and menu fields cover roughly 8%. Market ranking and cuisine opportunity modules remain planned until auditable mappings and allocation rules are implemented.
+Restaurant IDs rarely repeat, restaurant ratings cover roughly 41% of rows, and menu fields cover roughly 8%. Cuisine opportunity remains planned until auditable proportional allocation rules are implemented.
+
+## Location mapping and market eligibility
+
+The pipeline generates `data/mappings/location_mapping.csv`, with one row per raw label plus its cleaned city, metro region, state, confidence, review status and source-row count. Comma-delimited locality labels use the final city token only when the result is covered by a reviewed metro rule. Explicit aliases handle known variants such as `Noida-1`, `North-goa` and historical city names. Unknown locations remain Unknown.
+
+The default market-growth view compares the latest 365 observed days with the immediately preceding 365 days. Year filters compare the observed calendar span with the same dates one year earlier. A market is eligible by default only when it has at least 200 current transactions, at least 100 comparison transactions and a calculable growth rate. The UI lets users raise or lower the current threshold while preserving a minimum comparison base.
+
+Confidence combines current sample size and mapping coverage. High confidence requires at least 500 current transactions and at least 80% high-confidence mapped rows; medium requires at least 200 transactions; smaller markets remain low confidence.

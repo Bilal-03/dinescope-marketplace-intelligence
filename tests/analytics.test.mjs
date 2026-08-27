@@ -36,3 +36,25 @@ test('every advertised filter combination has a scope', () => {
     }
   }
 });
+
+test('location mapping reconciles every source row', () => {
+  const mapping = analytics.location_mapping;
+  assert.equal(mapping.raw_labels, 822);
+  assert.equal(mapping.mapped_rows + mapping.unknown_rows, analytics.source.rows);
+  assert.ok(mapping.high_confidence_rows <= mapping.mapped_rows);
+  assert.ok(analytics.filters.markets.includes('Bangalore'));
+  assert.ok(analytics.filters.markets.includes('Delhi'));
+  assert.ok(analytics.filters.markets.every((market) => !market.includes(',')));
+});
+
+test('market eligibility and concentration rules reconcile', () => {
+  const view = analytics.market_views['All years'];
+  const eligible = view.markets.filter((row) => row.eligible_default);
+  assert.equal(view.summary.eligible_markets, eligible.length);
+  assert.ok(eligible.every((row) => row.orders >= 200 && row.previous_orders >= 100 && row.growth_orders !== null));
+  const topFiveShare = view.markets.slice(0, 5).reduce((sum, row) => sum + row.order_share, 0);
+  assert.ok(Math.abs(topFiveShare - view.summary.top_five_concentration) < 1e-12);
+  for (const row of view.markets.slice(0, 20)) {
+    assert.equal(row.monthly_orders.reduce((sum, point) => sum + point.orders, 0), row.orders);
+  }
+});

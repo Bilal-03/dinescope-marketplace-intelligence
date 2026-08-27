@@ -11,3 +11,7 @@
 | Repeat customer rate | Repeat customers / active customers | Filtered customer | Not equivalent to cohort retention |
 | Cohort retention | Active cohort customers at age M / cohort size | Acquisition cohort | Immature cohorts have fewer observable ages |
 | Orders per customer | Valid transactions / active customers | Filtered customer | Uses source transaction grain |
+| Market transaction growth | (Current comparable-window transactions − previous comparable-window transactions) / previous transactions | Cleaned market | Suppressed when the comparison base has fewer than 50 transactions |
+| Market repeat rate | Customers with 2+ transactions / market active customers | Cleaned market and window | Low rates partly reflect sparse source observations |
+| Market concentration | Transactions in five largest cleaned markets / current-window transactions | Comparable market window | Unknown locations remain outside named-market rankings |
+| Market confidence | Rule using sample size and high-confidence mapping share | Cleaned market | Confidence describes evidence strength, not future certainty |

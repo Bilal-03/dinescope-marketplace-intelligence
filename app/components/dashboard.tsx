@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { AnalyticsData, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
+import type { AnalyticsData, MarketRow, MarketView, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
 import type { ProductRole } from '@/app/lib/access';
 
 type PageId = 'overview' | 'customers' | 'markets' | 'cuisines' | 'reliability' | 'decision';
@@ -9,7 +9,7 @@ type PageId = 'overview' | 'customers' | 'markets' | 'cuisines' | 'reliability' 
 const NAV_ITEMS: { id: PageId; label: string; icon: string; state: 'live' | 'planned' }[] = [
   { id: 'overview', label: 'Overview', icon: '⌂', state: 'live' },
   { id: 'customers', label: 'Customer growth', icon: '↗', state: 'live' },
-  { id: 'markets', label: 'Market demand', icon: '◎', state: 'planned' },
+  { id: 'markets', label: 'Market demand', icon: '◎', state: 'live' },
   { id: 'cuisines', label: 'Cuisine gaps', icon: '◇', state: 'planned' },
   { id: 'reliability', label: 'Data reliability', icon: '✓', state: 'live' },
   { id: 'decision', label: 'Decision lab', icon: '⌁', state: 'planned' },
@@ -37,13 +37,18 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
     setPeriod('All years');
   }
 
+  function navigate(nextPage: PageId) {
+    setPage(nextPage);
+    if (nextPage === 'markets') setMarket('All markets');
+  }
+
   return (
     <main className="app-shell">
       <aside className="sidebar">
         <div className="brand-mark">PL</div>
         <nav aria-label="Primary navigation">
           {NAV_ITEMS.map((item) => (
-            <button className={page === item.id ? 'nav-button active' : 'nav-button'} key={item.id} onClick={() => setPage(item.id)} title={`${item.label}${item.state === 'planned' ? ' · planned' : ''}`} type="button">
+            <button className={page === item.id ? 'nav-button active' : 'nav-button'} key={item.id} onClick={() => navigate(item.id)} title={`${item.label}${item.state === 'planned' ? ' · planned' : ''}`} type="button">
               <span>{item.icon}</span>{item.state === 'planned' && <i className="planned-dot" />}
             </button>
           ))}
@@ -63,13 +68,13 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
 
           <section className="filter-bar" aria-label="Global filters">
             <label><span className="filter-label">Analysis period</span><select value={period} onChange={(event) => setPeriod(event.target.value)}>{data.filters.periods.map((item) => <option key={item}>{item}</option>)}</select></label>
-            <label><span className="filter-label">Source market</span><select value={market} onChange={(event) => setMarket(event.target.value)}>{data.filters.markets.map((item) => <option key={item}>{item}</option>)}</select></label>
+            {page === 'markets' ? <div className="filter-lock"><span className="filter-label">Comparison scope</span><button type="button" disabled>All cleaned markets <b>✓</b></button></div> : <label><span className="filter-label">Clean market</span><select value={market} onChange={(event) => setMarket(event.target.value)}>{data.filters.markets.map((item) => <option key={item}>{item}</option>)}</select></label>}
             <div className="filter-lock"><span className="filter-label">Transaction rule</span><button type="button" disabled>Valid INR only <b>✓</b></button></div>
             <button className="reset-button" type="button" onClick={resetFilters}>↻ Reset</button>
-            <div className="record-count"><i /> {formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view</div>
+            <div className="record-count"><i /> {page === 'markets' ? `${formatNumber(data.market_views[period]?.summary?.active_markets ?? 0)} markets compared` : `${formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view`}</div>
           </section>
 
-          {scope.empty ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={setPage} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={setPage} />}
+          {scope.empty && page !== 'markets' ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={navigate} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'markets' ? <MarketIntelligence view={data.market_views[period]} mapping={data.location_mapping} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={navigate} />}
 
           <p className="disclaimer">Independent portfolio analysis using a public or synthetic dataset. Not affiliated with Zomato, Swiggy, or another delivery company.</p>
         </div>
@@ -166,6 +171,59 @@ function SegmentTable({ segments, market, period }: { segments: Segment[]; marke
   return <article className="panel segment-table-panel"><div className="panel-head"><div><span className="section-kicker">Action workspace</span><h2>Segment evidence &amp; recommended action</h2></div><button className="export-button" type="button" onClick={() => exportSegments(segments, market, period)}>↓ Export CSV</button></div><div className="table-scroll"><table className="data-table"><thead><tr><th>Segment</th><th>Customers</th><th>Share</th><th>Txns / customer</th><th>Sales / customer</th><th>Repeat rate</th><th>Median recency</th><th>Recommended action</th></tr></thead><tbody>{segments.map((segment) => <tr key={segment.segment}><th>{segment.segment}</th><td>{formatNumber(segment.customers)}</td><td>{formatPercent(segment.customer_share)}</td><td>{segment.orders_per_customer.toFixed(2)}</td><td>{formatRupee(segment.sales_per_customer)}</td><td>{formatPercent(segment.repeat_rate)}</td><td>{Math.round(segment.median_recency)} days</td><td>{segment.action}</td></tr>)}</tbody></table></div></article>;
 }
 
+function MarketIntelligence({ view, mapping }: { view: MarketView; mapping: AnalyticsData['location_mapping'] }) {
+  const [minimumOrders, setMinimumOrders] = useState(view.minimum_orders ?? 200);
+  const [sortBy, setSortBy] = useState<'orders' | 'growth_orders' | 'repeat_rate' | 'sales'>('orders');
+  const [selectedMarket, setSelectedMarket] = useState('');
+  if (view.empty || !view.summary) return <EmptyState />;
+  const eligible = view.markets.filter((row) => row.orders >= minimumOrders && row.previous_orders >= Math.max(50, minimumOrders / 2) && row.growth_orders !== null);
+  const ranked = [...eligible].sort((a, b) => (b[sortBy] ?? -Infinity) - (a[sortBy] ?? -Infinity));
+  const fastest = [...eligible].sort((a, b) => (b.growth_orders ?? -Infinity) - (a.growth_orders ?? -Infinity))[0];
+  const highestRepeat = [...eligible].sort((a, b) => b.repeat_rate - a.repeat_rate)[0];
+  const selected = view.markets.find((row) => row.market === selectedMarket) ?? ranked[0] ?? view.markets[0];
+
+  return <>
+    <div className="market-window"><div><span>Current comparable window</span><b>{view.current_window}</b></div><i>versus</i><div><span>Previous equal-length window</span><b>{view.comparison_window}</b></div><strong>{eligible.length} eligible markets</strong></div>
+    <section className="kpi-grid market-kpis">
+      <Kpi label="Active cleaned markets" value={formatNumber(view.summary.active_markets)} note={`${mapping.raw_labels} raw labels normalized`} tone="blue" definition="Cleaned markets with at least one valid transaction in the current comparison window." />
+      <Kpi label="Largest market" value={view.summary.largest_market ?? '—'} note={`${formatNumber(view.summary.largest_market_orders)} transactions`} tone="coral" definition="Market with the most valid transactions in the current comparable window." />
+      <Kpi label="Fastest eligible growth" value={fastest?.market ?? '—'} note={fastest?.growth_orders === null || !fastest ? 'Insufficient comparison' : `${formatSignedPercent(fastest.growth_orders)} transactions`} tone="teal" definition="Highest transaction growth among markets passing the selected current and comparison-period thresholds." />
+      <Kpi label="Highest repeat rate" value={highestRepeat?.market ?? '—'} note={highestRepeat ? formatPercent(highestRepeat.repeat_rate) : 'Insufficient comparison'} tone="amber" definition="Highest within-window repeat customer rate among eligible markets." />
+      <Kpi label="Top-five concentration" value={formatPercent(view.summary.top_five_concentration)} note="Share of current transactions" tone="violet" definition="Transaction share held by the five largest cleaned markets." />
+    </section>
+
+    <section className="market-controls panel"><div><div><span className="section-kicker">Eligibility control</span><h2>Minimum current transactions</h2></div><output>{formatNumber(minimumOrders)}</output></div><input aria-label="Minimum current transactions" type="range" min="100" max="1000" step="100" value={minimumOrders} onChange={(event) => setMinimumOrders(Number(event.target.value))} /><p>Growth also requires at least {formatNumber(Math.max(50, minimumOrders / 2))} transactions in the comparison window. This prevents tiny bases from dominating the ranking.</p></section>
+
+    <section className="market-analysis-grid">
+      <MarketQuadrant markets={eligible} selected={selected.market} select={setSelectedMarket} />
+      <MarketBrief market={selected} />
+    </section>
+
+    <MarketTrendCards markets={ranked.slice(0, 4)} />
+
+    <article className="panel market-table-panel"><div className="panel-head"><div><span className="section-kicker">Evidence table</span><h2>Eligible market ranking</h2></div><div className="table-actions"><select aria-label="Rank markets by" value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)}><option value="orders">Rank by transactions</option><option value="growth_orders">Rank by growth</option><option value="repeat_rate">Rank by repeat rate</option><option value="sales">Rank by sales</option></select><button className="export-button" type="button" onClick={() => exportMarkets(ranked, view.period)}>↓ Export CSV</button></div></div><div className="table-scroll"><table className="data-table market-table"><thead><tr><th>Market</th><th>Transactions</th><th>Growth</th><th>Customers</th><th>Repeat rate</th><th>Avg. txn value</th><th>Txn share</th><th>Confidence</th></tr></thead><tbody>{ranked.map((row) => <tr className={selected.market === row.market ? 'selected-row' : ''} key={row.market} onClick={() => setSelectedMarket(row.market)}><th>{row.market}</th><td>{formatNumber(row.orders)}</td><td className={growthClass(row.growth_orders)}>{formatSignedPercent(row.growth_orders)}</td><td>{formatNumber(row.customers)}</td><td>{formatPercent(row.repeat_rate)}</td><td>{formatRupee(row.average_transaction_value)}</td><td>{formatPercent(row.order_share)}</td><td><span className={`confidence inline-confidence ${row.confidence.toLowerCase()}`}>{row.confidence}</span></td></tr>)}</tbody></table></div></article>
+
+    <div className="market-method-note"><b>Mapping coverage</b><p>{formatPercent(mapping.mapped_rows / (mapping.mapped_rows + mapping.unknown_rows))} of rows carry a non-unknown cleaned market; {formatNumber(mapping.review_pending_labels)} low-volume labels remain queued for manual review. Cuisine-demand comparison stays disabled until proportional cuisine allocation is implemented in the next phase.</p></div>
+  </>;
+}
+
+function MarketQuadrant({ markets, selected, select }: { markets: MarketRow[]; selected: string; select: (market: string) => void }) {
+  const visible = [...markets].sort((a, b) => b.orders - a.orders).slice(0, 30);
+  const maxOrders = Math.max(...visible.map((row) => row.orders), 1);
+  const minOrders = Math.min(...visible.map((row) => row.orders), 1);
+  return <article className="panel quadrant-panel"><div className="panel-head"><div><span className="section-kicker">Scale × momentum</span><h2>Market growth quadrant</h2></div><span className="coverage-note">Select a point to diagnose</span></div><div className="quadrant" role="img" aria-label="Eligible markets plotted by transaction scale and growth"><span className="quadrant-label q1">Scale &amp; protect</span><span className="quadrant-label q2">Investigate decline</span><span className="quadrant-label q3">Selective bets</span><span className="quadrant-label q4">Build evidence</span><i className="axis vertical" /><i className="axis horizontal" />{visible.map((row) => { const x = scatterX(row.orders, minOrders, maxOrders); const y = scatterY(row.growth_orders ?? 0); const size = 9 + Math.sqrt(row.orders / maxOrders) * 13; return <button aria-label={`${row.market}: ${formatNumber(row.orders)} transactions, ${formatSignedPercent(row.growth_orders)} growth`} className={`market-point ${row.confidence.toLowerCase()} ${selected === row.market ? 'selected' : ''}`} key={row.market} onClick={() => select(row.market)} style={{ left: `${x}%`, bottom: `${y}%`, width: size, height: size }} title={`${row.market} · ${formatNumber(row.orders)} txns · ${formatSignedPercent(row.growth_orders)} growth`} type="button" />; })}</div><div className="quadrant-axis-labels"><span>Lower scale</span><b>Transaction scale →</b><span>Higher scale</span></div><div className="quadrant-legend"><span><i className="high" /> High confidence</span><span><i className="medium" /> Medium</span><span><i className="low" /> Low</span></div></article>;
+}
+
+function MarketBrief({ market }: { market: MarketRow }) {
+  const signal = market.growth_orders === null ? 'Comparison base is insufficient' : market.growth_orders >= .2 ? 'Demand is expanding materially' : market.growth_orders < -.1 ? 'Demand is contracting' : 'Demand is broadly stable';
+  const action = market.growth_orders !== null && market.growth_orders >= .2 && market.repeat_rate < .02 ? 'Validate whether acquisition quality can improve: growth is strong, but within-window repeat behavior remains low.' : market.growth_orders !== null && market.growth_orders < -.1 ? 'Diagnose category, customer-mix and instrumentation shifts before committing incremental growth spend.' : 'Protect the current base and compare customer mix before changing investment.';
+  return <article className="panel market-brief"><div className="panel-head"><div><span className="section-kicker">Selected market</span><h2>{market.market}</h2></div><span className={`confidence ${market.confidence.toLowerCase()}`}>{market.confidence} confidence</span></div><div className="market-hero-metric"><span>Transaction growth</span><strong className={growthClass(market.growth_orders)}>{formatSignedPercent(market.growth_orders)}</strong><small>{formatNumber(market.previous_orders)} → {formatNumber(market.orders)} transactions</small></div><div className="brief-callout market-signal"><span>01</span><div><b>{signal}</b><p>{action}</p></div></div><dl className="market-facts"><div><dt>Customer reach</dt><dd>{formatNumber(market.customers)}</dd></div><div><dt>Repeat rate</dt><dd>{formatPercent(market.repeat_rate)}</dd></div><div><dt>Average transaction value</dt><dd>{formatRupee(market.average_transaction_value)}</dd></div><div><dt>Transaction share</dt><dd>{formatPercent(market.order_share)}</dd></div></dl><p className="hypothesis-note">Recommended actions are diagnostic hypotheses, not causal conclusions.</p></article>;
+}
+
+function MarketTrendCards({ markets }: { markets: MarketRow[] }) {
+  return <section className="market-trend-section"><div className="section-row"><div><span className="section-kicker">Comparable movement</span><h2>Monthly transaction pulse</h2></div><span>Top eligible markets by current scale</span></div><div className="market-trend-grid">{markets.map((market) => { const max = Math.max(...market.monthly_orders.map((point) => point.orders), 1); return <article className="panel mini-trend" key={market.market}><div><b>{market.market}</b><span className={growthClass(market.growth_orders)}>{formatSignedPercent(market.growth_orders)}</span></div><div>{market.monthly_orders.map((point) => <i key={point.month} title={`${point.month}: ${point.orders} transactions`} style={{ height: `${Math.max(5, point.orders / max * 100)}%` }} />)}</div><small>{formatNumber(market.orders)} current-window transactions</small></article>; })}</div></section>;
+}
+
 function Reliability({ data }: { data: AnalyticsData }) {
   const q = data.quality;
   const issues = [
@@ -206,9 +264,18 @@ function exportSegments(segments: Segment[], market: string, period: string) {
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-segments-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
+function exportMarkets(markets: MarketRow[], period: string) {
+  const headers = ['market', 'transactions', 'transaction_growth', 'customers', 'repeat_rate', 'average_transaction_value', 'transaction_share', 'confidence'];
+  const rows = markets.map((market) => [market.market, market.orders, market.growth_orders ?? '', market.customers, market.repeat_rate, market.average_transaction_value, market.order_share, market.confidence]);
+  const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-market-ranking-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+}
+
 function csvCell(value: string | number) { const text = String(value); return `"${text.replaceAll('"', '""')}"`; }
 function formatNumber(value: number) { return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(value); }
 function formatPercent(value: number) { return new Intl.NumberFormat('en-IN', { style: 'percent', maximumFractionDigits: 1 }).format(value); }
+function formatSignedPercent(value: number | null) { if (value === null) return 'Not comparable'; const formatted = new Intl.NumberFormat('en-IN', { style: 'percent', maximumFractionDigits: 1, signDisplay: 'always' }).format(value); return formatted; }
 function formatRupee(value: number) { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value); }
 function formatCrore(value: number) { return `₹${(value / 10_000_000).toFixed(value >= 100_000_000 ? 2 : 1)} Cr`; }
 function compact(value: number) { return new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 1 }).format(value); }
@@ -218,3 +285,6 @@ function initials(name: string) { return name.split(/\s|@/).filter(Boolean).slic
 function firstName(name: string) { return name.includes('@') ? name.split('@')[0] : name.split(' ')[0]; }
 function heatColor(value: number) { const alpha = .08 + Math.min(value, 100) / 100 * .72; return `rgba(22, 137, 120, ${alpha})`; }
 function segmentColor(index: number) { return ['#f0644f', '#168978', '#5f72ad', '#d99024', '#8064a2', '#8c93a0'][index % 6]; }
+function growthClass(value: number | null) { return value === null ? 'neutral-growth' : value >= 0 ? 'positive-growth' : 'negative-growth'; }
+function scatterX(value: number, min: number, max: number) { if (max <= min) return 50; const scaled = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min)); return 8 + scaled * 84; }
+function scatterY(value: number) { const clamped = Math.max(-.75, Math.min(1.5, value)); return 8 + ((clamped + .75) / 2.25) * 84; }

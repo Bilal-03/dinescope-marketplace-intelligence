@@ -8,10 +8,12 @@ This is an independent portfolio case study created from a public or synthetic f
 
 - Executive marketplace overview with audited KPIs and deterministic decision brief
 - Product/Growth module with acquisition-versus-return trends, transaction frequency, lifecycle segmentation, cohort-retention heatmap and CSV export
+- Market & Demand Intelligence with cleaned metro markets, equal-length growth comparisons, eligibility controls, confidence labels, a scale-versus-growth quadrant and CSV export
 - Data Reliability Center with transaction reconciliation, source fingerprint and field-coverage warnings
 - Global source-market and year filters with reset and designed empty states
 - Deployment-ready private-site authentication hooks and server-side Admin/Analyst role resolution
 - Automated reconciliation tests for the source contract and core customer metrics
+- Auditable 822-label locality-to-market mapping with explicit review status
 
 See [STATUS.md](./STATUS.md) for the phase checklist and next build order.
 
@@ -28,7 +30,7 @@ Source CSV
   → private Sites deployment
 ```
 
-The original CSV is intentionally excluded from source control. Generate the aggregate file locally with:
+The original CSV is intentionally excluded from source control. Generate the aggregate file and reviewable location mapping locally with:
 
 ```bash
 python3 scripts/build_analytics.py /path/to/zomato_business_complete.csv app/data/analytics.json
@@ -40,6 +42,7 @@ python3 scripts/build_analytics.py /path/to/zomato_business_complete.csv app/dat
 - “Average transaction value” is used instead of AOV because the source grain is not independently verified.
 - Repeat customer rate is not presented as retention; retention uses acquisition cohorts and month age.
 - Restaurant performance claims are suppressed because most restaurant IDs appear once.
+- Market growth rankings require current and comparison-period sample thresholds; tiny bases are not allowed to lead the ranking.
 - Delivery, cancellation, discount, commission, funnel and campaign metrics are absent because the fields do not exist.
 
 ## Local development

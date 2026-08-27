@@ -2,7 +2,7 @@
 
 Updated: 27 August 2026
 
-## Current release: Foundation + Product/Growth module
+## Current release: Foundation + Product/Growth + Market Intelligence
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -14,8 +14,8 @@ Updated: 27 August 2026
 - [x] Phase 5c — Data Reliability Center
 - [x] Authentication foundation — optional ChatGPT identity plus server-side Admin/Analyst role resolution
 - [x] CSV export — customer segment evidence table
-- [ ] Phase 2b — Auditable locality-to-metro and restaurant-name mapping
-- [ ] Phase 5d — Market & Demand Intelligence
+- [x] Phase 2b — Auditable locality-to-metro mapping (restaurant-name mapping remains with the restaurant phase)
+- [x] Phase 5d — Market & Demand Intelligence
 - [ ] Phase 5e — Restaurant & Cuisine Opportunity
 - [ ] Phase 6 — Decision Lab and configurable opportunity score
 - [ ] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
@@ -31,10 +31,14 @@ Updated: 27 August 2026
 - [x] Filters update all metrics and visualisations in the active module
 - [x] Unsupported operational fields are not fabricated
 - [x] Rating and menu coverage remain visible at the point of interpretation
+- [x] 822 raw market labels reconcile to cleaned markets plus Unknown
+- [x] Market growth uses equal-length comparison windows
+- [x] Eligibility thresholds prevent tiny comparison bases from leading rankings
+- [x] Market rows expose sample size, mapping coverage and confidence
 
 ## Next recommended build sequence
 
-1. Create and review the locality-to-metro mapping before ranking markets.
-2. Implement market eligibility thresholds and confidence scoring.
-3. Normalise cuisines and allocate multi-cuisine demand without double counting.
-4. Build the Decision Lab after the market and cuisine inputs are defensible.
+1. Normalise restaurant and cuisine names with reviewable mappings.
+2. Allocate multi-cuisine demand proportionally to prevent double counting.
+3. Build Restaurant & Cuisine Opportunity with coverage warnings.
+4. Build the Decision Lab after cuisine inputs are defensible.
