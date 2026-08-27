@@ -18,26 +18,26 @@ This is an independent portfolio case study created from a public or synthetic f
 - Automated reconciliation tests for source, customer, market, cuisine and opportunity-score contracts
 - Auditable locality, cuisine and conservative restaurant-name mappings with explicit coverage context
 - Portfolio-ready case study, evidence boundaries, representative screenshots and a private/public release gate
+- Public Streamlit parity app with all six analytics modules, audited aggregate-only data loading and evidence-table exports
 
 See [STATUS.md](./STATUS.md) for the phase checklist and next build order.
 
 The Phase 8 evidence package is in [docs/portfolio_case_study.md](./docs/portfolio_case_study.md), with access, privacy and deployment sign-off tracked in [docs/release_readiness.md](./docs/release_readiness.md).
 
-The Streamlit migration and public-release sequence is documented in [docs/streamlit_public_deployment_plan.md](./docs/streamlit_public_deployment_plan.md). The current React/Vinext app remains the private reference build until a Python/Streamlit entry point reaches the documented parity checks.
+The Streamlit implementation and public-release sequence are documented in [docs/streamlit_public_deployment_plan.md](./docs/streamlit_public_deployment_plan.md). The Python entry point has reached module and metric parity; the React/Vinext app remains the richer private reference build.
 
-The public GitHub mirror intentionally excludes the detailed analytics payload, mapping artifacts, private Sites metadata and metric-bearing screenshots until the data-publication decision is approved. See [docs/public_data_boundary.md](./docs/public_data_boundary.md).
+The project owner approved publishing the deployment-safe aggregate and mapping artifacts for the public read-only app. Raw order/customer records, secrets and private Sites metadata remain excluded. See [docs/public_data_boundary.md](./docs/public_data_boundary.md).
 
 ## Architecture
 
-The attached implementation plan recommended Streamlit. PlateLens uses a hybrid architecture instead: Python prepares reproducible, audited aggregate analytics; a typed React/Vinext interface provides the polished interactive experience; and the deployment output is Cloudflare Worker-compatible. Raw customer-level records and addresses are not shipped to the browser.
+PlateLens uses a dual-interface architecture: Python prepares one reproducible audited aggregate; Streamlit provides the public read-only analytics product; and the typed React/Vinext interface remains the polished private reference experience. Raw customer-level records and addresses are not shipped to either frontend.
 
 ```text
 Source CSV
   → Python schema + validity audit
   → deployment-safe aggregate JSON
-  → typed metric/filter layer
-  → React analytics workspace
-  → private Sites deployment
+  ├→ Python metric adapter → public Streamlit Community Cloud app
+  └→ typed metric/filter layer → private React/Sites reference app
 ```
 
 The original CSV is intentionally excluded from source control. Generate the aggregate file and reviewable location, cuisine and restaurant-name mappings locally with:
@@ -61,6 +61,17 @@ python3 scripts/build_analytics.py /path/to/zomato_business_complete.csv app/dat
 ## Local development
 
 Requires Node.js 22.13+ and Python with the pinned packages in `requirements.txt`.
+
+Public Streamlit app:
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m unittest tests/test_streamlit_lib.py
+.venv/bin/streamlit run streamlit_app.py
+```
+
+Private React reference app:
 
 ```bash
 npm install

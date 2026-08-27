@@ -15,11 +15,12 @@ test('portfolio case study is evidence-backed and bounded', () => {
   assert.match(portfolio, /Decision Lab/);
 });
 
-test('release readiness keeps public access as an explicit owner decision', () => {
+test('release readiness records the explicit public read-only owner decision', () => {
   assert.match(readiness, /Private production workspace/);
   assert.match(readiness, /Public unauthenticated deployment/);
-  assert.match(readiness, /Pending owner approval/);
-  assert.match(readiness, /Decision:\s+\[ \] Keep private/);
+  assert.match(readiness, /Approved; deployment in progress/);
+  assert.match(readiness, /Decision:\s+\[ \] Keep private\s+\[ \] Invite-only\s+\[x\] Public read-only/);
+  assert.match(readiness, /exclude raw records, secrets and private Sites metadata/);
   assert.match(readiness, /server-backed team sharing/);
 });
 
