@@ -40,6 +40,10 @@ Restaurant IDs rarely repeat, restaurant ratings cover roughly 41% of rows, and 
 
 Decision Lab starts from the balanced cuisine opportunity signal but recalculates a pair's relative percentile score inside the active eligible set. Users can change weights for demand scale, growth momentum, customer reach, coverage gap and data quality; weights are normalized to 100% for calculation. An optional confidence adjustment applies the same High (1.0), Medium (0.85) and Low (0.65) factors used by the default opportunity view. Scenario presets are stored locally on the user's device, and the export includes the active scope, threshold, weights, confidence setting and ranked evidence rows. Presets are not a shared source of truth until a server-backed collaboration layer is introduced.
 
+## Interaction and performance guardrails
+
+The interface contract tests require named primary navigation and Decision Lab controls, explicit button types, keyboard handling for selectable market and cuisine rows, visible focus treatment and CSV export wiring. The performance check runs against the deployment build and currently budgets the aggregate analytics payload at 1.3 MB, client JavaScript at 650 KB raw / 180 KB gzip-sum, and client CSS at 60 KB raw / 20 KB gzip-sum. These are engineering guardrails for regressions, not claims about end-user network speed.
+
 ## Location mapping and market eligibility
 
 The pipeline generates `data/mappings/location_mapping.csv`, with one row per raw label plus its cleaned city, metro region, state, confidence, review status and source-row count. Comma-delimited locality labels use the final city token only when the result is covered by a reviewed metro rule. Explicit aliases handle known variants such as `Noida-1`, `North-goa` and historical city names. Unknown locations remain Unknown.

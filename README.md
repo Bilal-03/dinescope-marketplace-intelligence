@@ -11,6 +11,7 @@ This is an independent portfolio case study created from a public or synthetic f
 - Market & Demand Intelligence with cleaned metro markets, equal-length growth comparisons, eligibility controls, confidence labels, a scale-versus-growth quadrant and CSV export
 - Restaurant & Cuisine Opportunity with canonical cuisine taxonomy, additive multi-cuisine demand allocation, evidence thresholds, opportunity signals, heatmap and CSV export
 - Decision Lab with configurable demand/growth/reach/gap/quality weights, confidence guardrails, scenario comparison, local presets, rank movement and decision-brief export
+- Accessibility and performance hardening with keyboard-selectable evidence rows, named controls, interaction contract tests and a repeatable bundle budget check
 - Data Reliability Center with transaction reconciliation, source fingerprint and field-coverage warnings
 - Global source-market and year filters with reset and designed empty states
 - Deployment-ready private-site authentication hooks and server-side Admin/Analyst role resolution
@@ -58,6 +59,7 @@ Requires Node.js 22.13+ and Python with the pinned packages in `requirements.txt
 npm install
 npm run dev
 npm test
+npm run check:performance
 npm run build
 ```
 

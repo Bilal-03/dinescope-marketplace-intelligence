@@ -2,7 +2,7 @@
 
 Updated: 27 August 2026
 
-## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab
+## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab + Hardening
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -18,7 +18,7 @@ Updated: 27 August 2026
 - [x] Phase 5d — Market & Demand Intelligence
 - [x] Phase 5e — Restaurant & Cuisine Opportunity
 - [x] Phase 6 — Decision Lab and configurable opportunity score
-- [ ] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
+- [x] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
 - [ ] Phase 8 — Portfolio case study, screenshots and public release decision
 
 ## Verified acceptance checks
@@ -42,9 +42,11 @@ Updated: 27 August 2026
 - [x] Decision Lab recalculates relative scores from explicit demand, growth, reach, gap and quality weights
 - [x] Decision Lab preserves minimum evidence thresholds and optional confidence discounting
 - [x] Scenario presets, comparison, rank movement and decision-brief export are available
+- [x] Navigation, controls, table selection and export affordances have accessibility contract coverage
+- [x] Keyboard focus states are visible and selectable market/cuisine rows support Enter/Space
+- [x] Performance budgets cover the aggregate payload, client JavaScript and client CSS
 
 ## Next recommended build sequence
 
-1. Expand interaction/accessibility coverage and establish a performance budget.
+1. Prepare the portfolio case study and decide whether to make the deployment public.
 2. Add server-backed team sharing for saved decision scenarios when durable collaboration is needed.
-3. Prepare the portfolio case study and decide whether to make the deployment public.
