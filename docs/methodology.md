@@ -22,9 +22,19 @@ A business KPI transaction must have a non-null order ID, a parsed date, a true 
 
 RFM-style lifecycle segments use transparent ordering signals only. They do not claim app engagement, customer intent or causal response to a campaign.
 
+## Restaurant identity and cuisine allocation
+
+The pipeline emits reviewable cuisine and restaurant-name mappings. Cuisine tokens are trimmed, case-normalized, mapped through a small explicit alias set and screened for known non-cuisine labels. Each transaction's unique canonical cuisines receive an equal `1/n` share of its transaction and sales value. Allocated transaction totals therefore reconcile exactly to cuisine-covered valid transactions.
+
+Restaurant names use deliberately conservative normalization: Unicode accents, case, punctuation and ampersands are standardized, without fuzzy matching or stripping outlet locations. Because only 123 of 148,541 restaurant IDs repeat, the product reports observed normalized listings as supply context and does not claim durable outlet or restaurant performance.
+
+## Cuisine opportunity eligibility and score
+
+The default cuisine-market comparison uses the same equal-length windows as Market Intelligence. A pair is eligible with at least 100 allocated current transactions, 50 allocated comparison transactions and calculable growth. Its 0–100 investigation signal combines demand (25%), growth (25%), customer reach (20%), demand-to-listing gap (15%) and quality coverage (15%), then discounts the result for medium or low evidence confidence. Component values are normalized within the active period, so the signal is a relative prioritization tool—not a forecast or proof of unmet supply.
+
 ## Known limitations
 
-Restaurant IDs rarely repeat, restaurant ratings cover roughly 41% of rows, and menu fields cover roughly 8%. Cuisine opportunity remains planned until auditable proportional allocation rules are implemented.
+Restaurant IDs rarely repeat, restaurant ratings cover roughly 41% of rows, and menu fields cover roughly 8%. Cuisine labels and listing counts are observational, and equal allocation assumes each listed cuisine contributed equally to the transaction. Recommended actions are hypotheses for validation.
 
 ## Location mapping and market eligibility
 

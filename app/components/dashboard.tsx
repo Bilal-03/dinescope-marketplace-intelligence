@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { AnalyticsData, MarketRow, MarketView, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
+import type { AnalyticsData, CuisinePair, CuisineSummary, CuisineView, MarketRow, MarketView, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
 import type { ProductRole } from '@/app/lib/access';
 
 type PageId = 'overview' | 'customers' | 'markets' | 'cuisines' | 'reliability' | 'decision';
@@ -10,7 +10,7 @@ const NAV_ITEMS: { id: PageId; label: string; icon: string; state: 'live' | 'pla
   { id: 'overview', label: 'Overview', icon: '⌂', state: 'live' },
   { id: 'customers', label: 'Customer growth', icon: '↗', state: 'live' },
   { id: 'markets', label: 'Market demand', icon: '◎', state: 'live' },
-  { id: 'cuisines', label: 'Cuisine gaps', icon: '◇', state: 'planned' },
+  { id: 'cuisines', label: 'Cuisine gaps', icon: '◇', state: 'live' },
   { id: 'reliability', label: 'Data reliability', icon: '✓', state: 'live' },
   { id: 'decision', label: 'Decision lab', icon: '⌁', state: 'planned' },
 ];
@@ -71,10 +71,10 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
             {page === 'markets' ? <div className="filter-lock"><span className="filter-label">Comparison scope</span><button type="button" disabled>All cleaned markets <b>✓</b></button></div> : <label><span className="filter-label">Clean market</span><select value={market} onChange={(event) => setMarket(event.target.value)}>{data.filters.markets.map((item) => <option key={item}>{item}</option>)}</select></label>}
             <div className="filter-lock"><span className="filter-label">Transaction rule</span><button type="button" disabled>Valid INR only <b>✓</b></button></div>
             <button className="reset-button" type="button" onClick={resetFilters}>↻ Reset</button>
-            <div className="record-count"><i /> {page === 'markets' ? `${formatNumber(data.market_views[period]?.summary?.active_markets ?? 0)} markets compared` : `${formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view`}</div>
+            <div className="record-count"><i /> {page === 'markets' ? `${formatNumber(data.market_views[period]?.summary?.active_markets ?? 0)} markets compared` : page === 'cuisines' ? `${formatNumber(data.cuisine_views[period]?.pairs?.filter((row) => market === 'All markets' || row.market === market).length ?? 0)} cuisine-market signals` : `${formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view`}</div>
           </section>
 
-          {scope.empty && page !== 'markets' ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={navigate} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'markets' ? <MarketIntelligence view={data.market_views[period]} mapping={data.location_mapping} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={navigate} />}
+          {scope.empty && !['markets', 'cuisines'].includes(page) ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={navigate} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'markets' ? <MarketIntelligence view={data.market_views[period]} mapping={data.location_mapping} /> : page === 'cuisines' ? <CuisineOpportunity view={data.cuisine_views[period]} market={market} mapping={data.cuisine_mapping} restaurantMapping={data.restaurant_mapping} restaurantObservations={data.restaurant_observations} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={navigate} />}
 
           <p className="disclaimer">Independent portfolio analysis using a public or synthetic dataset. Not affiliated with Zomato, Swiggy, or another delivery company.</p>
         </div>
@@ -224,6 +224,68 @@ function MarketTrendCards({ markets }: { markets: MarketRow[] }) {
   return <section className="market-trend-section"><div className="section-row"><div><span className="section-kicker">Comparable movement</span><h2>Monthly transaction pulse</h2></div><span>Top eligible markets by current scale</span></div><div className="market-trend-grid">{markets.map((market) => { const max = Math.max(...market.monthly_orders.map((point) => point.orders), 1); return <article className="panel mini-trend" key={market.market}><div><b>{market.market}</b><span className={growthClass(market.growth_orders)}>{formatSignedPercent(market.growth_orders)}</span></div><div>{market.monthly_orders.map((point) => <i key={point.month} title={`${point.month}: ${point.orders} transactions`} style={{ height: `${Math.max(5, point.orders / max * 100)}%` }} />)}</div><small>{formatNumber(market.orders)} current-window transactions</small></article>; })}</div></section>;
 }
 
+function CuisineOpportunity({ view, market, mapping, restaurantMapping, restaurantObservations }: { view: CuisineView; market: string; mapping: AnalyticsData['cuisine_mapping']; restaurantMapping: AnalyticsData['restaurant_mapping']; restaurantObservations: AnalyticsData['restaurant_observations'] }) {
+  const [minimumOrders, setMinimumOrders] = useState(view.minimum_allocated_orders ?? 100);
+  const [sortBy, setSortBy] = useState<'opportunity_score' | 'allocated_orders' | 'growth' | 'demand_to_listing_index'>('opportunity_score');
+  const [selectedKey, setSelectedKey] = useState('');
+  if (view.empty || !view.summary) return <EmptyState />;
+  const scopedPairs = view.pairs.filter((row) => market === 'All markets' || row.market === market);
+  const eligible = scopedPairs.filter((row) => row.allocated_orders >= minimumOrders && row.previous_allocated_orders >= Math.max(25, minimumOrders / 2) && row.growth !== null);
+  const ranked = [...eligible].sort((a, b) => (b[sortBy] ?? -Infinity) - (a[sortBy] ?? -Infinity));
+  const selected = scopedPairs.find((row) => `${row.market}|${row.cuisine}` === selectedKey) ?? ranked[0] ?? scopedPairs[0];
+  const cuisineSummary: CuisineSummary[] = market === 'All markets' ? view.cuisines : scopedPairs.map((row) => ({ cuisine: row.cuisine, allocated_orders: row.allocated_orders, allocated_sales: row.allocated_sales, customers: row.customers, markets: 1, observed_listings: row.observed_listings })).sort((a, b) => b.allocated_orders - a.allocated_orders);
+  const topCuisine = cuisineSummary[0];
+  const topOpportunity = [...eligible].sort((a, b) => b.opportunity_score - a.opportunity_score)[0];
+
+  return <>
+    <div className="market-window cuisine-window"><div><span>Current comparable window</span><b>{view.current_window}</b></div><i>versus</i><div><span>Previous equal-length window</span><b>{view.comparison_window}</b></div><strong>{market === 'All markets' ? 'All cleaned markets' : market}</strong></div>
+    <section className="kpi-grid cuisine-kpis">
+      <Kpi label="Canonical cuisines" value={formatNumber(mapping.canonical_cuisines)} note={`${mapping.raw_tokens} raw tokens reviewed`} tone="blue" definition="Distinct cuisine labels remaining after normalization and removal of non-cuisine marketing text." />
+      <Kpi label="Highest observed demand" value={topCuisine?.cuisine ?? '—'} note={topCuisine ? `${formatDecimal(topCuisine.allocated_orders)} allocated txns` : 'No evidence'} tone="coral" definition="Cuisine with the most proportionally allocated transactions in the selected market scope." />
+      <Kpi label="Eligible opportunities" value={formatNumber(eligible.length)} note={`${formatNumber(minimumOrders)}+ allocated transactions`} tone="teal" definition="Cuisine-market pairs passing current and comparison-period sample thresholds." />
+      <Kpi label="Top opportunity signal" value={topOpportunity ? `${topOpportunity.market} · ${topOpportunity.cuisine}` : '—'} note={topOpportunity ? `Score ${topOpportunity.opportunity_score.toFixed(1)} / 100` : 'Insufficient comparison'} tone="amber" definition="Confidence-adjusted descriptive score combining demand, growth, customer reach, demand-to-listing index and data coverage." />
+      <Kpi label="Cuisine field coverage" value={formatPercent(mapping.cuisine_coverage)} note={`${formatNumber(mapping.excluded_token_rows)} invalid token rows excluded`} tone="violet" definition="Source rows with an observed restaurant cuisine value." />
+    </section>
+
+    <section className="market-controls panel cuisine-controls"><div><div><span className="section-kicker">Evidence threshold</span><h2>Minimum allocated transactions</h2></div><output>{formatNumber(minimumOrders)}</output></div><input aria-label="Minimum allocated transactions" type="range" min="50" max="500" step="50" value={minimumOrders} onChange={(event) => setMinimumOrders(Number(event.target.value))} /><p>Each multi-cuisine transaction contributes 1/n to its cuisines. Comparison evidence must reach at least {formatNumber(Math.max(25, minimumOrders / 2))} allocated transactions.</p></section>
+
+    <section className="cuisine-analysis-grid">
+      <CuisineDemandChart cuisines={cuisineSummary.slice(0, 10)} />
+      {selected ? <CuisineBrief pair={selected} /> : <article className="panel"><EmptyState compact /></article>}
+    </section>
+
+    <CuisineHeatmap pairs={scopedPairs} select={(pair) => setSelectedKey(`${pair.market}|${pair.cuisine}`)} />
+
+    <article className="panel cuisine-table-panel"><div className="panel-head"><div><span className="section-kicker">Category action queue</span><h2>Eligible cuisine-market opportunities</h2></div><div className="table-actions"><select aria-label="Rank opportunities by" value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)}><option value="opportunity_score">Rank by opportunity signal</option><option value="allocated_orders">Rank by demand</option><option value="growth">Rank by growth</option><option value="demand_to_listing_index">Rank by demand/listing index</option></select><button className="export-button" type="button" onClick={() => exportCuisinePairs(ranked, view.period, market)}>↓ Export CSV</button></div></div><div className="table-scroll"><table className="data-table cuisine-table"><thead><tr><th>Market · Cuisine</th><th>Signal</th><th>Allocated txns</th><th>Growth</th><th>Customers</th><th>Listings</th><th>Demand / listing</th><th>Rating cov.</th><th>Menu cov.</th><th>Confidence</th><th>Recommended action</th></tr></thead><tbody>{ranked.map((row) => { const key = `${row.market}|${row.cuisine}`; return <tr className={selected && `${selected.market}|${selected.cuisine}` === key ? 'selected-row' : ''} key={key} onClick={() => setSelectedKey(key)}><th><b>{row.market}</b><span>{row.cuisine}</span></th><td><strong className="score-cell">{row.opportunity_score.toFixed(1)}</strong></td><td>{formatDecimal(row.allocated_orders)}</td><td className={growthClass(row.growth)}>{formatSignedPercent(row.growth)}</td><td>{formatNumber(row.customers)}</td><td>{formatNumber(row.observed_listings)}</td><td>{row.demand_to_listing_index?.toFixed(2) ?? '—'}×</td><td>{formatPercent(row.rating_coverage)}</td><td>{formatPercent(row.menu_coverage)}</td><td><span className={`confidence inline-confidence ${row.confidence.toLowerCase()}`}>{row.confidence}</span></td><td>{row.recommended_action}</td></tr>; })}</tbody></table></div></article>
+
+    <RestaurantEvidence mapping={restaurantMapping} observations={restaurantObservations} />
+    <div className="market-method-note cuisine-method-note"><b>Analytical boundary</b><p>Allocated transaction and sales totals reconcile because every valid cuisine-covered row contributes exactly 1.0 across its observed cuisines. “Observed listings” uses conservative normalized restaurant names—not durable outlet supply. Restaurant performance is intentionally not ranked because only {formatNumber(restaurantMapping.restaurant_ids_repeated)} restaurant IDs repeat.</p></div>
+  </>;
+}
+
+function CuisineDemandChart({ cuisines }: { cuisines: CuisineSummary[] }) {
+  const max = Math.max(...cuisines.map((row) => row.allocated_orders), 1);
+  return <article className="panel cuisine-demand"><div className="panel-head"><div><span className="section-kicker">Allocated demand</span><h2>Leading cuisine demand</h2></div><span className="coverage-note">Additive 1/n allocation</span></div><div className="cuisine-demand-list">{cuisines.map((row, index) => <div key={row.cuisine}><span className="rank">{String(index + 1).padStart(2, '0')}</span><b>{row.cuisine}</b><div><i style={{ width: `${row.allocated_orders / max * 100}%` }} /></div><strong>{formatDecimal(row.allocated_orders)}</strong><small>{formatCrore(row.allocated_sales)}</small></div>)}</div></article>;
+}
+
+function CuisineBrief({ pair }: { pair: CuisinePair }) {
+  return <article className="panel cuisine-brief"><div className="panel-head"><div><span className="section-kicker">Selected signal</span><h2>{pair.market} · {pair.cuisine}</h2></div><span className={`confidence ${pair.confidence.toLowerCase()}`}>{pair.confidence} confidence</span></div><div className="opportunity-score"><div><span>Opportunity signal</span><strong>{pair.opportunity_score.toFixed(1)}</strong><small>/ 100</small></div><i><b style={{ width: `${pair.opportunity_score}%` }} /></i></div><div className="brief-callout cuisine-action"><span>01</span><div><b>Recommended investigation</b><p>{pair.recommended_action}</p></div></div><dl className="market-facts"><div><dt>Allocated transaction growth</dt><dd className={growthClass(pair.growth)}>{formatSignedPercent(pair.growth)}</dd></div><div><dt>Customer reach</dt><dd>{formatNumber(pair.customers)}</dd></div><div><dt>Observed normalized listings</dt><dd>{formatNumber(pair.observed_listings)}</dd></div><div><dt>Demand-to-listing index</dt><dd>{pair.demand_to_listing_index?.toFixed(2) ?? '—'}×</dd></div><div><dt>Rating / menu coverage</dt><dd>{formatPercent(pair.rating_coverage)} / {formatPercent(pair.menu_coverage)}</dd></div></dl><p className="hypothesis-note">A high signal prioritizes investigation; it does not prove unmet supply or causal demand.</p></article>;
+}
+
+function CuisineHeatmap({ pairs, select }: { pairs: CuisinePair[]; select: (pair: CuisinePair) => void }) {
+  const marketTotals = new Map<string, number>(); const cuisineTotals = new Map<string, number>();
+  for (const row of pairs) { marketTotals.set(row.market, (marketTotals.get(row.market) ?? 0) + row.allocated_orders); cuisineTotals.set(row.cuisine, (cuisineTotals.get(row.cuisine) ?? 0) + row.allocated_orders); }
+  const markets = [...marketTotals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 7).map(([name]) => name);
+  const cuisines = [...cuisineTotals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name]) => name);
+  const lookup = new Map(pairs.map((row) => [`${row.market}|${row.cuisine}`, row]));
+  const max = Math.max(...pairs.filter((row) => markets.includes(row.market) && cuisines.includes(row.cuisine)).map((row) => row.allocated_orders), 1);
+  return <article className="panel cuisine-heatmap-panel"><div className="panel-head"><div><span className="section-kicker">Demand footprint</span><h2>Cuisine-market demand heatmap</h2></div><span className="coverage-note">Click a cell to inspect</span></div><div className="heatmap-scroll"><table className="heatmap cuisine-heatmap"><thead><tr><th>Market</th>{cuisines.map((cuisine) => <th key={cuisine}>{cuisine}</th>)}</tr></thead><tbody>{markets.map((marketName) => <tr key={marketName}><th>{marketName}</th>{cuisines.map((cuisine) => { const pair = lookup.get(`${marketName}|${cuisine}`); return <td key={cuisine} style={{ backgroundColor: cuisineHeat(pair?.allocated_orders ?? 0, max) }}>{pair ? <button type="button" onClick={() => select(pair)} title={`${marketName} · ${cuisine}: ${formatDecimal(pair.allocated_orders)} allocated transactions`}>{formatDecimal(pair.allocated_orders)}</button> : '—'}</td>; })}</tr>)}</tbody></table></div><p className="panel-note">Darker cells represent greater proportionally allocated transaction demand. This view does not imply individual restaurant performance.</p></article>;
+}
+
+function RestaurantEvidence({ mapping, observations }: { mapping: AnalyticsData['restaurant_mapping']; observations: AnalyticsData['restaurant_observations'] }) {
+  return <section className="restaurant-evidence"><article className="panel restaurant-context"><span className="section-kicker">Restaurant identity audit</span><h2>Conservative name normalization</h2><div className="restaurant-audit-metrics"><div><strong>{formatNumber(mapping.raw_names)}</strong><span>Raw names</span></div><div><strong>{formatNumber(mapping.normalized_names)}</strong><span>Normalized names</span></div><div><strong>{formatNumber(mapping.repeat_normalized_names)}</strong><span>Repeated names</span></div><div><strong>{formatNumber(mapping.restaurant_ids_repeated)}</strong><span>Repeated IDs</span></div></div><p>Normalization only standardizes case, punctuation, accents and “&amp;”. It does not remove outlet locations or fuzzy-merge brands, protecting against false chain matches.</p></article><article className="panel observed-chains"><div className="panel-head"><div><span className="section-kicker">Coverage context</span><h2>Most-observed normalized names</h2></div></div><div>{observations.slice(0, 7).map((row) => <div key={row.normalized_name}><b>{titleCase(row.normalized_name)}</b><span>{formatNumber(row.observed_rows)} rows</span><small>{formatNumber(row.distinct_restaurant_ids)} IDs · {formatNumber(row.markets)} markets</small></div>)}</div></article></section>;
+}
+
 function Reliability({ data }: { data: AnalyticsData }) {
   const q = data.quality;
   const issues = [
@@ -272,8 +334,17 @@ function exportMarkets(markets: MarketRow[], period: string) {
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-market-ranking-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
+function exportCuisinePairs(pairs: CuisinePair[], period: string, market: string) {
+  const headers = ['market', 'cuisine', 'opportunity_signal', 'allocated_transactions', 'transaction_growth', 'customers', 'observed_listings', 'demand_to_listing_index', 'rating_coverage', 'menu_coverage', 'confidence', 'recommended_action'];
+  const rows = pairs.map((pair) => [pair.market, pair.cuisine, pair.opportunity_score, pair.allocated_orders, pair.growth ?? '', pair.customers, pair.observed_listings, pair.demand_to_listing_index ?? '', pair.rating_coverage, pair.menu_coverage, pair.confidence, pair.recommended_action]);
+  const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-cuisine-opportunities-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+}
+
 function csvCell(value: string | number) { const text = String(value); return `"${text.replaceAll('"', '""')}"`; }
 function formatNumber(value: number) { return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(value); }
+function formatDecimal(value: number) { return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 1 }).format(value); }
 function formatPercent(value: number) { return new Intl.NumberFormat('en-IN', { style: 'percent', maximumFractionDigits: 1 }).format(value); }
 function formatSignedPercent(value: number | null) { if (value === null) return 'Not comparable'; const formatted = new Intl.NumberFormat('en-IN', { style: 'percent', maximumFractionDigits: 1, signDisplay: 'always' }).format(value); return formatted; }
 function formatRupee(value: number) { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value); }
@@ -288,3 +359,5 @@ function segmentColor(index: number) { return ['#f0644f', '#168978', '#5f72ad', 
 function growthClass(value: number | null) { return value === null ? 'neutral-growth' : value >= 0 ? 'positive-growth' : 'negative-growth'; }
 function scatterX(value: number, min: number, max: number) { if (max <= min) return 50; const scaled = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min)); return 8 + scaled * 84; }
 function scatterY(value: number) { const clamped = Math.max(-.75, Math.min(1.5, value)); return 8 + ((clamped + .75) / 2.25) * 84; }
+function cuisineHeat(value: number, max: number) { const alpha = value <= 0 ? .02 : .08 + Math.sqrt(value / max) * .72; return `rgba(240, 100, 79, ${alpha})`; }
+function titleCase(value: string) { return value.replace(/\b\w/g, (letter) => letter.toUpperCase()); }

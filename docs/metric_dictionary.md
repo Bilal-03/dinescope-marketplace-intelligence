@@ -15,3 +15,8 @@
 | Market repeat rate | Customers with 2+ transactions / market active customers | Cleaned market and window | Low rates partly reflect sparse source observations |
 | Market concentration | Transactions in five largest cleaned markets / current-window transactions | Comparable market window | Unknown locations remain outside named-market rankings |
 | Market confidence | Rule using sample size and high-confidence mapping share | Cleaned market | Confidence describes evidence strength, not future certainty |
+| Allocated cuisine transactions | Sum of `1/n` per valid transaction across its `n` unique canonical cuisines | Cuisine or cuisine-market | Assumes listed cuisines contribute equally; only cuisine-covered rows are represented |
+| Allocated cuisine sales | Sum of Sales Amount × `1/n` across canonical cuisines | Cuisine or cuisine-market | Attribution is proportional, not item-level revenue evidence |
+| Observed normalized listings | Distinct conservative normalized restaurant names observed for a cuisine-market pair | Cuisine-market and window | Not a durable outlet count; names may represent branches or unrelated restaurants |
+| Demand-to-listing index | Pair allocated transactions per observed listing / period median for eligible pairs | Cuisine-market | Relative supply-context proxy, not proof of undersupply |
+| Cuisine opportunity signal | Weighted normalized demand, growth, reach, supply-gap and quality components × confidence factor | Eligible cuisine-market pair | Relative investigation priority; sensitive to chosen period and source coverage |

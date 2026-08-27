@@ -2,7 +2,7 @@
 
 Updated: 27 August 2026
 
-## Current release: Foundation + Product/Growth + Market Intelligence
+## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -16,7 +16,7 @@ Updated: 27 August 2026
 - [x] CSV export — customer segment evidence table
 - [x] Phase 2b — Auditable locality-to-metro mapping (restaurant-name mapping remains with the restaurant phase)
 - [x] Phase 5d — Market & Demand Intelligence
-- [ ] Phase 5e — Restaurant & Cuisine Opportunity
+- [x] Phase 5e — Restaurant & Cuisine Opportunity
 - [ ] Phase 6 — Decision Lab and configurable opportunity score
 - [ ] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
 - [ ] Phase 8 — Portfolio case study, screenshots and public release decision
@@ -35,10 +35,14 @@ Updated: 27 August 2026
 - [x] Market growth uses equal-length comparison windows
 - [x] Eligibility thresholds prevent tiny comparison bases from leading rankings
 - [x] Market rows expose sample size, mapping coverage and confidence
+- [x] Multi-cuisine allocation reconciles exactly to cuisine-covered transactions
+- [x] Cuisine and restaurant-name mappings are generated as reviewable CSV artifacts
+- [x] Opportunity rankings enforce minimum current and comparison evidence
+- [x] Restaurant evidence is labelled as observed listings rather than durable outlet performance
 
 ## Next recommended build sequence
 
-1. Normalise restaurant and cuisine names with reviewable mappings.
-2. Allocate multi-cuisine demand proportionally to prevent double counting.
-3. Build Restaurant & Cuisine Opportunity with coverage warnings.
-4. Build the Decision Lab after cuisine inputs are defensible.
+1. Build the Decision Lab with adjustable demand, growth, reach, supply-gap and quality weights.
+2. Add scenario comparison, saved presets and exportable decision briefs.
+3. Expand interaction/accessibility coverage and establish a performance budget.
+4. Prepare the portfolio case study and decide whether to make the deployment public.

@@ -58,3 +58,27 @@ test('market eligibility and concentration rules reconcile', () => {
     assert.equal(row.monthly_orders.reduce((sum, point) => sum + point.orders, 0), row.orders);
   }
 });
+
+test('cuisine taxonomy is explicit and proportional allocation reconciles', () => {
+  assert.equal(analytics.cuisine_mapping.raw_tokens, 126);
+  assert.equal(analytics.cuisine_mapping.canonical_cuisines, 110);
+  assert.equal(analytics.cuisine_mapping.excluded_token_rows, 22);
+  for (const view of Object.values(analytics.cuisine_views)) {
+    assert.ok(Math.abs(view.allocated_order_total - view.covered_order_count) < 1e-9);
+  }
+});
+
+test('cuisine opportunities obey evidence and score boundaries', () => {
+  for (const view of Object.values(analytics.cuisine_views)) {
+    assert.ok(view.pairs.every((row) => row.opportunity_score >= 0 && row.opportunity_score <= 100));
+    const eligible = view.pairs.filter((row) => row.eligible_default);
+    assert.equal(view.summary.eligible_pairs, eligible.length);
+    assert.ok(eligible.every((row) => row.allocated_orders >= 100 && row.previous_allocated_orders >= 50 && row.growth !== null));
+  }
+});
+
+test('restaurant evidence is not misrepresented as durable outlet performance', () => {
+  assert.equal(analytics.restaurant_mapping.restaurant_ids, 148_541);
+  assert.equal(analytics.restaurant_mapping.restaurant_ids_repeated, 123);
+  assert.ok(analytics.restaurant_mapping.restaurant_ids_repeated / analytics.restaurant_mapping.restaurant_ids < 0.001);
+});

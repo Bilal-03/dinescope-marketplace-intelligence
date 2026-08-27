@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import unicodedata
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +55,51 @@ STATE_BY_MARKET = {
     "Vijayawada": "Andhra Pradesh",
 }
 
+CUISINE_ALIASES = {
+    "pizzas": "Pizza", "pastas": "Pasta", "juices": "Juice", "thalis": "Thali",
+    "kebabs": "Kebab", "italian-american": "Italian American", "pan-asian": "Pan Asian",
+    "tex-mex": "Tex Mex", "beverage": "Beverages", "bakery products": "Bakery",
+    "svanidhi street food vendor": "Street Food",
+    "biryani - shivaji military hotel": "Biryani", "indian": "Indian",
+}
+
+INVALID_CUISINE_PATTERNS = (
+    r"\buse code\b", r"\bcode valid\b", r"\bdiscount\b", r"\bfree delivery\b",
+    r"\blimited stocks\b", r"\bcombos available\b", r"\bmax \d+ combos\b",
+    r"^\d{1,2}:\d{2}\b", r"^default$", r"^popular brand store$",
+)
+
+CUISINE_GROUPS = {
+    "Quick service & snacks": {"Fast Food", "Pizza", "Burgers", "Snacks", "Street Food", "Chaat", "Combo", "Kebab", "Grill", "Barbecue", "Pasta", "Tandoor"},
+    "Desserts & beverages": {"Desserts", "Beverages", "Bakery", "Ice Cream", "Ice Cream Cakes", "Sweets", "Juice", "Waffle", "Paan", "Cafe"},
+    "Health & home-style": {"Healthy Food", "Salads", "Keto", "Jain", "Home Food"},
+    "Indian regional": {"Indian", "North Indian", "South Indian", "Biryani", "Mughlai", "Punjabi", "Bengali", "Maharashtrian", "Andhra", "Hyderabadi", "Kerala", "Gujarati", "Chettinad", "Rajasthani", "Bihari", "Goan", "Assamese", "Coastal", "Malwani", "Mangalorean", "North Eastern", "Lucknowi", "Awadhi", "Oriya", "Naga", "Kashmiri", "Sindhi", "Rayalaseema", "Telangana", "Konkan", "Parsi", "Khasi"},
+}
+
+
+def normalize_restaurant_name(value: str) -> str:
+    if not value or str(value).lower() in {"nan", "none", "unknown"}:
+        return "unknown"
+    ascii_value = unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode()
+    ascii_value = ascii_value.lower().replace("&", " and ")
+    return re.sub(r"[^a-z0-9]+", " ", ascii_value).strip() or "unknown"
+
+
+def canonical_cuisine(value: str) -> tuple[str | None, str, str]:
+    cleaned = re.sub(r"\s+", " ", str(value)).strip()
+    if not cleaned:
+        return None, "Invalid", "Excluded blank"
+    lowered = cleaned.lower()
+    if any(re.search(pattern, lowered) for pattern in INVALID_CUISINE_PATTERNS):
+        return None, "Invalid", "Excluded non-cuisine label"
+    canonical = CUISINE_ALIASES.get(lowered, cleaned.title())
+    group = "Global & niche"
+    for group_name, members in CUISINE_GROUPS.items():
+        if canonical in members:
+            group = group_name
+            break
+    return canonical, group, "Reviewed alias" if lowered in CUISINE_ALIASES else "Standardized label"
+
 
 def canonical_city(value: str) -> str:
     cleaned = re.sub(r"\s+", " ", value).strip(" ,-_")
@@ -87,6 +133,40 @@ def build_location_mapping(raw_market: pd.Series) -> pd.DataFrame:
     for raw_city, count in counts.items():
         rows.append({"raw_city": raw_city, **map_location(raw_city), "row_count": int(count)})
     return pd.DataFrame(rows).sort_values(["row_count", "raw_city"], ascending=[False, True])
+
+
+def build_cuisine_mapping(raw_cuisine: pd.Series) -> pd.DataFrame:
+    tokens = raw_cuisine.fillna("").astype(str).str.split(",").explode().str.strip()
+    counts = tokens[tokens.ne("")].value_counts()
+    rows = []
+    for raw_token, count in counts.items():
+        canonical, group, status = canonical_cuisine(raw_token)
+        rows.append({
+            "raw_cuisine": raw_token,
+            "canonical_cuisine": canonical or "Excluded",
+            "cuisine_group": group,
+            "confidence": "High" if canonical else "Low",
+            "review_status": status,
+            "row_count": int(count),
+        })
+    return pd.DataFrame(rows).sort_values(["row_count", "raw_cuisine"], ascending=[False, True])
+
+
+def build_restaurant_mapping(raw_name: pd.Series, restaurant_id: pd.Series) -> pd.DataFrame:
+    mapping = pd.DataFrame({
+        "raw_name": raw_name.fillna("Unknown").astype(str),
+        "restaurant_id": restaurant_id.fillna("Unknown").astype(str),
+    })
+    mapping["normalized_name"] = mapping["raw_name"].map(normalize_restaurant_name)
+    grouped = mapping.groupby("normalized_name", as_index=False).agg(
+        observed_rows=("raw_name", "size"),
+        raw_name_variants=("raw_name", "nunique"),
+        distinct_restaurant_ids=("restaurant_id", "nunique"),
+    )
+    grouped = grouped[grouped["observed_rows"].ge(2)].copy()
+    grouped["confidence"] = np.where(grouped["raw_name_variants"].eq(1), "High", "Medium")
+    grouped["review_status"] = np.where(grouped["observed_rows"].ge(20), "Priority review", "Conservative normalization")
+    return grouped.sort_values(["observed_rows", "normalized_name"], ascending=[False, True])
 
 
 def scalar(value):
@@ -328,11 +408,149 @@ def build_market_view(frame: pd.DataFrame, period: str) -> dict:
     }
 
 
+def build_cuisine_bridge(frame: pd.DataFrame) -> pd.DataFrame:
+    def tokens_for(value: str) -> list[str]:
+        tokens = []
+        for raw_token in str(value or "").split(","):
+            canonical, _, _ = canonical_cuisine(raw_token)
+            if canonical and canonical not in tokens:
+                tokens.append(canonical)
+        return tokens
+
+    bridge = frame.copy()
+    bridge["cuisine_tokens"] = bridge["cuisine_raw"].fillna("").map(tokens_for)
+    bridge["cuisine_count"] = bridge["cuisine_tokens"].map(len)
+    bridge = bridge[bridge["cuisine_count"].gt(0)].explode("cuisine_tokens").rename(columns={"cuisine_tokens": "cuisine"})
+    bridge["allocation_weight"] = 1 / bridge["cuisine_count"]
+    bridge["allocated_sales"] = bridge["sales"] * bridge["allocation_weight"]
+    return bridge
+
+
+def build_cuisine_view(bridge: pd.DataFrame, period: str) -> dict:
+    current, previous, current_label, previous_label = comparison_window(bridge, period)
+    if current.empty:
+        return {"period": period, "empty": True, "pairs": [], "cuisines": []}
+    current_market_orders = current.groupby("clean_market")["allocation_weight"].sum()
+    current_market_listings = current[current["normalized_restaurant_name"].ne("unknown")].groupby("clean_market")["normalized_restaurant_name"].nunique()
+    previous_pair_orders = previous.groupby(["clean_market", "cuisine"])["allocation_weight"].sum()
+    rows = []
+    for (market, cuisine), group in current.groupby(["clean_market", "cuisine"]):
+        if market == "Unknown":
+            continue
+        allocated_orders = float(group["allocation_weight"].sum())
+        if allocated_orders < 10:
+            continue
+        previous_orders = float(previous_pair_orders.get((market, cuisine), 0))
+        listings = int(group.loc[group["normalized_restaurant_name"].ne("unknown"), "normalized_restaurant_name"].nunique())
+        market_orders = float(current_market_orders.get(market, allocated_orders))
+        market_listings = int(current_market_listings.get(market, max(listings, 1)))
+        demand_share = allocated_orders / market_orders if market_orders else 0
+        listing_share = listings / market_listings if market_listings else 0
+        gap_index = demand_share / listing_share if listing_share else None
+        growth = (allocated_orders - previous_orders) / previous_orders if previous_orders >= 25 else None
+        rating_coverage = float(np.average(group["has_rating"], weights=group["allocation_weight"]))
+        menu_coverage = float(np.average(group["has_menu"], weights=group["allocation_weight"]))
+        if allocated_orders >= 200 and previous_orders >= 75:
+            confidence = "High"
+        elif allocated_orders >= 75 and previous_orders >= 25:
+            confidence = "Medium"
+        else:
+            confidence = "Low"
+        rows.append({
+            "market": market,
+            "cuisine": cuisine,
+            "allocated_orders": allocated_orders,
+            "allocated_sales": float(group["allocated_sales"].sum()),
+            "customers": int(group["customer_id"].nunique()),
+            "observed_listings": listings,
+            "demand_share": demand_share,
+            "listing_share": listing_share,
+            "demand_to_listing_index": gap_index,
+            "previous_allocated_orders": previous_orders,
+            "growth": growth,
+            "rating_coverage": rating_coverage,
+            "menu_coverage": menu_coverage,
+            "confidence": confidence,
+            "eligible_default": allocated_orders >= 100 and previous_orders >= 50 and growth is not None,
+        })
+
+    pairs = pd.DataFrame(rows)
+    if not pairs.empty:
+        pairs["demand_score"] = pairs["allocated_orders"].rank(pct=True)
+        pairs["growth_score"] = pd.to_numeric(pairs["growth"], errors="coerce").fillna(-1).clip(-1, 2).rank(pct=True)
+        pairs["reach_score"] = pairs["customers"].rank(pct=True)
+        pairs["gap_score"] = pairs["demand_to_listing_index"].fillna(0).clip(0, 3).rank(pct=True)
+        pairs["quality_score"] = ((pairs["rating_coverage"] + pairs["menu_coverage"]) / 2).rank(pct=True)
+        pairs["base_opportunity_score"] = 100 * (
+            .25 * pairs["demand_score"] + .25 * pairs["growth_score"] + .20 * pairs["reach_score"]
+            + .15 * pairs["gap_score"] + .15 * pairs["quality_score"]
+        )
+        confidence_factor = pairs["confidence"].map({"High": 1.0, "Medium": .85, "Low": .65})
+        pairs["opportunity_score"] = pairs["base_opportunity_score"] * confidence_factor
+
+        def action_for(row: pd.Series) -> str:
+            if row["menu_coverage"] < .04 and row["rating_coverage"] < .25:
+                return "Improve category instrumentation before scaling a supply recommendation."
+            if row["growth"] is not None and row["growth"] >= .20 and (row["demand_to_listing_index"] or 0) >= 1.1:
+                return "Test cuisine supply acquisition and discovery placement in this market."
+            if row["growth"] is not None and row["growth"] < -.10 and row["allocated_orders"] >= 150:
+                return "Diagnose demand decline and customer mix before adding supply."
+            return "Validate demand quality and listing breadth before changing investment."
+
+        pairs["recommended_action"] = pairs.apply(action_for, axis=1)
+        pairs = pairs.sort_values("opportunity_score", ascending=False)
+        # The UI's lowest selectable evidence threshold is 50 allocated
+        # transactions. Do not ship lower-evidence rows or internal scoring
+        # components to the browser; this keeps the deployment payload bounded.
+        pairs = pairs[pairs["allocated_orders"].ge(50)].drop(columns=[
+            "demand_score", "growth_score", "reach_score", "gap_score",
+            "quality_score", "base_opportunity_score",
+        ])
+        numeric_columns = pairs.select_dtypes(include=[np.number]).columns
+        pairs[numeric_columns] = pairs[numeric_columns].round(6)
+
+    cuisines = []
+    for cuisine, group in current.groupby("cuisine"):
+        cuisines.append({
+            "cuisine": cuisine,
+            "allocated_orders": float(group["allocation_weight"].sum()),
+            "allocated_sales": float(group["allocated_sales"].sum()),
+            "customers": int(group["customer_id"].nunique()),
+            "markets": int(group.loc[group["clean_market"].ne("Unknown"), "clean_market"].nunique()),
+            "observed_listings": int(group.loc[group["normalized_restaurant_name"].ne("unknown"), "normalized_restaurant_name"].nunique()),
+        })
+    cuisines.sort(key=lambda row: row["allocated_orders"], reverse=True)
+    pair_records = pairs.astype(object).where(pd.notna(pairs), None).to_dict(orient="records") if not pairs.empty else []
+    eligible = [row for row in pair_records if row["eligible_default"]]
+    return {
+        "period": period,
+        "empty": False,
+        "current_window": current_label,
+        "comparison_window": previous_label,
+        "minimum_allocated_orders": 100,
+        "allocated_order_total": float(current["allocation_weight"].sum()),
+        "covered_order_count": int(current["order_id"].nunique()),
+        "cuisines": cuisines,
+        "pairs": pair_records,
+        "summary": {
+            "active_cuisines": len(cuisines),
+            "eligible_pairs": len(eligible),
+            "top_cuisine": cuisines[0]["cuisine"] if cuisines else None,
+            "top_cuisine_orders": cuisines[0]["allocated_orders"] if cuisines else 0,
+            "top_opportunity_market": eligible[0]["market"] if eligible else None,
+            "top_opportunity_cuisine": eligible[0]["cuisine"] if eligible else None,
+            "top_opportunity_score": eligible[0]["opportunity_score"] if eligible else None,
+        },
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--mapping-output", type=Path, default=Path("data/mappings/location_mapping.csv"))
+    parser.add_argument("--cuisine-mapping-output", type=Path, default=Path("data/mappings/cuisine_mapping.csv"))
+    parser.add_argument("--restaurant-mapping-output", type=Path, default=Path("data/mappings/restaurant_name_mapping.csv"))
     args = parser.parse_args()
     source = args.source.expanduser().resolve()
 
@@ -346,6 +564,8 @@ def main() -> None:
 
     raw_market = raw["Restaurant City"].fillna("Unknown").astype(str).str.strip()
     location_mapping = build_location_mapping(raw_market)
+    cuisine_mapping = build_cuisine_mapping(raw["Restaurant Cuisine"])
+    restaurant_mapping = build_restaurant_mapping(raw["Restaurant Name"], raw["Restaurant ID"])
     mapping_by_raw = location_mapping.set_index("raw_city")
     frame = pd.DataFrame({
         "order_id": raw.loc[valid, "Order ID"].astype(str),
@@ -354,7 +574,15 @@ def main() -> None:
         "sales": sales[valid],
         "quantity": quantity[valid],
         "raw_market": raw_market[valid],
+        "restaurant_id": raw.loc[valid, "Restaurant ID"].fillna("Unknown").astype(str),
+        "restaurant_name": raw.loc[valid, "Restaurant Name"].fillna("Unknown").astype(str),
+        "cuisine_raw": raw.loc[valid, "Restaurant Cuisine"].fillna("").astype(str),
+        "rating": pd.to_numeric(raw.loc[valid, "Restaurant Rating"], errors="coerce"),
+        "menu_item_count": pd.to_numeric(raw.loc[valid, "Menu_Item_Count"], errors="coerce"),
     })
+    frame["normalized_restaurant_name"] = frame["restaurant_name"].map(normalize_restaurant_name)
+    frame["has_rating"] = frame["rating"].notna()
+    frame["has_menu"] = frame["menu_item_count"].notna()
     frame["clean_market"] = frame["raw_market"].map(mapping_by_raw["clean_city"])
     frame["mapping_confidence"] = frame["raw_market"].map(mapping_by_raw["confidence"])
     frame["month_start"] = frame["order_date"].dt.to_period("M").dt.to_timestamp()
@@ -383,6 +611,23 @@ def main() -> None:
         })
 
     market_views = {period: build_market_view(frame, period) for period in ["All years", *map(str, years)]}
+    cuisine_bridge = build_cuisine_bridge(frame)
+    cuisine_views = {period: build_cuisine_view(cuisine_bridge, period) for period in ["All years", *map(str, years)]}
+
+    restaurant_observations = []
+    for normalized_name, group in frame[frame["normalized_restaurant_name"].ne("unknown")].groupby("normalized_restaurant_name"):
+        if len(group) < 2:
+            continue
+        restaurant_observations.append({
+            "normalized_name": normalized_name,
+            "observed_rows": int(len(group)),
+            "distinct_restaurant_ids": int(group["restaurant_id"].nunique()),
+            "markets": int(group.loc[group["clean_market"].ne("Unknown"), "clean_market"].nunique()),
+            "rating_coverage": float(group["has_rating"].mean()),
+            "menu_coverage": float(group["has_menu"].mean()),
+        })
+    restaurant_observations.sort(key=lambda row: row["observed_rows"], reverse=True)
+    restaurant_id_counts = raw["Restaurant ID"].dropna().astype(str).value_counts()
 
     quality = {
         "raw_rows": int(len(raw)),
@@ -413,6 +658,21 @@ def main() -> None:
         "filters": {"markets": ["All markets", *top_markets], "periods": ["All years", *map(str, years)]},
         "market_summary": market_summary,
         "market_views": market_views,
+        "cuisine_views": cuisine_views,
+        "cuisine_mapping": {
+            "raw_tokens": int(len(cuisine_mapping)),
+            "canonical_cuisines": int(cuisine_mapping.loc[cuisine_mapping["canonical_cuisine"].ne("Excluded"), "canonical_cuisine"].nunique()),
+            "excluded_token_rows": int(cuisine_mapping.loc[cuisine_mapping["canonical_cuisine"].eq("Excluded"), "row_count"].sum()),
+            "cuisine_coverage": float(raw["Restaurant Cuisine"].notna().mean()),
+        },
+        "restaurant_mapping": {
+            "raw_names": int(raw["Restaurant Name"].nunique()),
+            "normalized_names": int(frame["normalized_restaurant_name"].nunique()),
+            "repeat_normalized_names": int(len(restaurant_mapping)),
+            "restaurant_ids": int(raw["Restaurant ID"].nunique()),
+            "restaurant_ids_repeated": int(restaurant_id_counts.gt(1).sum()),
+        },
+        "restaurant_observations": restaurant_observations[:20],
         "location_mapping": {
             "raw_labels": int(len(location_mapping)),
             "mapped_rows": int(raw_market.ne("Unknown").sum()),
@@ -432,8 +692,14 @@ def main() -> None:
     args.output.write_text(json.dumps(output, default=scalar, allow_nan=False, separators=(",", ":")), encoding="utf-8")
     args.mapping_output.parent.mkdir(parents=True, exist_ok=True)
     location_mapping.to_csv(args.mapping_output, index=False)
+    args.cuisine_mapping_output.parent.mkdir(parents=True, exist_ok=True)
+    cuisine_mapping.to_csv(args.cuisine_mapping_output, index=False)
+    args.restaurant_mapping_output.parent.mkdir(parents=True, exist_ok=True)
+    restaurant_mapping.to_csv(args.restaurant_mapping_output, index=False)
     print(f"Wrote {args.output} ({args.output.stat().st_size:,} bytes)")
     print(f"Wrote {args.mapping_output} ({len(location_mapping):,} mapping rows)")
+    print(f"Wrote {args.cuisine_mapping_output} ({len(cuisine_mapping):,} mapping rows)")
+    print(f"Wrote {args.restaurant_mapping_output} ({len(restaurant_mapping):,} repeat-name rows)")
 
 
 if __name__ == "__main__":

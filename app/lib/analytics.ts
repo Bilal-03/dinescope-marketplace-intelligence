@@ -81,6 +81,56 @@ export type MarketView = {
   };
 };
 
+export type CuisinePair = {
+  market: string;
+  cuisine: string;
+  allocated_orders: number;
+  allocated_sales: number;
+  customers: number;
+  observed_listings: number;
+  demand_share: number;
+  listing_share: number;
+  demand_to_listing_index: number | null;
+  previous_allocated_orders: number;
+  growth: number | null;
+  rating_coverage: number;
+  menu_coverage: number;
+  confidence: 'High' | 'Medium' | 'Low';
+  eligible_default: boolean;
+  opportunity_score: number;
+  recommended_action: string;
+};
+
+export type CuisineSummary = {
+  cuisine: string;
+  allocated_orders: number;
+  allocated_sales: number;
+  customers: number;
+  markets: number;
+  observed_listings: number;
+};
+
+export type CuisineView = {
+  period: string;
+  empty: boolean;
+  current_window?: string;
+  comparison_window?: string;
+  minimum_allocated_orders?: number;
+  allocated_order_total?: number;
+  covered_order_count?: number;
+  cuisines: CuisineSummary[];
+  pairs: CuisinePair[];
+  summary?: {
+    active_cuisines: number;
+    eligible_pairs: number;
+    top_cuisine: string | null;
+    top_cuisine_orders: number;
+    top_opportunity_market: string | null;
+    top_opportunity_cuisine: string | null;
+    top_opportunity_score: number | null;
+  };
+};
+
 export type AnalyticsData = {
   generated_at: string;
   source: {
@@ -109,6 +159,28 @@ export type AnalyticsData = {
   filters: { markets: string[]; periods: string[] };
   market_summary: { market: string; orders: number; sales: number; customers: number; repeat_rate: number }[];
   market_views: Record<string, MarketView>;
+  cuisine_views: Record<string, CuisineView>;
+  cuisine_mapping: {
+    raw_tokens: number;
+    canonical_cuisines: number;
+    excluded_token_rows: number;
+    cuisine_coverage: number;
+  };
+  restaurant_mapping: {
+    raw_names: number;
+    normalized_names: number;
+    repeat_normalized_names: number;
+    restaurant_ids: number;
+    restaurant_ids_repeated: number;
+  };
+  restaurant_observations: {
+    normalized_name: string;
+    observed_rows: number;
+    distinct_restaurant_ids: number;
+    markets: number;
+    rating_coverage: number;
+    menu_coverage: number;
+  }[];
   location_mapping: {
     raw_labels: number;
     mapped_rows: number;
