@@ -4,6 +4,8 @@ PlateLens is an interactive food-delivery marketplace intelligence product for P
 
 This is an independent portfolio case study created from a public or synthetic food-delivery dataset. It is not affiliated with, endorsed by, or based on internal data from Zomato, Swiggy, or another food-delivery company.
 
+Live public Streamlit app: [platelens-food-delivery-intelligence.streamlit.app](https://platelens-food-delivery-intelligence.streamlit.app/)
+
 ## What is working
 
 - Executive marketplace overview with audited KPIs and deterministic decision brief
@@ -70,6 +72,8 @@ python3.11 -m venv .venv
 .venv/bin/python -m unittest tests/test_streamlit_lib.py
 .venv/bin/streamlit run streamlit_app.py
 ```
+
+The public deployment is configured from the `main` branch, uses Python 3.11 and Streamlit 1.62.0, and loads only the checked-in deployment-safe aggregate.
 
 Private React reference app:
 

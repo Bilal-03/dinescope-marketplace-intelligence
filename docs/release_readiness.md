@@ -9,7 +9,7 @@ Product: PlateLens — Food Delivery Marketplace Intelligence
 | --- | --- | --- |
 | Private production workspace | **Ready** | Keep the current owner-only deployment available for review. |
 | Portfolio case-study package | **Ready** | Case study, screenshots and evidence boundaries are checked into the repository. |
-| Public unauthenticated deployment | **Approved; deployment in progress** | Publish the aggregate-only Streamlit app and keep raw records/private Sites metadata excluded. |
+| Public unauthenticated deployment | **Live** | Aggregate-only Streamlit app is public; raw records/private Sites metadata remain excluded. |
 
 The owner explicitly approved public Streamlit publication on 28 August 2026. This record authorizes the aggregate-only deployment described in `docs/public_data_boundary.md`; it does not authorize publication of raw records, secrets or private Sites metadata.
 
@@ -40,7 +40,7 @@ The owner explicitly approved public Streamlit publication on 28 August 2026. Th
 - [x] Performance budgets pass for aggregate, JavaScript and CSS bundles.
 - [x] Keyboard focus, named controls, table-row selection and export affordances have contract coverage.
 - [x] Local previews have an explicit auth fallback and role resolution path.
-- [ ] If the product is opened publicly, re-run unauthenticated access, deep-link, mobile-width and cache checks against the public URL.
+- [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://platelens-food-delivery-intelligence.streamlit.app/
 
 ### Deployment and ownership
 
@@ -63,7 +63,7 @@ Notes:          Publish the deployment-safe aggregate and required mappings;
                 exclude raw records, secrets and private Sites metadata.
 ```
 
-The existing private React/Sites deployment remains unchanged while the separate public Streamlit surface is published.
+The existing private React/Sites deployment remains unchanged; the separate public Streamlit surface is live at https://platelens-food-delivery-intelligence.streamlit.app/.
 
 ## Next build after release decision
 

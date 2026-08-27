@@ -18,7 +18,7 @@ test('portfolio case study is evidence-backed and bounded', () => {
 test('release readiness records the explicit public read-only owner decision', () => {
   assert.match(readiness, /Private production workspace/);
   assert.match(readiness, /Public unauthenticated deployment/);
-  assert.match(readiness, /Approved; deployment in progress/);
+  assert.match(readiness, /Public unauthenticated deployment \| \*\*Live\*\*/);
   assert.match(readiness, /Decision:\s+\[ \] Keep private\s+\[ \] Invite-only\s+\[x\] Public read-only/);
   assert.match(readiness, /exclude raw records, secrets and private Sites metadata/);
   assert.match(readiness, /server-backed team sharing/);
