@@ -20,3 +20,5 @@
 | Observed normalized listings | Distinct conservative normalized restaurant names observed for a cuisine-market pair | Cuisine-market and window | Not a durable outlet count; names may represent branches or unrelated restaurants |
 | Demand-to-listing index | Pair allocated transactions per observed listing / period median for eligible pairs | Cuisine-market | Relative supply-context proxy, not proof of undersupply |
 | Cuisine opportunity signal | Weighted normalized demand, growth, reach, supply-gap and quality components × confidence factor | Eligible cuisine-market pair | Relative investigation priority; sensitive to chosen period and source coverage |
+| Decision Lab score | User-weighted percentile dimensions for demand, growth, reach, gap and quality, normalized to 100%, with optional confidence factor | Eligible cuisine-market pair | Relative scenario ranking; changing weights does not change source metrics or prove causality |
+| Rank movement | Balanced-baseline rank minus active scenario rank | Eligible cuisine-market pair | Describes prioritization movement within the same filtered evidence set |

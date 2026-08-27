@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { AnalyticsData, CuisinePair, CuisineSummary, CuisineView, MarketRow, MarketView, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
 import type { ProductRole } from '@/app/lib/access';
 
@@ -12,16 +12,16 @@ const NAV_ITEMS: { id: PageId; label: string; icon: string; state: 'live' | 'pla
   { id: 'markets', label: 'Market demand', icon: '◎', state: 'live' },
   { id: 'cuisines', label: 'Cuisine gaps', icon: '◇', state: 'live' },
   { id: 'reliability', label: 'Data reliability', icon: '✓', state: 'live' },
-  { id: 'decision', label: 'Decision lab', icon: '⌁', state: 'planned' },
+  { id: 'decision', label: 'Decision lab', icon: '⌁', state: 'live' },
 ];
 
 const PAGE_COPY: Record<PageId, { eyebrow: string; title: string; subtitle: string }> = {
   overview: { eyebrow: 'Product & Growth', title: 'Marketplace overview', subtitle: 'Understand customer momentum, value and where growth needs attention.' },
   customers: { eyebrow: 'First analytics module', title: 'Customer growth & retention', subtitle: 'Separate acquisition volume, repeat behavior and cohort retention.' },
-  markets: { eyebrow: 'Phase 2', title: 'Market demand intelligence', subtitle: 'Compare meaningful scale, growth, value and market confidence.' },
-  cuisines: { eyebrow: 'Phase 3', title: 'Cuisine opportunity', subtitle: 'Find demand-to-coverage gaps without overstating restaurant performance.' },
+  markets: { eyebrow: 'Phase 5d', title: 'Market demand intelligence', subtitle: 'Compare meaningful scale, growth, value and market confidence.' },
+  cuisines: { eyebrow: 'Phase 5e', title: 'Cuisine opportunity', subtitle: 'Find demand-to-coverage gaps without overstating restaurant performance.' },
   reliability: { eyebrow: 'Foundation', title: 'Data reliability center', subtitle: 'See exactly what is trusted, excluded and limited before acting.' },
-  decision: { eyebrow: 'Phase 4', title: 'Decision lab', subtitle: 'Prioritise opportunities with adjustable evidence and confidence weights.' },
+  decision: { eyebrow: 'Phase 6', title: 'Decision lab', subtitle: 'Prioritise opportunities with adjustable evidence and confidence weights.' },
 };
 
 export default function Dashboard({ data, displayName, role }: { data: AnalyticsData; displayName: string; role: ProductRole }) {
@@ -71,10 +71,10 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
             {page === 'markets' ? <div className="filter-lock"><span className="filter-label">Comparison scope</span><button type="button" disabled>All cleaned markets <b>✓</b></button></div> : <label><span className="filter-label">Clean market</span><select value={market} onChange={(event) => setMarket(event.target.value)}>{data.filters.markets.map((item) => <option key={item}>{item}</option>)}</select></label>}
             <div className="filter-lock"><span className="filter-label">Transaction rule</span><button type="button" disabled>Valid INR only <b>✓</b></button></div>
             <button className="reset-button" type="button" onClick={resetFilters}>↻ Reset</button>
-            <div className="record-count"><i /> {page === 'markets' ? `${formatNumber(data.market_views[period]?.summary?.active_markets ?? 0)} markets compared` : page === 'cuisines' ? `${formatNumber(data.cuisine_views[period]?.pairs?.filter((row) => market === 'All markets' || row.market === market).length ?? 0)} cuisine-market signals` : `${formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view`}</div>
+            <div className="record-count"><i /> {page === 'markets' ? `${formatNumber(data.market_views[period]?.summary?.active_markets ?? 0)} markets compared` : page === 'cuisines' || page === 'decision' ? `${formatNumber(data.cuisine_views[period]?.pairs?.filter((row) => market === 'All markets' || row.market === market).length ?? 0)} cuisine-market signals` : `${formatNumber(scope.metrics?.valid_transactions ?? 0)} records in view`}</div>
           </section>
 
-          {scope.empty && !['markets', 'cuisines'].includes(page) ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={navigate} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'markets' ? <MarketIntelligence view={data.market_views[period]} mapping={data.location_mapping} /> : page === 'cuisines' ? <CuisineOpportunity view={data.cuisine_views[period]} market={market} mapping={data.cuisine_mapping} restaurantMapping={data.restaurant_mapping} restaurantObservations={data.restaurant_observations} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={navigate} />}
+          {scope.empty && !['markets', 'cuisines', 'decision'].includes(page) ? <EmptyState /> : page === 'overview' ? <Overview data={data} scope={scope} goTo={navigate} /> : page === 'customers' ? <CustomerGrowth scope={scope} market={market} period={period} /> : page === 'markets' ? <MarketIntelligence view={data.market_views[period]} mapping={data.location_mapping} /> : page === 'cuisines' ? <CuisineOpportunity view={data.cuisine_views[period]} market={market} mapping={data.cuisine_mapping} restaurantMapping={data.restaurant_mapping} restaurantObservations={data.restaurant_observations} /> : page === 'decision' ? <DecisionLab view={data.cuisine_views[period]} market={market} period={period} /> : page === 'reliability' ? <Reliability data={data} /> : <PlannedModule page={page} goTo={navigate} />}
 
           <p className="disclaimer">Independent portfolio analysis using a public or synthetic dataset. Not affiliated with Zomato, Swiggy, or another delivery company.</p>
         </div>
@@ -303,6 +303,144 @@ function Reliability({ data }: { data: AnalyticsData }) {
   </>;
 }
 
+type DecisionWeights = { demand: number; growth: number; reach: number; gap: number; quality: number };
+type DecisionDimension = keyof DecisionWeights;
+type DecisionScenario = { id: string; name: string; weights: DecisionWeights; confidenceDiscount: boolean };
+type DecisionRow = CuisinePair & { lab_score: number; rank: number; dimensions: Record<DecisionDimension, number>; baseline_rank: number | null; rank_delta: number | null };
+
+const DEFAULT_DECISION_WEIGHTS: DecisionWeights = { demand: 25, growth: 25, reach: 20, gap: 15, quality: 15 };
+const BASE_DECISION_SCENARIO: DecisionScenario = { id: 'balanced', name: 'Balanced guardrails', weights: DEFAULT_DECISION_WEIGHTS, confidenceDiscount: true };
+const DECISION_DIMENSIONS: { key: DecisionDimension; label: string; description: string }[] = [
+  { key: 'demand', label: 'Demand scale', description: 'Allocated transactions in the current window.' },
+  { key: 'growth', label: 'Growth momentum', description: 'Comparable-window transaction growth.' },
+  { key: 'reach', label: 'Customer reach', description: 'Distinct customers reached by the pair.' },
+  { key: 'gap', label: 'Coverage gap', description: 'Relative demand-to-listing index.' },
+  { key: 'quality', label: 'Data quality', description: 'Rating and menu field coverage.' },
+];
+
+function DecisionLab({ view, market, period }: { view: CuisineView; market: string; period: string }) {
+  const [minimumOrders, setMinimumOrders] = useState(100);
+  const [weights, setWeights] = useState<DecisionWeights>(DEFAULT_DECISION_WEIGHTS);
+  const [confidenceDiscount, setConfidenceDiscount] = useState(true);
+  const [scenarioName, setScenarioName] = useState('');
+  const [comparisonId, setComparisonId] = useState(BASE_DECISION_SCENARIO.id);
+  const [scenarios, setScenarios] = useState<DecisionScenario[]>(readDecisionScenarios);
+  const scopedPairs = view.pairs.filter((row) => market === 'All markets' || row.market === market);
+  const weightTotal = Object.values(weights).reduce((sum, value) => sum + value, 0);
+  const currentRows = useMemo(() => scoreDecisionPairs(scopedPairs, minimumOrders, weights, confidenceDiscount), [scopedPairs, minimumOrders, weights, confidenceDiscount]);
+  const baselineRows = useMemo(() => scoreDecisionPairs(scopedPairs, minimumOrders, DEFAULT_DECISION_WEIGHTS, true), [scopedPairs, minimumOrders]);
+  const baselineRanks = new Map(baselineRows.map((row) => [decisionKey(row), row.rank]));
+  const rankedRows: DecisionRow[] = currentRows.map((row) => ({ ...row, baseline_rank: baselineRanks.get(decisionKey(row)) ?? null, rank_delta: baselineRanks.has(decisionKey(row)) ? (baselineRanks.get(decisionKey(row))! - row.rank) : null }));
+  const comparisonScenario = scenarios.find((scenario) => scenario.id === comparisonId) ?? BASE_DECISION_SCENARIO;
+  const comparisonRows = useMemo(() => scoreDecisionPairs(scopedPairs, minimumOrders, comparisonScenario.weights, comparisonScenario.confidenceDiscount), [scopedPairs, minimumOrders, comparisonScenario]);
+  const top = rankedRows[0];
+  const baselineTop = baselineRows[0];
+
+  function updateWeight(key: DecisionDimension, value: number) {
+    setWeights((current) => ({ ...current, [key]: value }));
+  }
+
+  function loadScenario(scenario: DecisionScenario) {
+    setWeights(scenario.weights);
+    setConfidenceDiscount(scenario.confidenceDiscount);
+    setComparisonId(scenario.id);
+  }
+
+  function saveScenario() {
+    const name = scenarioName.trim();
+    if (!name) return;
+    const scenario: DecisionScenario = { id: `scenario-${Date.now()}`, name: name.slice(0, 40), weights: { ...weights }, confidenceDiscount };
+    const next = [...scenarios.filter((item) => item.id !== scenario.id), scenario];
+    setScenarios(next);
+    persistDecisionScenarios(next);
+    setScenarioName('');
+    setComparisonId(scenario.id);
+  }
+
+  function removeScenario(id: string) {
+    const next = scenarios.filter((scenario) => scenario.id !== id);
+    setScenarios(next);
+    persistDecisionScenarios(next);
+    if (comparisonId === id) setComparisonId(BASE_DECISION_SCENARIO.id);
+  }
+
+  if (view.empty || !view.summary) return <EmptyState />;
+
+  return <>
+    <div className="market-window decision-window"><div><span>Current comparable window</span><b>{view.current_window}</b></div><i>versus</i><div><span>Previous equal-length window</span><b>{view.comparison_window}</b></div><strong>{market === 'All markets' ? 'All cleaned markets' : market}</strong></div>
+
+    <section className="decision-intro panel"><div><span className="decision-tag">Live scoring sandbox</span><h2>Make the trade-offs explicit</h2><p>Adjust the evidence mix, compare it with a saved scenario, and export a ranked investigation brief. Every signal stays bounded by the same cuisine allocation and sample-size rules.</p></div><div className="decision-intro-stat"><span>Current lab leader</span><strong>{top ? `${top.market} · ${top.cuisine}` : '—'}</strong><small>{top ? `${top.lab_score.toFixed(1)} / 100` : 'No eligible evidence'}</small></div></section>
+
+    <section className="decision-layout">
+      <DecisionWeightsPanel weights={weights} updateWeight={updateWeight} total={weightTotal} />
+      <div className="decision-side-column">
+        <article className="panel decision-guardrails"><div className="panel-head"><div><span className="section-kicker">Evidence guardrails</span><h2>Keep the ranking defensible</h2></div><span className="confidence high">Always on</span></div><label className="decision-range"><span><b>Minimum allocated transactions</b><output>{formatNumber(minimumOrders)}</output></span><input aria-label="Decision minimum allocated transactions" type="range" min="50" max="500" step="50" value={minimumOrders} onChange={(event) => setMinimumOrders(Number(event.target.value))} /></label><label className="decision-check"><input type="checkbox" checked={confidenceDiscount} onChange={(event) => setConfidenceDiscount(event.target.checked)} /><span><b>Apply confidence discount</b><small>Medium evidence is multiplied by 0.85; low evidence by 0.65.</small></span></label><p className="panel-note">Comparison evidence must reach at least {formatNumber(Math.max(25, minimumOrders / 2))} allocated transactions. Scores are relative within this filtered view.</p></article>
+
+        <article className="panel decision-presets"><div className="panel-head"><div><span className="section-kicker">Saved presets</span><h2>Scenario library</h2></div><span className="coverage-note">Stored on this device</span></div><div className="save-scenario"><input aria-label="Scenario name" placeholder="Name this weighting" value={scenarioName} onChange={(event) => setScenarioName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') saveScenario(); }} /><button type="button" onClick={saveScenario} disabled={!scenarioName.trim()}>Save</button></div><div className="preset-list">{scenarios.map((scenario) => <div className={scenario.id === comparisonId ? 'preset-row selected' : 'preset-row'} key={scenario.id}><div><b>{scenario.name}</b><small>{scenarioSummary(scenario)} · {scenario.confidenceDiscount ? 'confidence adjusted' : 'no discount'}</small></div><div><button type="button" onClick={() => loadScenario(scenario)}>Load</button>{scenario.id !== BASE_DECISION_SCENARIO.id && <button className="preset-remove" type="button" onClick={() => removeScenario(scenario.id)} aria-label={`Remove ${scenario.name}`}>×</button>}</div></div>)}</div><p className="panel-note">Presets are local device preferences; they do not change the underlying source metrics.</p></article>
+      </div>
+    </section>
+
+    <DecisionScenarioCompare current={rankedRows} comparison={comparisonRows} comparisonScenario={comparisonScenario} scenarios={scenarios} comparisonId={comparisonId} setComparisonId={setComparisonId} baselineTop={baselineTop} />
+
+    <article className="panel decision-table-panel"><div className="panel-head"><div><span className="section-kicker">Decision brief</span><h2>Ranked investigation queue</h2></div><div className="table-actions"><span className="decision-count">{formatNumber(rankedRows.length)} eligible pairs</span><button className="export-button" type="button" onClick={() => exportDecisionBrief(rankedRows, weights, confidenceDiscount, market, period, minimumOrders)}>↓ Export brief</button></div></div><div className="table-scroll"><table className="data-table decision-table"><thead><tr><th>Rank · market / cuisine</th><th>Lab score</th><th>Move</th><th>Demand</th><th>Growth</th><th>Reach</th><th>Gap</th><th>Quality</th><th>Confidence</th><th>Recommended next action</th></tr></thead><tbody>{rankedRows.slice(0, 25).map((row) => <tr key={decisionKey(row)}><th><div className="decision-rank"><span>{String(row.rank).padStart(2, '0')}</span><div><b>{row.market}</b><small>{row.cuisine}</small></div></div></th><td><strong className="score-cell">{row.lab_score.toFixed(1)}</strong></td><td className={rankMovementClass(row.rank_delta)}>{rankMovement(row.rank_delta)}</td><td><DecisionDimensionCell value={row.dimensions.demand} /></td><td><DecisionDimensionCell value={row.dimensions.growth} /></td><td><DecisionDimensionCell value={row.dimensions.reach} /></td><td><DecisionDimensionCell value={row.dimensions.gap} /></td><td><DecisionDimensionCell value={row.dimensions.quality} /></td><td><span className={`confidence inline-confidence ${row.confidence.toLowerCase()}`}>{row.confidence}</span></td><td>{row.recommended_action}</td></tr>)}</tbody></table></div>{rankedRows.length > 25 && <p className="panel-note decision-table-note">Showing the top 25 of {formatNumber(rankedRows.length)} eligible pairs. Export the brief for the full ranked queue.</p>}</article>
+
+    <section className="decision-footer-grid"><article className="panel decision-brief-card"><span className="section-kicker">How to use this signal</span><h2>{top ? `${top.market} · ${top.cuisine} is the current investigation lead.` : 'No pair clears the selected evidence threshold.'}</h2><p>{top ? `The lab gives this pair a ${top.lab_score.toFixed(1)} score under the current weighting. The baseline score was ${baselineTop ? `${baselineTop.market} · ${baselineTop.cuisine}` : 'not available'}; use the movement column to see what changed.` : 'Lower the threshold only when the resulting evidence remains appropriate for the decision being made.'}</p><div className="brief-formula"><span>Score formula</span><b>Demand {weights.demand}% · Growth {weights.growth}% · Reach {weights.reach}% · Gap {weights.gap}% · Quality {weights.quality}%</b><small>Weights are normalized to 100% for calculation. Confidence adjustment: {confidenceDiscount ? 'on' : 'off'}.</small></div></article><article className="panel decision-boundary-card"><span className="section-kicker">Decision boundary</span><h2>Prioritisation is not proof</h2><p>The score is a transparent relative ranking for Product, Growth and Category teams. It does not forecast demand, prove unmet supply, or replace restaurant-level validation.</p><div><b>Observed supply context</b><span>Restaurant listings are conservative normalized names; outlet IDs rarely repeat.</span></div><div><b>Data quality context</b><span>Rating and menu coverage remain visible beside every opportunity.</span></div></article></section>
+  </>;
+}
+
+function DecisionWeightsPanel({ weights, updateWeight, total }: { weights: DecisionWeights; updateWeight: (key: DecisionDimension, value: number) => void; total: number }) {
+  return <article className="panel decision-weight-panel"><div className="panel-head"><div><span className="section-kicker">Configurable score</span><h2>What should matter most?</h2></div><span className={total === 100 ? 'weight-total valid' : 'weight-total'}>{total}% total</span></div><p className="decision-panel-copy">Set the relative importance of each evidence dimension. The calculation normalizes any total to 100% so you can explore trade-offs without breaking the score.</p><div className="decision-weight-list">{DECISION_DIMENSIONS.map((dimension) => <label className="decision-weight" key={dimension.key}><span><b>{dimension.label}</b><output>{weights[dimension.key]}%</output></span><input aria-label={`${dimension.label} weight`} type="range" min="0" max="50" step="5" value={weights[dimension.key]} onChange={(event) => updateWeight(dimension.key, Number(event.target.value))} /><small>{dimension.description}</small></label>)}</div><div className="weight-foot"><span>Suggested starting point</span><b>Balanced guardrails</b><button type="button" onClick={() => DECISION_DIMENSIONS.forEach((dimension) => updateWeight(dimension.key, DEFAULT_DECISION_WEIGHTS[dimension.key]))}>Reset weights</button></div></article>;
+}
+
+function DecisionScenarioCompare({ current, comparison, comparisonScenario, scenarios, comparisonId, setComparisonId, baselineTop }: { current: DecisionRow[]; comparison: DecisionRow[]; comparisonScenario: DecisionScenario; scenarios: DecisionScenario[]; comparisonId: string; setComparisonId: (id: string) => void; baselineTop?: DecisionRow }) {
+  const currentTop = current[0];
+  const comparisonTop = comparison[0];
+  const sameLeader = currentTop && comparisonTop && decisionKey(currentTop) === decisionKey(comparisonTop);
+  return <article className="panel decision-compare-panel"><div className="panel-head"><div><span className="section-kicker">Scenario comparison</span><h2>See what the weighting changes</h2></div><label className="compare-select"><span>Compare current lab with</span><select aria-label="Compare current lab with" value={comparisonId} onChange={(event) => setComparisonId(event.target.value)}>{scenarios.map((scenario) => <option key={scenario.id} value={scenario.id}>{scenario.name}</option>)}</select></label></div><div className="decision-compare-grid"><div className="compare-card current"><span>Current lab</span><strong>{currentTop ? `${currentTop.market} · ${currentTop.cuisine}` : '—'}</strong><b>{currentTop ? currentTop.lab_score.toFixed(1) : '—'} <small>/ 100</small></b><p>Active weights and guardrails</p></div><div className="compare-arrow">↔</div><div className="compare-card"><span>{comparisonScenario.name}</span><strong>{comparisonTop ? `${comparisonTop.market} · ${comparisonTop.cuisine}` : '—'}</strong><b>{comparisonTop ? comparisonTop.lab_score.toFixed(1) : '—'} <small>/ 100</small></b><p>{comparisonScenario.confidenceDiscount ? 'Confidence adjusted' : 'No confidence discount'}</p></div></div><div className="decision-comparison-note"><b>{sameLeader ? 'Leader is stable under both scenarios.' : 'Leader changes under this scenario.'}</b><span>{baselineTop && comparisonTop ? `Balanced baseline leads with ${baselineTop.market} · ${baselineTop.cuisine}; compare rank movement before acting.` : 'Use a broader filter or lower threshold to create a comparable evidence base.'}</span></div></article>;
+}
+
+function DecisionDimensionCell({ value }: { value: number }) { return <span className="dimension-cell"><i style={{ width: `${Math.max(4, value)}%` }} /><b>{Math.round(value)}</b></span>; }
+
+function scoreDecisionPairs(pairs: CuisinePair[], minimumOrders: number, weights: DecisionWeights, confidenceDiscount: boolean): DecisionRow[] {
+  const comparisonMinimum = Math.max(25, minimumOrders / 2);
+  const eligible = pairs.filter((row) => row.allocated_orders >= minimumOrders && row.previous_allocated_orders >= comparisonMinimum && row.growth !== null);
+  const values: Record<DecisionDimension, number[]> = {
+    demand: eligible.map((row) => row.allocated_orders),
+    growth: eligible.map((row) => row.growth ?? -1),
+    reach: eligible.map((row) => row.customers),
+    gap: eligible.map((row) => row.demand_to_listing_index ?? 0),
+    quality: eligible.map((row) => (row.rating_coverage + row.menu_coverage) / 2),
+  };
+  const normalized = normalizeDecisionWeights(weights);
+  const scored = eligible.map((row) => {
+    const dimensions = {
+      demand: percentileScore(row.allocated_orders, values.demand),
+      growth: percentileScore(row.growth ?? -1, values.growth),
+      reach: percentileScore(row.customers, values.reach),
+      gap: percentileScore(row.demand_to_listing_index ?? 0, values.gap),
+      quality: percentileScore((row.rating_coverage + row.menu_coverage) / 2, values.quality),
+    } satisfies Record<DecisionDimension, number>;
+    const rawScore = DECISION_DIMENSIONS.reduce((sum, dimension) => sum + dimensions[dimension.key] * normalized[dimension.key], 0);
+    const confidenceFactor = confidenceDiscount ? ({ High: 1, Medium: .85, Low: .65 } as const)[row.confidence] : 1;
+    return { ...row, dimensions, lab_score: rawScore * confidenceFactor };
+  });
+  return scored.sort((a, b) => b.lab_score - a.lab_score || b.allocated_orders - a.allocated_orders || decisionKey(a).localeCompare(decisionKey(b))).map((row, index) => ({ ...row, rank: index + 1, baseline_rank: null, rank_delta: null }));
+}
+
+function normalizeDecisionWeights(weights: DecisionWeights): DecisionWeights {
+  const total = Object.values(weights).reduce((sum, value) => sum + value, 0);
+  if (!total) return { demand: 1, growth: 0, reach: 0, gap: 0, quality: 0 };
+  return { demand: weights.demand / total, growth: weights.growth / total, reach: weights.reach / total, gap: weights.gap / total, quality: weights.quality / total };
+}
+
+function percentileScore(value: number, values: number[]) { if (!values.length) return 0; return values.filter((candidate) => candidate <= value).length / values.length * 100; }
+function decisionKey(row: Pick<CuisinePair, 'market' | 'cuisine'>) { return `${row.market}|${row.cuisine}`; }
+function scenarioSummary(scenario: DecisionScenario) { return `D${scenario.weights.demand} · G${scenario.weights.growth} · R${scenario.weights.reach} · Gap${scenario.weights.gap} · Q${scenario.weights.quality}`; }
+function rankMovement(value: number | null) { if (value === null) return 'new'; if (value > 0) return `↑${value}`; if (value < 0) return `↓${Math.abs(value)}`; return '—'; }
+function rankMovementClass(value: number | null) { return value === null ? 'rank-new' : value > 0 ? 'rank-up' : value < 0 ? 'rank-down' : 'rank-flat'; }
+function readDecisionScenarios(): DecisionScenario[] { if (typeof window === 'undefined') return [BASE_DECISION_SCENARIO]; try { const stored = JSON.parse(window.localStorage.getItem('platelens-decision-scenarios') ?? '[]') as DecisionScenario[]; const valid = Array.isArray(stored) ? stored.filter((scenario) => scenario && scenario.id && scenario.id !== BASE_DECISION_SCENARIO.id && scenario.name && scenario.weights) : []; return [BASE_DECISION_SCENARIO, ...valid]; } catch { return [BASE_DECISION_SCENARIO]; } }
+function persistDecisionScenarios(scenarios: DecisionScenario[]) { if (typeof window === 'undefined') return; try { window.localStorage.setItem('platelens-decision-scenarios', JSON.stringify(scenarios.filter((scenario) => scenario.id !== BASE_DECISION_SCENARIO.id))); } catch { /* device storage is optional */ } }
+
 function PlannedModule({ page, goTo }: { page: PageId; goTo: (page: PageId) => void }) {
   const steps: Record<string, string[]> = { markets: ['Create auditable locality-to-metro mapping', 'Add minimum sample eligibility rules', 'Build market scale-versus-growth quadrant'], cuisines: ['Normalise cuisine labels', 'Allocate multi-cuisine demand proportionally', 'Add demand-to-coverage opportunity scoring'], decision: ['Validate market and cuisine inputs', 'Add configurable score weights', 'Export evidence, confidence and next actions'] };
   return <section className="planned-module"><span className="planned-badge">Planned next phase</span><h2>This module has a defined build path—not placeholder metrics.</h2><p>The foundation intentionally ships Product/Growth analytics first. The next module will inherit the same audited transaction rule, global filters and confidence labels.</p><ol>{(steps[page] ?? []).map((step, index) => <li key={step}><span>0{index + 1}</span>{step}</li>)}</ol><button className="primary-button inline" type="button" onClick={() => goTo('customers')}>Return to working module <span>→</span></button></section>;
@@ -340,6 +478,15 @@ function exportCuisinePairs(pairs: CuisinePair[], period: string, market: string
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-cuisine-opportunities-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+}
+
+function exportDecisionBrief(rows: DecisionRow[], weights: DecisionWeights, confidenceDiscount: boolean, market: string, period: string, minimumOrders: number) {
+  const headers = ['rank', 'market', 'cuisine', 'lab_score', 'baseline_rank', 'rank_movement', 'demand_dimension', 'growth_dimension', 'reach_dimension', 'gap_dimension', 'quality_dimension', 'confidence', 'allocated_transactions', 'transaction_growth', 'observed_listings', 'recommended_action'];
+  const metadata = [['scope', market, 'period', period, 'minimum_allocated_transactions', minimumOrders, 'confidence_discount', confidenceDiscount ? 'on' : 'off'], ['weights', scenarioSummary({ id: 'export', name: 'Export', weights, confidenceDiscount })]];
+  const dataRows = rows.map((row) => [row.rank, row.market, row.cuisine, row.lab_score.toFixed(2), row.baseline_rank ?? '', rankMovement(row.rank_delta), Math.round(row.dimensions.demand), Math.round(row.dimensions.growth), Math.round(row.dimensions.reach), Math.round(row.dimensions.gap), Math.round(row.dimensions.quality), row.confidence, row.allocated_orders, row.growth ?? '', row.observed_listings, row.recommended_action]);
+  const csv = [...metadata, headers, ...dataRows].map((row) => row.map(csvCell).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-decision-brief-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
 function csvCell(value: string | number) { const text = String(value); return `"${text.replaceAll('"', '""')}"`; }

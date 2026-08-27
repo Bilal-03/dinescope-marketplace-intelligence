@@ -10,6 +10,7 @@ This is an independent portfolio case study created from a public or synthetic f
 - Product/Growth module with acquisition-versus-return trends, transaction frequency, lifecycle segmentation, cohort-retention heatmap and CSV export
 - Market & Demand Intelligence with cleaned metro markets, equal-length growth comparisons, eligibility controls, confidence labels, a scale-versus-growth quadrant and CSV export
 - Restaurant & Cuisine Opportunity with canonical cuisine taxonomy, additive multi-cuisine demand allocation, evidence thresholds, opportunity signals, heatmap and CSV export
+- Decision Lab with configurable demand/growth/reach/gap/quality weights, confidence guardrails, scenario comparison, local presets, rank movement and decision-brief export
 - Data Reliability Center with transaction reconciliation, source fingerprint and field-coverage warnings
 - Global source-market and year filters with reset and designed empty states
 - Deployment-ready private-site authentication hooks and server-side Admin/Analyst role resolution
@@ -45,6 +46,7 @@ python3 scripts/build_analytics.py /path/to/zomato_business_complete.csv app/dat
 - Restaurant performance claims are suppressed because most restaurant IDs appear once.
 - Multi-cuisine transactions are split equally across canonical cuisines, so allocated transaction totals remain additive.
 - Cuisine opportunity scores prioritize investigation; they do not prove unmet supply or forecast causal impact.
+- Decision Lab scores normalize each selected dimension within the filtered eligible set; changing weights changes prioritization, not the underlying metrics.
 - Market growth rankings require current and comparison-period sample thresholds; tiny bases are not allowed to lead the ranking.
 - Delivery, cancellation, discount, commission, funnel and campaign metrics are absent because the fields do not exist.
 

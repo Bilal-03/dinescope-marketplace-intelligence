@@ -36,6 +36,10 @@ The default cuisine-market comparison uses the same equal-length windows as Mark
 
 Restaurant IDs rarely repeat, restaurant ratings cover roughly 41% of rows, and menu fields cover roughly 8%. Cuisine labels and listing counts are observational, and equal allocation assumes each listed cuisine contributed equally to the transaction. Recommended actions are hypotheses for validation.
 
+## Decision Lab scenarios
+
+Decision Lab starts from the balanced cuisine opportunity signal but recalculates a pair's relative percentile score inside the active eligible set. Users can change weights for demand scale, growth momentum, customer reach, coverage gap and data quality; weights are normalized to 100% for calculation. An optional confidence adjustment applies the same High (1.0), Medium (0.85) and Low (0.65) factors used by the default opportunity view. Scenario presets are stored locally on the user's device, and the export includes the active scope, threshold, weights, confidence setting and ranked evidence rows. Presets are not a shared source of truth until a server-backed collaboration layer is introduced.
+
 ## Location mapping and market eligibility
 
 The pipeline generates `data/mappings/location_mapping.csv`, with one row per raw label plus its cleaned city, metro region, state, confidence, review status and source-row count. Comma-delimited locality labels use the final city token only when the result is covered by a reviewed metro rule. Explicit aliases handle known variants such as `Noida-1`, `North-goa` and historical city names. Unknown locations remain Unknown.

@@ -2,7 +2,7 @@
 
 Updated: 27 August 2026
 
-## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity
+## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -17,7 +17,7 @@ Updated: 27 August 2026
 - [x] Phase 2b — Auditable locality-to-metro mapping (restaurant-name mapping remains with the restaurant phase)
 - [x] Phase 5d — Market & Demand Intelligence
 - [x] Phase 5e — Restaurant & Cuisine Opportunity
-- [ ] Phase 6 — Decision Lab and configurable opportunity score
+- [x] Phase 6 — Decision Lab and configurable opportunity score
 - [ ] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
 - [ ] Phase 8 — Portfolio case study, screenshots and public release decision
 
@@ -39,10 +39,12 @@ Updated: 27 August 2026
 - [x] Cuisine and restaurant-name mappings are generated as reviewable CSV artifacts
 - [x] Opportunity rankings enforce minimum current and comparison evidence
 - [x] Restaurant evidence is labelled as observed listings rather than durable outlet performance
+- [x] Decision Lab recalculates relative scores from explicit demand, growth, reach, gap and quality weights
+- [x] Decision Lab preserves minimum evidence thresholds and optional confidence discounting
+- [x] Scenario presets, comparison, rank movement and decision-brief export are available
 
 ## Next recommended build sequence
 
-1. Build the Decision Lab with adjustable demand, growth, reach, supply-gap and quality weights.
-2. Add scenario comparison, saved presets and exportable decision briefs.
-3. Expand interaction/accessibility coverage and establish a performance budget.
-4. Prepare the portfolio case study and decide whether to make the deployment public.
+1. Expand interaction/accessibility coverage and establish a performance budget.
+2. Add server-backed team sharing for saved decision scenarios when durable collaboration is needed.
+3. Prepare the portfolio case study and decide whether to make the deployment public.
