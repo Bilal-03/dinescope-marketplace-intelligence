@@ -25,6 +25,8 @@ The Phase 8 evidence package is in [docs/portfolio_case_study.md](./docs/portfol
 
 The Streamlit migration and public-release sequence is documented in [docs/streamlit_public_deployment_plan.md](./docs/streamlit_public_deployment_plan.md). The current React/Vinext app remains the private reference build until a Python/Streamlit entry point reaches the documented parity checks.
 
+The public GitHub mirror intentionally excludes the detailed analytics payload, mapping artifacts, private Sites metadata and metric-bearing screenshots until the data-publication decision is approved. See [docs/public_data_boundary.md](./docs/public_data_boundary.md).
+
 ## Architecture
 
 The attached implementation plan recommended Streamlit. PlateLens uses a hybrid architecture instead: Python prepares reproducible, audited aggregate analytics; a typed React/Vinext interface provides the polished interactive experience; and the deployment output is Cloudflare Worker-compatible. Raw customer-level records and addresses are not shipped to the browser.

@@ -10,10 +10,11 @@ The public Streamlit app should be read-only and evidence-led. It should not int
 
 ## Repository and privacy boundary
 
-The public GitHub repository is `Bilal-03/platelens-food-delivery-intelligence`.
+The public GitHub repository is `Bilal-03/platelens-food-delivery-intelligence`. The current mirror is source-and-documentation first; the data-publication decision is tracked separately in [`docs/public_data_boundary.md`](./public_data_boundary.md).
 
 - The raw `zomato_business_complete.csv` remains local and is excluded by `.gitignore`.
-- The deployment-safe aggregate and reviewable mapping CSVs may be published because they contain the measures required by the product rather than raw customer-level records.
+- The deployment-safe aggregate and reviewable mapping CSVs are kept out of the public GitHub mirror for now. They contain derived commercial and customer-behavior metrics, so publishing them requires explicit data-publication approval and a final privacy review.
+- The public Streamlit release must use either an approved aggregate, a redacted aggregate or a synthetic fixture; it must not silently fall back to raw source rows.
 - The private Sites project configuration is intentionally not copied into the public repository.
 - No tokens, `.env` files, private visitor lists or deployment credentials belong in GitHub.
 - The README and app footer must continue to state that this is an independent portfolio analysis and is not affiliated with Zomato, Swiggy or another delivery company.
