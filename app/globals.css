@@ -7,7 +7,8 @@ button { font: inherit; }
 button:focus-visible, select:focus-visible, input:focus-visible, [tabindex="0"]:focus-visible { outline: 3px solid rgba(240,100,79,.42); outline-offset: 2px; }
 .app-shell { min-height: 100vh; display: flex; }
 .sidebar { position: fixed; inset: 0 auto 0 0; width: 72px; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 20px 0; background: #172033; color: white; }
-.brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; margin-bottom: 38px; background: var(--coral); font-size: 13px; font-weight: 800; letter-spacing: .04em; }
+.brand-mark { width: 38px; height: 38px; display: grid; place-items: center; margin-bottom: 38px; }
+.brand-mark img { width: 38px; height: 38px; object-fit: contain; }
 .sidebar nav { display: grid; gap: 10px; }
 .nav-button { position: relative; width: 42px; height: 42px; border: 0; border-radius: 11px; color: #9fa8b9; background: transparent; cursor: pointer; font-size: 19px; transition: .2s ease; }
 .planned-dot { position: absolute; right: 6px; top: 6px; width: 5px; height: 5px; border-radius: 50%; background: #68738a; }
@@ -17,6 +18,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, [tabindex="0"]:
 .workspace { min-width: 0; width: 100%; padding-left: 72px; }
 .topbar { height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 34px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.94); backdrop-filter: blur(14px); }
 .brand-lockup { display: flex; align-items: center; gap: 20px; }
+.brand-lockup .brand-logo { width: 34px; height: 34px; object-fit: contain; margin-right: -10px; }
 .brand-lockup > div { display: grid; gap: 1px; }
 .brand-lockup strong { font-size: 15px; letter-spacing: -.01em; }
 .brand-lockup span { color: var(--muted); font-size: 11px; }

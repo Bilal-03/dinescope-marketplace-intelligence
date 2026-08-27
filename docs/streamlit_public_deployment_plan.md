@@ -4,11 +4,11 @@ Updated: 28 August 2026
 
 ## Executive decision
 
-The Python/Streamlit application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://platelens-food-delivery-intelligence.streamlit.app/. Streamlit Phases 0–5 are complete; durable server-backed scenario sharing remains an explicit future capability.
+The Python/Streamlit application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://dinescope-marketplace-intelligence.streamlit.app/. Streamlit Phases 0–5 are complete; durable server-backed scenario sharing remains an explicit future capability.
 
 Phase 0 contract status: aggregate version `1.1.0`, audited 36-column source validation, explicit raw-denominator coverage counts, fail-loud Python/TypeScript validation and shared evidence helpers are implemented and tested.
 
-Phase 1 shell status: the Streamlit workspace now mirrors the reference navigation/page copy, persists period and market filters in session state, resets Market Demand to an all-cleaned-market comparison, exposes the locked Valid INR rule and source window, and opens the metric dictionary from the top bar or sidebar. Staged module flags are controlled with `PLATELENS_FEATURE_FLAGS`; a blank value enables all known flags, while a comma-separated allowlist enables only the named flags.
+Phase 1 shell status: the Streamlit workspace now mirrors the reference navigation/page copy, persists period and market filters in session state, resets Market Demand to an all-cleaned-market comparison, exposes the locked Valid INR rule and source window, and opens the metric dictionary from the top bar or sidebar. Staged module flags are controlled with `DINESCOPE_FEATURE_FLAGS`; a blank value enables all known flags, while a comma-separated allowlist enables only the named flags.
 
 Phase 2 analytics status: Overview and Customer Growth now use the reference KPI labels and definitions, Altair-backed monthly performance/customer-mix charts with tooltips, a Transactions/Sales toggle, top-five market and decision-boundary panels, lifecycle/action evidence, frequency depth and Cohort/Size/M0–M6 retention tables. `altair==6.2.2` is pinned in `requirements.txt`.
 
@@ -22,7 +22,7 @@ The public Streamlit app should be read-only and evidence-led. It should not int
 
 ## Repository and privacy boundary
 
-The public GitHub repository is `Bilal-03/platelens-food-delivery-intelligence`. The current mirror is source-and-documentation first; the data-publication decision is tracked separately in [`docs/public_data_boundary.md`](./public_data_boundary.md).
+The public GitHub repository is `Bilal-03/dinescope-marketplace-intelligence`. The current mirror is source-and-documentation first; the data-publication decision is tracked separately in [`docs/public_data_boundary.md`](./public_data_boundary.md).
 
 - The raw `zomato_business_complete.csv` remains local and is excluded by `.gitignore`.
 - The deployment-safe aggregate and reviewable mapping CSVs are approved for the public GitHub mirror and Streamlit runtime.
@@ -44,7 +44,7 @@ app/data/analytics.json
   → read-only analytics pages
 ```
 
-Use `st.set_page_config`, a compact sidebar filter surface and a consistent page-level header. Prefer native Streamlit components (`st.metric`, `st.dataframe`, `st.download_button`, `st.tabs`, containers and status messages) before adding another chart framework. Custom CSS can carry the PlateLens visual language, but should remain small and tested against narrow widths.
+Use `st.set_page_config`, a compact sidebar filter surface and a consistent page-level header. Prefer native Streamlit components (`st.metric`, `st.dataframe`, `st.download_button`, `st.tabs`, containers and status messages) before adding another chart framework. Custom CSS can carry the DineScope visual language, but should remain small and tested against narrow widths.
 
 ### 2. Preserve metric contracts
 
@@ -98,7 +98,7 @@ Streamlit Community Cloud uses the GitHub repository as the app source, watches 
 ## Streamlit Community Cloud release steps
 
 1. Sign in to Streamlit Community Cloud with the GitHub account that administers the repository.
-2. Create an app from `Bilal-03/platelens-food-delivery-intelligence`, branch `main`, entry point `streamlit_app.py`.
+2. Create an app from `Bilal-03/dinescope-marketplace-intelligence`, branch `main`, entry point `streamlit_app.py`.
 3. Choose a stable public subdomain and a Python version that matches local validation.
 4. Confirm `requirements.txt` resolves without unpinned or unnecessary packages.
 5. Deploy and inspect logs plus the first-run experience.

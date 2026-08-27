@@ -1,15 +1,15 @@
-# PlateLens — Food Delivery Marketplace Intelligence
+# DineScope — Food Marketplace Intelligence
 
 ## Case-study snapshot
 
 **Role:** Product manager / product-minded engineer  
 **Audience:** Product, Growth, Marketplace, Category and City Operations teams  
-**Product:** An interactive analytics workspace that turns a messy food-delivery source export into decision-ready demand, customer and supply evidence.  
-**Status:** Private production deployment; portfolio release package prepared, public access intentionally pending owner approval.
+**Product:** An interactive decision-intelligence platform that helps Product and Growth teams uncover customer, market, restaurant, and cuisine opportunities from food-delivery data.
+**Status:** Public read-only Streamlit deployment; aggregate-only portfolio release is live.
 
 This is an independent portfolio case study. It is not affiliated with a food-delivery company, endorsed by Zomato or Swiggy, or based on internal company data.
 
-PlateLens is designed around a practical product question: *where should a marketplace team investigate next, and how much confidence should it have in the evidence?* It connects customer behavior, market demand, cuisine opportunity and source reliability in one workspace. The interface makes uncertainty visible at the same moment that it presents an opportunity, so a high ranking cannot be mistaken for a proven causal recommendation.
+DineScope is designed around a practical product question: *where should a marketplace team investigate next, and how much confidence should it have in the evidence?* It connects customer behavior, market demand, cuisine opportunity and source reliability in one workspace. The interface makes uncertainty visible at the same moment that it presents an opportunity, so a high ranking cannot be mistaken for a proven causal recommendation.
 
 ## The problem
 
@@ -20,7 +20,7 @@ Marketplace teams rarely struggle to find a chart. They struggle to reconcile co
 - A repeat rate can be mistaken for retention even when cohort maturity is unknown.
 - A polished dashboard can hide missing ratings, menu coverage or invalid transactions.
 
-The source file contains enough customer, order, location, cuisine and restaurant context to explore these questions, but not enough operational fields to claim delivery speed, cancellation, discount, commission, funnel or campaign performance. PlateLens therefore makes the source contract part of the product rather than burying it in an appendix.
+The source file contains enough customer, order, location, cuisine and restaurant context to explore these questions, but not enough operational fields to claim delivery speed, cancellation, discount, commission, funnel or campaign performance. DineScope therefore makes the source contract part of the product rather than burying it in an appendix.
 
 ## What was built
 

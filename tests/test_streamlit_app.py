@@ -48,8 +48,8 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertTrue(any("SHA-256" in item.value for item in app.caption))
 
     def test_feature_flags_can_stage_only_selected_modules(self):
-        previous = os.environ.get("PLATELENS_FEATURE_FLAGS")
-        os.environ["PLATELENS_FEATURE_FLAGS"] = "shell_v2,markets_v2"
+        previous = os.environ.get("DINESCOPE_FEATURE_FLAGS")
+        os.environ["DINESCOPE_FEATURE_FLAGS"] = "shell_v2,markets_v2"
         try:
             app = AppTest.from_file("../streamlit_app.py", default_timeout=20).run()
             self.assertTrue(any("staged for private validation" in item.value for item in app.info))
@@ -57,9 +57,9 @@ class StreamlitAppSmokeTest(unittest.TestCase):
             self.assertFalse(any("staged for private validation" in item.value for item in app.info))
         finally:
             if previous is None:
-                os.environ.pop("PLATELENS_FEATURE_FLAGS", None)
+                os.environ.pop("DINESCOPE_FEATURE_FLAGS", None)
             else:
-                os.environ["PLATELENS_FEATURE_FLAGS"] = previous
+                os.environ["DINESCOPE_FEATURE_FLAGS"] = previous
 
     def test_phase_two_overview_and_customer_values_match_reference(self):
         app = AppTest.from_file("../streamlit_app.py", default_timeout=20).run()

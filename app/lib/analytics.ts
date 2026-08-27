@@ -227,5 +227,5 @@ export function analyticsContractErrors(data: AnalyticsData): string[] {
 
 const contractErrors = analyticsContractErrors(analytics);
 if (contractErrors.length > 0) {
-  throw new Error(`Invalid PlateLens aggregate contract: ${contractErrors.join('; ')}`);
+  throw new Error(`Invalid DineScope aggregate contract: ${contractErrors.join('; ')}`);
 }

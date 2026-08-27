@@ -1,0 +1,96 @@
+"""Build deterministic DineScope lockup and social-card assets from the master icon."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from PIL import Image, ImageDraw, ImageFont
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PUBLIC = ROOT / "public"
+ICON_PATH = PUBLIC / "favicon.png"
+LOCKUP_PATH = PUBLIC / "dinescope-lockup.png"
+OG_PATH = PUBLIC / "og.png"
+
+EVERGREEN = "#123C36"
+CORAL = "#EF6A50"
+INK = "#172033"
+MUTED = "#65736F"
+CANVAS = "#F5F4EE"
+WHITE = "#FFFFFF"
+
+FONT_REGULAR = Path("/System/Library/Fonts/Supplemental/Trebuchet MS.ttf")
+FONT_BOLD = Path("/System/Library/Fonts/Supplemental/Trebuchet MS Bold.ttf")
+
+
+def font(path: Path, size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    try:
+        return ImageFont.truetype(str(path), size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def contain(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    copy = image.copy()
+    copy.thumbnail(size, Image.Resampling.LANCZOS)
+    return copy
+
+
+def build_lockup(icon: Image.Image) -> None:
+    canvas = Image.new("RGBA", (700, 180), (0, 0, 0, 0))
+    mark = contain(icon, (132, 132))
+    canvas.alpha_composite(mark, (14, (canvas.height - mark.height) // 2))
+    draw = ImageDraw.Draw(canvas)
+    draw.text((164, 36), "DineScope", fill=EVERGREEN, font=font(FONT_BOLD, 55))
+    draw.text(
+        (166, 102),
+        "FOOD MARKETPLACE INTELLIGENCE",
+        fill=MUTED,
+        font=font(FONT_BOLD, 20),
+        spacing=4,
+    )
+    canvas.save(LOCKUP_PATH, optimize=True)
+
+
+def build_social_card(icon: Image.Image) -> None:
+    canvas = Image.new("RGB", (1200, 630), CANVAS)
+    draw = ImageDraw.Draw(canvas)
+
+    draw.ellipse((872, -150, 1328, 306), fill="#E6EEE9")
+    draw.ellipse((945, 365, 1265, 685), fill="#F8DDD6")
+    draw.rounded_rectangle((64, 52, 1136, 578), radius=38, fill=WHITE, outline="#DDE5E1", width=2)
+    draw.rounded_rectangle((64, 52, 80, 578), radius=8, fill=CORAL)
+
+    mark = contain(icon, (270, 270))
+    canvas.paste(mark, (790, 162), mark)
+
+    draw.text((126, 104), "DineScope", fill=EVERGREEN, font=font(FONT_BOLD, 73))
+    draw.text(
+        (130, 197),
+        "FOOD MARKETPLACE INTELLIGENCE",
+        fill=CORAL,
+        font=font(FONT_BOLD, 24),
+    )
+    draw.text((130, 270), "See demand.", fill=INK, font=font(FONT_BOLD, 37))
+    draw.text((130, 318), "Understand customers.", fill=INK, font=font(FONT_BOLD, 37))
+    draw.text((130, 366), "Prioritize growth.", fill=INK, font=font(FONT_BOLD, 37))
+    draw.text(
+        (130, 453),
+        "Decision intelligence for Product & Growth teams",
+        fill=MUTED,
+        font=font(FONT_REGULAR, 23),
+    )
+    draw.rounded_rectangle((130, 509, 415, 546), radius=18, fill="#E9F3F0")
+    draw.text((153, 517), "AUDITED · AGGREGATE-ONLY", fill=EVERGREEN, font=font(FONT_BOLD, 16))
+    canvas.save(OG_PATH, quality=94, optimize=True)
+
+
+def main() -> None:
+    icon = Image.open(ICON_PATH).convert("RGBA")
+    build_lockup(icon)
+    build_social_card(icon)
+
+
+if __name__ == "__main__":
+    main()

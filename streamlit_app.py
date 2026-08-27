@@ -1,8 +1,9 @@
-"""PlateLens public analytics workspace for Streamlit Community Cloud."""
+"""DineScope public analytics workspace for Streamlit Community Cloud."""
 
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 import uuid
 
 import altair as alt
@@ -47,6 +48,17 @@ PAGE_OPTIONS = [
     "Data reliability",
     "Decision lab",
 ]
+
+BRAND_NAME = "DineScope"
+BRAND_DESCRIPTOR = "Food Marketplace Intelligence Platform"
+BRAND_TAGLINE = "See demand. Understand customers. Prioritize growth."
+BRAND_DESCRIPTION = (
+    "An interactive decision-intelligence platform that helps Product and Growth teams "
+    "uncover customer, market, restaurant, and cuisine opportunities from food-delivery data."
+)
+REPOSITORY_URL = "https://github.com/Bilal-03/dinescope-marketplace-intelligence"
+BRAND_LOCKUP = Path(__file__).parent / "public" / "dinescope-lockup.png"
+BRAND_ICON = Path(__file__).parent / "public" / "favicon.png"
 PAGE_FEATURE_FLAGS = {
     "Overview": "overview_v2",
     "Customer growth": "customers_v2",
@@ -112,10 +124,16 @@ DECISION_WEIGHT_HELP = {
 
 
 st.set_page_config(
-    page_title="PlateLens · Food delivery intelligence",
-    page_icon="◉",
+    page_title="DineScope · Food Marketplace Intelligence",
+    page_icon=str(BRAND_ICON),
     layout="wide",
     initial_sidebar_state="expanded",
+)
+st.logo(
+    str(BRAND_LOCKUP),
+    size="large",
+    link=REPOSITORY_URL,
+    icon_image=str(BRAND_ICON),
 )
 
 
@@ -123,7 +141,7 @@ st.set_page_config(
 def analytics() -> dict:
     payload = load_analytics()
     if not valid_data_contract(payload):
-        raise ValueError("The published analytics artifact does not satisfy the PlateLens data contract.")
+        raise ValueError("The published analytics artifact does not satisfy the DineScope data contract.")
     return payload
 
 
@@ -337,7 +355,7 @@ def fmt_inr(value: float) -> str:
 def hero(page: str, subtitle: str, data: dict) -> None:
     generated = datetime.fromisoformat(data["generated_at"].replace("Z", "+00:00")).strftime("%d %b %Y")
     copy = PAGE_COPY.get(page, {})
-    eyebrow = copy.get("eyebrow", "PlateLens")
+    eyebrow = copy.get("eyebrow", BRAND_NAME)
     title = copy.get("title", page)
     subtitle = copy.get("subtitle", subtitle)
     st.markdown(
@@ -377,8 +395,8 @@ def show_methodology(data: dict) -> None:
 def render_topbar(data: dict, flags: dict[str, bool]) -> None:
     left, right = st.columns([2.3, 1])
     with left:
-        st.markdown("### PlateLens")
-        st.caption("Marketplace intelligence · Product & Growth workspace")
+        st.markdown(f"### {BRAND_NAME}")
+        st.caption(f"{BRAND_DESCRIPTOR} · {BRAND_TAGLINE}")
     with right:
         st.button("Metric dictionary", key="pl_methodology_top", on_click=open_methodology)
         st.caption(f"Audited aggregate v{data['aggregate_version']}")
@@ -418,8 +436,9 @@ def render_global_filters(data: dict, page: str) -> tuple[str, str]:
 
 def render_sidebar(data: dict, flags: dict[str, bool]) -> str:
     with st.sidebar:
-        st.markdown("## ◉ PlateLens")
-        st.caption("Food delivery market intelligence")
+        st.markdown(f"## {BRAND_NAME}")
+        st.caption(BRAND_DESCRIPTOR)
+        st.caption(BRAND_TAGLINE)
         page = st.radio(
             "Workspace",
             PAGE_OPTIONS,
@@ -431,7 +450,7 @@ def render_sidebar(data: dict, flags: dict[str, bool]) -> str:
         st.button("Metric dictionary", key="pl_methodology", on_click=open_methodology)
         st.caption(f"{data['quality']['valid_transactions']:,} audited transactions")
         st.caption("Public read-only analytics · no raw customer records")
-        st.markdown("[Source, methods and support](https://github.com/Bilal-03/platelens-food-delivery-intelligence)")
+        st.markdown(f"[Source, methods and support]({REPOSITORY_URL})")
         st.caption("Independent portfolio case study. Not affiliated with or endorsed by Zomato, Swiggy or another food-delivery company.")
         enabled = sum(flags.values())
         st.caption(f"Staged modules enabled · {enabled}/{len(flags)}")
@@ -515,7 +534,7 @@ def render_overview(data: dict, market: str, period: str) -> None:
         st.markdown('<span class="pl-section-kicker">Evidence boundary</span>', unsafe_allow_html=True)
         st.subheader("Why recommendations stay cautious")
         st.write(
-            f"Restaurant IDs almost never repeat, market labels mix locality and metro names, and menu coverage is only {fmt_pct(data['quality']['menu_coverage'])}. PlateLens keeps those constraints visible instead of inventing precision."
+            f"Restaurant IDs almost never repeat, market labels mix locality and metro names, and menu coverage is only {fmt_pct(data['quality']['menu_coverage'])}. DineScope keeps those constraints visible instead of inventing precision."
         )
         st.button("Review source reliability →", key="pl_review_reliability", on_click=navigate_to_reliability)
     st.markdown('<span class="pl-section-kicker">Lifecycle signal</span>', unsafe_allow_html=True)
@@ -663,7 +682,7 @@ def render_customers(data: dict, market: str, period: str) -> None:
     st.download_button(
         "Export customer segment evidence",
         segment_table.to_csv(index=False).encode("utf-8"),
-        f"platelens-segments-{market}-{period}.csv".replace(" ", "-").lower(),
+        f"dinescope-segments-{market}-{period}.csv".replace(" ", "-").lower(),
         "text/csv",
         key="pl_customer_segment_export",
     )
@@ -912,7 +931,7 @@ def render_markets(data: dict, market: str, period: str) -> None:
     st.download_button(
         "Export market ranking",
         table.to_csv(index=False).encode("utf-8"),
-        f"platelens-market-ranking-{period}.csv",
+        f"dinescope-market-ranking-{period}.csv",
         "text/csv",
         key="pl_market_ranking_export",
     )
@@ -1123,7 +1142,7 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
         st.download_button(
             "Export cuisine evidence",
             table.to_csv(index=False).encode("utf-8"),
-            f"platelens-cuisine-opportunities-{period}.csv",
+            f"dinescope-cuisine-opportunities-{period}.csv",
             "text/csv",
             key="pl_cuisine_export",
         )
@@ -1369,7 +1388,7 @@ def render_decision_lab(data: dict, market: str, period: str) -> None:
     st.download_button(
         "Export decision brief",
         (export_metadata + frame.to_csv(index=False)).encode("utf-8"),
-        f"platelens-decision-brief-{market}-{period}.csv".replace(" ", "-").lower(),
+        f"dinescope-decision-brief-{market}-{period}.csv".replace(" ", "-").lower(),
         "text/csv",
         key="pl_decision_export",
     )
@@ -1485,7 +1504,7 @@ renderers = {
     "Data reliability": lambda: render_reliability(data),
 }
 if not flags.get("shell_v2", True):
-    st.warning("The Phase 1 shell is disabled by `PLATELENS_FEATURE_FLAGS`; the workspace is shown for validation only.")
+    st.warning("The Phase 1 shell is disabled by `DINESCOPE_FEATURE_FLAGS`; the workspace is shown for validation only.")
 elif not flags.get(PAGE_FEATURE_FLAGS[page], True):
     st.info(f"{PAGE_COPY[page]['title']} is staged for private validation and is not enabled in this deployment.")
 else:

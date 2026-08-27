@@ -4,7 +4,7 @@ export type ProductRole = 'Admin' | 'Analyst' | 'Preview';
 
 export function resolveRole(user: ChatGPTUser | null): ProductRole {
   if (!user) return 'Preview';
-  const adminEmails = (process.env.PLATELENS_ADMIN_EMAILS ?? '')
+  const adminEmails = (process.env.DINESCOPE_ADMIN_EMAILS ?? process.env.PLATELENS_ADMIN_EMAILS ?? '')
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);

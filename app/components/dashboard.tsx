@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import type { AnalyticsData, CuisinePair, CuisineSummary, CuisineView, MarketRow, MarketView, MonthlyPoint, Scope, Segment } from '@/app/lib/analytics';
 import type { ProductRole } from '@/app/lib/access';
 
@@ -45,7 +46,7 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
   return (
     <main className="app-shell">
       <aside className="sidebar">
-        <div className="brand-mark">PL</div>
+        <div className="brand-mark"><Image src="/favicon.png" alt="" width={38} height={38} priority /></div>
         <nav aria-label="Primary navigation">
           {NAV_ITEMS.map((item) => (
             <button aria-label={item.label} aria-current={page === item.id ? 'page' : undefined} className={page === item.id ? 'nav-button active' : 'nav-button'} key={item.id} onClick={() => navigate(item.id)} title={`${item.label}${item.state === 'planned' ? ' · planned' : ''}`} type="button">
@@ -58,7 +59,7 @@ export default function Dashboard({ data, displayName, role }: { data: Analytics
 
       <section className="workspace">
         <header className="topbar">
-          <div className="brand-lockup"><div><strong>PlateLens</strong><span>Marketplace intelligence</span></div><span className="status-pill"><i /> Audited source</span></div>
+          <div className="brand-lockup"><Image className="brand-logo" src="/favicon.png" alt="DineScope" width={34} height={34} priority /><div><strong>DineScope</strong><span>Food marketplace intelligence</span></div><span className="status-pill"><i /> Audited source</span></div>
           <div className="top-actions"><button className="method-button" type="button" onClick={() => setShowMethod(true)}>Metric dictionary</button><div className="user-chip"><div className="avatar">{initials(displayName)}</div><span><b>{firstName(displayName)}</b><small>{role}</small></span></div></div>
         </header>
 
@@ -107,7 +108,7 @@ function Overview({ data, scope, goTo }: { data: AnalyticsData; scope: Scope; go
     </section>
     <section className="overview-lower">
       <article className="panel market-panel"><div className="panel-head"><div><span className="section-kicker">Demand footprint</span><h2>Highest-volume source markets</h2></div><span className="coverage-note">Raw locality labels · mapping pending</span></div><div className="market-list">{data.market_summary.slice(0, 5).map((row, index) => <div className="market-row" key={row.market}><span className="rank">0{index + 1}</span><b>{row.market}</b><span>{formatNumber(row.orders)} txns</span><div><i style={{ width: `${row.orders / data.market_summary[0].orders * 100}%` }} /></div><strong>{formatCrore(row.sales)}</strong></div>)}</div></article>
-      <article className="panel integrity-card"><span className="section-kicker">Evidence boundary</span><h2>Why recommendations stay cautious</h2><p>Restaurant IDs almost never repeat, market labels mix locality and metro names, and menu coverage is only {formatPercent(data.quality.menu_coverage)}. PlateLens keeps those constraints visible instead of inventing precision.</p><button type="button" onClick={() => goTo('reliability')}>Review source reliability <span>→</span></button></article>
+      <article className="panel integrity-card"><span className="section-kicker">Evidence boundary</span><h2>Why recommendations stay cautious</h2><p>Restaurant IDs almost never repeat, market labels mix locality and metro names, and menu coverage is only {formatPercent(data.quality.menu_coverage)}. DineScope keeps those constraints visible instead of inventing precision.</p><button type="button" onClick={() => goTo('reliability')}>Review source reliability <span>→</span></button></article>
     </section>
   </>;
 }
@@ -438,8 +439,8 @@ function decisionKey(row: Pick<CuisinePair, 'market' | 'cuisine'>) { return `${r
 function scenarioSummary(scenario: DecisionScenario) { return `D${scenario.weights.demand} · G${scenario.weights.growth} · R${scenario.weights.reach} · Gap${scenario.weights.gap} · Q${scenario.weights.quality}`; }
 function rankMovement(value: number | null) { if (value === null) return 'new'; if (value > 0) return `↑${value}`; if (value < 0) return `↓${Math.abs(value)}`; return '—'; }
 function rankMovementClass(value: number | null) { return value === null ? 'rank-new' : value > 0 ? 'rank-up' : value < 0 ? 'rank-down' : 'rank-flat'; }
-function readDecisionScenarios(): DecisionScenario[] { if (typeof window === 'undefined') return [BASE_DECISION_SCENARIO]; try { const stored = JSON.parse(window.localStorage.getItem('platelens-decision-scenarios') ?? '[]') as DecisionScenario[]; const valid = Array.isArray(stored) ? stored.filter((scenario) => scenario && scenario.id && scenario.id !== BASE_DECISION_SCENARIO.id && scenario.name && scenario.weights) : []; return [BASE_DECISION_SCENARIO, ...valid]; } catch { return [BASE_DECISION_SCENARIO]; } }
-function persistDecisionScenarios(scenarios: DecisionScenario[]) { if (typeof window === 'undefined') return; try { window.localStorage.setItem('platelens-decision-scenarios', JSON.stringify(scenarios.filter((scenario) => scenario.id !== BASE_DECISION_SCENARIO.id))); } catch { /* device storage is optional */ } }
+function readDecisionScenarios(): DecisionScenario[] { if (typeof window === 'undefined') return [BASE_DECISION_SCENARIO]; try { const stored = JSON.parse(window.localStorage.getItem('dinescope-decision-scenarios') ?? window.localStorage.getItem('platelens-decision-scenarios') ?? '[]') as DecisionScenario[]; const valid = Array.isArray(stored) ? stored.filter((scenario) => scenario && scenario.id && scenario.id !== BASE_DECISION_SCENARIO.id && scenario.name && scenario.weights) : []; return [BASE_DECISION_SCENARIO, ...valid]; } catch { return [BASE_DECISION_SCENARIO]; } }
+function persistDecisionScenarios(scenarios: DecisionScenario[]) { if (typeof window === 'undefined') return; try { window.localStorage.setItem('dinescope-decision-scenarios', JSON.stringify(scenarios.filter((scenario) => scenario.id !== BASE_DECISION_SCENARIO.id))); } catch { /* device storage is optional */ } }
 
 function PlannedModule({ page, goTo }: { page: PageId; goTo: (page: PageId) => void }) {
   const steps: Record<string, string[]> = { markets: ['Create auditable locality-to-metro mapping', 'Add minimum sample eligibility rules', 'Build market scale-versus-growth quadrant'], cuisines: ['Normalise cuisine labels', 'Allocate multi-cuisine demand proportionally', 'Add demand-to-coverage opportunity scoring'], decision: ['Validate market and cuisine inputs', 'Add configurable score weights', 'Export evidence, confidence and next actions'] };
@@ -454,14 +455,14 @@ function Methodology({ data, close }: { data: AnalyticsData; close: () => void }
   return <div className="modal-backdrop" role="presentation" onMouseDown={close}><section className="method-modal" role="dialog" aria-modal="true" aria-labelledby="method-title" onMouseDown={(event) => event.stopPropagation()}><div className="modal-head"><div><span className="section-kicker">Transparent by design</span><h2 id="method-title">Metric dictionary &amp; methodology</h2></div><button type="button" onClick={close} aria-label="Close">×</button></div><p>Definitions apply consistently across global filters. The source CSV is transformed into deployment-safe aggregates; raw customer records and addresses are never sent to the browser.</p><dl className="definition-list">{Object.entries(data.definitions).map(([key, value]) => <div key={key}><dt>{key.replaceAll('_', ' ')}</dt><dd>{value}</dd></div>)}</dl><div className="method-foot"><span>Source SHA-256</span><code>{data.source.sha256}</code></div></section></div>;
 }
 
-function EmptyState({ compact = false }: { compact?: boolean }) { return <section className={compact ? 'empty-state compact' : 'empty-state'}><span>∅</span><h2>No defensible result for this filter</h2><p>Reset the filters or choose a broader period. PlateLens suppresses empty and insufficient evidence instead of rendering misleading charts.</p></section>; }
+function EmptyState({ compact = false }: { compact?: boolean }) { return <section className={compact ? 'empty-state compact' : 'empty-state'}><span>∅</span><h2>No defensible result for this filter</h2><p>Reset the filters or choose a broader period. DineScope suppresses empty and insufficient evidence instead of rendering misleading charts.</p></section>; }
 
 function exportSegments(segments: Segment[], market: string, period: string) {
   const headers = ['segment', 'customers', 'customer_share', 'orders_per_customer', 'sales_per_customer', 'repeat_rate', 'median_recency_days', 'recommended_action'];
   const rows = segments.map((segment) => [segment.segment, segment.customers, segment.customer_share, segment.orders_per_customer, segment.sales_per_customer, segment.repeat_rate, segment.median_recency, segment.action]);
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-segments-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `dinescope-segments-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
 function exportMarkets(markets: MarketRow[], period: string) {
@@ -469,7 +470,7 @@ function exportMarkets(markets: MarketRow[], period: string) {
   const rows = markets.map((market) => [market.market, market.orders, market.growth_orders ?? '', market.customers, market.repeat_rate, market.average_transaction_value, market.order_share, market.confidence]);
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-market-ranking-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `dinescope-market-ranking-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
 function exportCuisinePairs(pairs: CuisinePair[], period: string, market: string) {
@@ -477,7 +478,7 @@ function exportCuisinePairs(pairs: CuisinePair[], period: string, market: string
   const rows = pairs.map((pair) => [pair.market, pair.cuisine, pair.opportunity_score, pair.allocated_orders, pair.growth ?? '', pair.customers, pair.observed_listings, pair.demand_to_listing_index ?? '', pair.rating_coverage, pair.menu_coverage, pair.confidence, pair.recommended_action]);
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-cuisine-opportunities-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `dinescope-cuisine-opportunities-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
 function exportDecisionBrief(rows: DecisionRow[], weights: DecisionWeights, confidenceDiscount: boolean, market: string, period: string, minimumOrders: number) {
@@ -486,7 +487,7 @@ function exportDecisionBrief(rows: DecisionRow[], weights: DecisionWeights, conf
   const dataRows = rows.map((row) => [row.rank, row.market, row.cuisine, row.lab_score.toFixed(2), row.baseline_rank ?? '', rankMovement(row.rank_delta), Math.round(row.dimensions.demand), Math.round(row.dimensions.growth), Math.round(row.dimensions.reach), Math.round(row.dimensions.gap), Math.round(row.dimensions.quality), row.confidence, row.allocated_orders, row.growth ?? '', row.observed_listings, row.recommended_action]);
   const csv = [...metadata, headers, ...dataRows].map((row) => row.map(csvCell).join(',')).join('\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `platelens-decision-brief-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
+  const anchor = document.createElement('a'); anchor.href = url; anchor.download = `dinescope-decision-brief-${market}-${period}.csv`.replaceAll(' ', '-').toLowerCase(); anchor.click(); URL.revokeObjectURL(url);
 }
 
 function csvCell(value: string | number) { const text = String(value); return `"${text.replaceAll('"', '""')}"`; }

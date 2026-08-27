@@ -29,10 +29,11 @@ test('all buttons declare their type and table selection is keyboard operable', 
 });
 
 test('decision presets and evidence exports remain device-local and explicit', () => {
+  assert.match(source, /localStorage\.getItem\('dinescope-decision-scenarios'\)/);
+  assert.match(source, /localStorage\.setItem\('dinescope-decision-scenarios'/);
   assert.match(source, /localStorage\.getItem\('platelens-decision-scenarios'\)/);
-  assert.match(source, /localStorage\.setItem\('platelens-decision-scenarios'/);
   assert.match(source, /new Blob\(\[csv\], \{ type: 'text\/csv;charset=utf-8' \}\)/);
-  assert.match(source, /platelens-decision-brief-/);
+  assert.match(source, /dinescope-decision-brief-/);
 });
 
 test('keyboard focus treatment is visible for controls and selectable rows', () => {

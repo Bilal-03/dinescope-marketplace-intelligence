@@ -1,7 +1,7 @@
 # Release readiness
 
 Updated: 28 August 2026
-Product: PlateLens — Food Delivery Marketplace Intelligence
+Product: DineScope — Food Marketplace Intelligence
 
 ## Decision summary
 
@@ -44,7 +44,7 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 - [x] Performance budgets pass for aggregate, JavaScript and CSS bundles.
 - [x] Keyboard focus, named controls, table-row selection and export affordances have contract coverage.
 - [x] Local previews have an explicit auth fallback and role resolution path.
-- [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://platelens-food-delivery-intelligence.streamlit.app/
+- [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://dinescope-marketplace-intelligence.streamlit.app/
 
 ### Deployment and ownership
 
@@ -52,7 +52,7 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 - [x] The repository includes the deployment configuration and repeatable build commands.
 - [x] The product states that it is an independent portfolio case study and is not affiliated with a food-delivery company.
 - [x] Public access policy is selected: public read-only.
-- [x] PlateLens title and neutral favicon do not imply company affiliation.
+- [x] DineScope title, original plate-and-scope identity and favicon do not imply company affiliation.
 - [x] Streamlit sidebar includes a visible independent-portfolio disclaimer and public repository support path.
 
 ## Public-release decision record
@@ -67,7 +67,7 @@ Notes:          Publish the deployment-safe aggregate and required mappings;
                 exclude raw records, secrets and private Sites metadata.
 ```
 
-The existing private React/Sites deployment remains unchanged; the separate public Streamlit surface is live at https://platelens-food-delivery-intelligence.streamlit.app/.
+The existing private React/Sites deployment remains unchanged; the separate public Streamlit surface is live at https://dinescope-marketplace-intelligence.streamlit.app/.
 
 ## Next build after release decision
 

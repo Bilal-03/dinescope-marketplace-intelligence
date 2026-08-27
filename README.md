@@ -1,27 +1,31 @@
-# PlateLens
+<p align="center">
+  <img src="./public/dinescope-lockup.png" width="430" alt="DineScope — Food Marketplace Intelligence">
+</p>
 
-### Food-delivery marketplace intelligence for teams that need a defensible next move.
+<h1 align="center">DineScope — Food Marketplace Intelligence</h1>
+
+<p align="center"><strong>See demand. Understand customers. Prioritize growth.</strong></p>
 
 <p>
-  <a href="https://platelens-food-delivery-intelligence.streamlit.app/"><img src="https://img.shields.io/badge/Live%20app-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Launch the live Streamlit app"></a>
-  <a href="https://github.com/Bilal-03/platelens-food-delivery-intelligence"><img src="https://img.shields.io/badge/Release-Public%20read--only-194F46?style=for-the-badge" alt="Public read-only release"></a>
+  <a href="https://dinescope-marketplace-intelligence.streamlit.app/"><img src="https://img.shields.io/badge/Live%20app-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Launch the live Streamlit app"></a>
+  <a href="https://github.com/Bilal-03/dinescope-marketplace-intelligence"><img src="https://img.shields.io/badge/Release-Public%20read--only-123C36?style=for-the-badge" alt="Public read-only release"></a>
   <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11">
   <img src="https://img.shields.io/badge/React%20%2B%20TypeScript-Reference%20UI-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="React and TypeScript reference UI">
 </p>
 
 <p>
-  <a href="https://platelens-food-delivery-intelligence.streamlit.app/">Open the public app</a> ·
-  <a href="https://platelens-food-delivery-intelligence.streamlit.app/?embed=true">Open the anonymous embed view</a> ·
+  <a href="https://dinescope-marketplace-intelligence.streamlit.app/">Open the public app</a> ·
+  <a href="https://dinescope-marketplace-intelligence.streamlit.app/?embed=true">Open the anonymous embed view</a> ·
   <a href="./STATUS.md">Read the implementation status</a>
 </p>
 
-PlateLens is an interactive food-delivery marketplace intelligence product for Product, Growth, Marketplace, Category and City Operations teams. It turns a messy marketplace export into a connected workflow for understanding customer behaviour, market demand, cuisine opportunity and data reliability—then makes the evidence boundary visible before a team acts on a ranking.
+**DineScope** is a Food Marketplace Intelligence Platform: an interactive decision-intelligence product that helps Product and Growth teams uncover customer, market, restaurant, and cuisine opportunities from food-delivery data. It turns a messy marketplace export into a connected workflow for understanding customer behaviour, market demand, cuisine opportunity and data reliability—then makes the evidence boundary visible before a team acts on a ranking.
 
 This is an independent portfolio case study built from a public or synthetic food-delivery dataset. It is not affiliated with, endorsed by, or based on internal data from Zomato, Swiggy or another food-delivery company.
 
 ## Recruiter quick read
 
-| | What PlateLens demonstrates |
+| | What DineScope demonstrates |
 |---|---|
 | **Product problem** | Marketplace teams need to decide where to investigate next, but growth, demand, supply and data quality signals rarely share one trustworthy frame. |
 | **Primary users** | Product and Growth first; Marketplace, Category and City Operations as adjacent decision partners. |
@@ -53,7 +57,7 @@ The public Streamlit app has six connected workspaces. The **Customer Growth** w
 
 The published aggregate is generated from **150,281 source rows** and an audited **36-column contract**. These are the headline values exposed by the product:
 
-| Evidence | Verified value | How PlateLens treats it |
+| Evidence | Verified value | How DineScope treats it |
 |---|---:|---|
 | Valid transactions | **148,668** | Only distinct orders that pass the explicit validity rule enter business KPIs. |
 | Excluded transactions | **1,613** | Exclusions remain visible and reconcile to the raw denominator; they are not silently dropped. |
@@ -72,7 +76,7 @@ The observed source window is **4 October 2017 through 26 June 2020**. Dates are
 
 ### Repeat behaviour is not retention
 
-Repeat rate answers “what share of active customers ordered at least twice in this scope?” Cohort retention answers “what share of a first-observed cohort returned at month age *m*?” PlateLens keeps both visible so a large repeat number cannot be presented as proof that acquisition is compounding.
+Repeat rate answers “what share of active customers ordered at least twice in this scope?” Cohort retention answers “what share of a first-observed cohort returned at month age *m*?” DineScope keeps both visible so a large repeat number cannot be presented as proof that acquisition is compounding.
 
 ### Evidence thresholds come before opportunity rankings
 
@@ -88,7 +92,7 @@ Normalization standardizes accents, case, punctuation and ampersands without fuz
 
 ### Unsupported operations metrics stay out of scope
 
-The source has no delivery-time, cancellation, discount, commission, funnel or campaign fields. PlateLens does not fabricate those measures; a new source contract would be required before adding them.
+The source has no delivery-time, cancellation, discount, commission, funnel or campaign fields. DineScope does not fabricate those measures; a new source contract would be required before adding them.
 
 ## Technical architecture
 
@@ -139,7 +143,7 @@ python3.11 -m venv .venv
 Open the local URL printed by Streamlit. The app defaults to all known feature flags. To stage a subset during validation:
 
 ~~~bash
-PLATELENS_FEATURE_FLAGS=shell_v2,markets_v2 .venv/bin/streamlit run streamlit_app.py
+DINESCOPE_FEATURE_FLAGS=shell_v2,markets_v2 .venv/bin/streamlit run streamlit_app.py
 ~~~
 
 ### React/Vinext reference experience
@@ -149,7 +153,7 @@ npm install
 npm run dev
 ~~~
 
-The reference interface supports the optional local role hook <code>PLATELENS_ADMIN_EMAILS</code>. Unauthenticated local previews resolve to <code>Preview</code>; authenticated visitors resolve to <code>Analyst</code> unless their email is in the Admin allowlist.
+The reference interface supports the optional local role hook <code>DINESCOPE_ADMIN_EMAILS</code>. Unauthenticated local previews resolve to <code>Preview</code>; authenticated visitors resolve to <code>Analyst</code> unless their email is in the Admin allowlist.
 
 ### Rebuild the audited aggregate locally
 
@@ -183,7 +187,7 @@ The latest release validation passed **24 Python tests**, **16 Node tests**, ESL
 
 ## Deployment and release boundary
 
-- **Repository:** [Bilal-03/platelens-food-delivery-intelligence](https://github.com/Bilal-03/platelens-food-delivery-intelligence)
+- **Repository:** [Bilal-03/dinescope-marketplace-intelligence](https://github.com/Bilal-03/dinescope-marketplace-intelligence)
 - **Branch:** <code>main</code>
 - **Streamlit entry point:** <code>streamlit_app.py</code>
 - **Runtime:** Python 3.11 with dependencies pinned in <code>requirements.txt</code>
@@ -200,7 +204,7 @@ The raw source CSV, customer/order records, <code>.streamlit/secrets.toml</code>
 
 ## Five-minute portfolio walkthrough
 
-1. Open the [live Streamlit app](https://platelens-food-delivery-intelligence.streamlit.app/).
+1. Open the [live Streamlit app](https://dinescope-marketplace-intelligence.streamlit.app/).
 2. Start in **Overview** to see the audited KPI baseline and the deterministic decision brief.
 3. Open **Customer growth** to inspect the acquisition-versus-return view and M0–M6 cohort retention—the clearest example of product metric discipline.
 4. Open **Cuisine gaps** or **Market demand** to see evidence thresholds, confidence and mapping context beside opportunity signals.
@@ -210,9 +214,9 @@ The raw source CSV, customer/order records, <code>.streamlit/secrets.toml</code>
 Representative captures are available in [docs/screenshots/](./docs/screenshots/):
 
 <p>
-  <img src="./docs/screenshots/01-overview.jpg" width="31%" alt="PlateLens Overview with audited KPIs and decision brief">
-  <img src="./docs/screenshots/02-decision-lab.jpg" width="31%" alt="PlateLens Decision Lab with adjustable weights and evidence guardrails">
-  <img src="./docs/screenshots/03-cuisine-opportunity.jpg" width="31%" alt="PlateLens Cuisine Opportunity with demand and coverage context">
+  <img src="./docs/screenshots/01-overview.jpg" width="31%" alt="DineScope Overview with audited KPIs and decision brief">
+  <img src="./docs/screenshots/02-decision-lab.jpg" width="31%" alt="DineScope Decision Lab with adjustable weights and evidence guardrails">
+  <img src="./docs/screenshots/03-cuisine-opportunity.jpg" width="31%" alt="DineScope Cuisine Opportunity with demand and coverage context">
 </p>
 
 ## Repository map
@@ -258,4 +262,4 @@ The following remain intentionally out of scope until a stronger source is avail
 
 ---
 
-**PlateLens in one sentence:** a deployment-ready marketplace intelligence product that makes customer growth, demand opportunity and data reliability legible in one workflow—without pretending the data proves more than it does.
+**DineScope in one sentence:** a deployment-ready marketplace intelligence product that makes customer growth, demand opportunity and data reliability legible in one workflow—without pretending the data proves more than it does.

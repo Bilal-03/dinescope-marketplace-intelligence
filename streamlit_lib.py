@@ -84,7 +84,11 @@ def parse_feature_flags(raw: str | None = None) -> dict[str, bool]:
     flags are enabled; ``all`` is a convenient explicit allowlist.
     """
 
-    value = os.getenv("PLATELENS_FEATURE_FLAGS", "") if raw is None else raw
+    value = (
+        os.getenv("DINESCOPE_FEATURE_FLAGS", os.getenv("PLATELENS_FEATURE_FLAGS", ""))
+        if raw is None
+        else raw
+    )
     tokens = {token.strip().lower() for token in value.split(",") if token.strip()}
     if not tokens or "all" in tokens:
         return {name: True for name in FEATURE_FLAG_NAMES}
@@ -682,7 +686,7 @@ def contract_errors(data: Any) -> list[str]:
 def assert_valid_data_contract(data: Any) -> None:
     errors = contract_errors(data)
     if errors:
-        raise ValueError("Invalid PlateLens aggregate contract:\n- " + "\n- ".join(errors))
+        raise ValueError("Invalid DineScope aggregate contract:\n- " + "\n- ".join(errors))
 
 
 def valid_data_contract(data: dict[str, Any]) -> bool:

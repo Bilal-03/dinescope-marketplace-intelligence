@@ -1,10 +1,10 @@
-# PlateLens implementation status
+# DineScope implementation status
 
 Updated: 28 August 2026
 
 ## Current release: Public Streamlit full-parity baseline + optional collaboration backlog
 
-- [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
+- [x] Phase 0 — Product framing, DineScope brand identity, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
 - [x] Phase 2a — Reproducible aggregate pipeline for deployment-safe analytics data
 - [x] Phase 3a — Core KPIs, repeat logic, lifecycle segmentation and cohort-retention calculations
@@ -21,7 +21,7 @@ Updated: 28 August 2026
 - [x] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
 - [x] Phase 8a — Portfolio case study, production screenshots and release-readiness package
 - [x] Public release decision — owner approved public read-only Streamlit access on 28 August 2026
-- [x] Streamlit baseline foundation — six aggregate-only workspaces, exports and PlateLens theme
+- [x] Streamlit baseline foundation — six aggregate-only workspaces, exports and DineScope theme
 - [x] Streamlit data contract — versioned aggregate, source-schema validation and fail-loud quality reconciliation
 - [x] Streamlit Phase 1 — parity shell, page-aware filters, methodology dialog and feature-flag state
 - [x] Streamlit Phase 2 — Overview and Customer Growth visual/table parity
@@ -29,7 +29,7 @@ Updated: 28 August 2026
 - [x] Streamlit Phase 4 — Cuisine Opportunity parity and restaurant evidence
 - [x] Streamlit Phase 5 — session-only Decision Lab scenarios, comparison and rank movement
 - [x] Streamlit local acceptance — dependency install, Python tests and browser-rendered module checks
-- [x] Streamlit Community Cloud publication — [public app](https://platelens-food-delivery-intelligence.streamlit.app/) is live from `main` with Python 3.11
+- [x] Streamlit Community Cloud publication — [public app](https://dinescope-marketplace-intelligence.streamlit.app/) is live from `main` with Python 3.11
 
 ## Verified acceptance checks
 
@@ -78,7 +78,7 @@ Updated: 28 August 2026
 - [x] Locked Valid INR rule, source window, record count and public read-only boundary are visible
 - [x] Reset restores All markets and All years without resetting the active page
 - [x] Metric dictionary/methodology dialog exposes aggregate version, definitions, checksum and evidence boundary
-- [x] `PLATELENS_FEATURE_FLAGS` supports all-on defaults and comma-separated staged allowlists
+- [x] `DINESCOPE_FEATURE_FLAGS` supports all-on defaults and comma-separated staged allowlists; the legacy variable remains a compatibility fallback
 - [x] AppTest covers navigation, page-aware filters, reset, methodology and staged flags
 
 ## Phase 2 completion record — 28 August 2026
