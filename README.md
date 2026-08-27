@@ -17,8 +17,11 @@ This is an independent portfolio case study created from a public or synthetic f
 - Deployment-ready private-site authentication hooks and server-side Admin/Analyst role resolution
 - Automated reconciliation tests for source, customer, market, cuisine and opportunity-score contracts
 - Auditable locality, cuisine and conservative restaurant-name mappings with explicit coverage context
+- Portfolio-ready case study, evidence boundaries, representative screenshots and a private/public release gate
 
 See [STATUS.md](./STATUS.md) for the phase checklist and next build order.
+
+The Phase 8 evidence package is in [docs/portfolio_case_study.md](./docs/portfolio_case_study.md), with access, privacy and deployment sign-off tracked in [docs/release_readiness.md](./docs/release_readiness.md).
 
 ## Architecture
 

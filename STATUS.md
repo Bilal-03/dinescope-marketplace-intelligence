@@ -2,7 +2,7 @@
 
 Updated: 27 August 2026
 
-## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab + Hardening
+## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab + Hardening + Portfolio Package
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -19,7 +19,8 @@ Updated: 27 August 2026
 - [x] Phase 5e — Restaurant & Cuisine Opportunity
 - [x] Phase 6 — Decision Lab and configurable opportunity score
 - [x] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
-- [ ] Phase 8 — Portfolio case study, screenshots and public release decision
+- [x] Phase 8a — Portfolio case study, production screenshots and release-readiness package
+- [ ] Public release decision — awaiting explicit owner approval; current deployment remains private
 
 ## Verified acceptance checks
 
@@ -45,8 +46,9 @@ Updated: 27 August 2026
 - [x] Navigation, controls, table selection and export affordances have accessibility contract coverage
 - [x] Keyboard focus states are visible and selectable market/cuisine rows support Enter/Space
 - [x] Performance budgets cover the aggregate payload, client JavaScript and client CSS
+- [x] Portfolio case study links evidence boundaries, three representative production captures and a release gate
 
 ## Next recommended build sequence
 
-1. Prepare the portfolio case study and decide whether to make the deployment public.
+1. Decide whether the deployment should remain private, become invite-only or become public read-only; rerun access and privacy checks if it changes.
 2. Add server-backed team sharing for saved decision scenarios when durable collaboration is needed.
