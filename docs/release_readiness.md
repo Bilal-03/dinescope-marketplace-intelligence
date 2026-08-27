@@ -1,6 +1,6 @@
 # Release readiness
 
-Updated: 27 August 2026  
+Updated: 28 August 2026
 Product: PlateLens — Food Delivery Marketplace Intelligence
 
 ## Decision summary
@@ -9,9 +9,9 @@ Product: PlateLens — Food Delivery Marketplace Intelligence
 | --- | --- | --- |
 | Private production workspace | **Ready** | Keep the current owner-only deployment available for review. |
 | Portfolio case-study package | **Ready** | Case study, screenshots and evidence boundaries are checked into the repository. |
-| Public unauthenticated deployment | **Pending owner approval** | Do not change site access until the owner explicitly chooses public release. |
+| Public unauthenticated deployment | **Approved; deployment in progress** | Publish the aggregate-only Streamlit app and keep raw records/private Sites metadata excluded. |
 
-This document is a release gate, not an instruction to publish. Public access would be a meaningful external-state change and requires an explicit owner decision after the checks below are complete.
+The owner explicitly approved public Streamlit publication on 28 August 2026. This record authorizes the aggregate-only deployment described in `docs/public_data_boundary.md`; it does not authorize publication of raw records, secrets or private Sites metadata.
 
 ## Readiness checklist
 
@@ -21,7 +21,7 @@ This document is a release gate, not an instruction to publish. Public access wo
 - [x] The portfolio narrative distinguishes observed evidence, assumptions and hypotheses.
 - [x] Unsupported operational metrics are called out instead of being implied by the UI.
 - [x] Screenshots represent the live product surface and avoid raw customer-level records.
-- [ ] Owner has approved the final public portfolio wording and whether the product should be linked publicly.
+- [x] Owner has approved the public read-only Streamlit release and public repository linkage.
 
 ### Data and trust
 
@@ -31,7 +31,7 @@ This document is a release gate, not an instruction to publish. Public access wo
 - [x] Market, cuisine and restaurant mappings are reviewable CSV artifacts.
 - [x] Minimum evidence thresholds and confidence labels are visible in the product.
 - [x] Raw customer-level records and addresses are excluded from the browser payload.
-- [ ] Before public release, perform a final privacy review of screenshots, logs and any future support exports.
+- [x] Public runtime is aggregate-only; raw customer/order records are not loaded or downloadable.
 
 ### Engineering and experience
 
@@ -47,24 +47,24 @@ This document is a release gate, not an instruction to publish. Public access wo
 - [x] Production deployment is private and owner-controlled.
 - [x] The repository includes the deployment configuration and repeatable build commands.
 - [x] The product states that it is an independent portfolio case study and is not affiliated with a food-delivery company.
-- [ ] Public access policy is not yet selected: owner-only, invite-only or public read-only.
-- [ ] If public, confirm that the social preview and favicon do not imply an unauthorised affiliation.
-- [ ] If public, add a visible portfolio disclaimer and a support/contact path that does not expose private credentials.
+- [x] Public access policy is selected: public read-only.
+- [x] PlateLens title and neutral favicon do not imply company affiliation.
+- [x] Streamlit sidebar includes a visible independent-portfolio disclaimer and public repository support path.
 
 ## Public-release decision record
 
 Complete this section only when the owner is ready to make the access decision.
 
 ```text
-Decision:       [ ] Keep private   [ ] Invite-only   [ ] Public read-only
-Approved by:    ______________________________
-Date:           ______________________________
-Notes:          ______________________________
+Decision:       [ ] Keep private   [ ] Invite-only   [x] Public read-only
+Approved by:    Project owner
+Date:           28 August 2026
+Notes:          Publish the deployment-safe aggregate and required mappings;
+                exclude raw records, secrets and private Sites metadata.
 ```
 
-Until this record is completed, the recommended action is to keep the current private deployment unchanged and use the case-study package for review.
+The existing private React/Sites deployment remains unchanged while the separate public Streamlit surface is published.
 
 ## Next build after release decision
 
 The next product capability after a release decision is server-backed team sharing for saved Decision Lab scenarios. Local presets are deliberately device-scoped today; durable collaboration needs an explicit persistence model, authorization policy and audit trail.
-

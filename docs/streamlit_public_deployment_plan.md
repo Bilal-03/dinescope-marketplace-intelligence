@@ -1,10 +1,10 @@
 # Streamlit public deployment plan
 
-Updated: 27 August 2026
+Updated: 28 August 2026
 
 ## Executive decision
 
-The current PlateLens experience is a React/Vinext application hosted privately on Sites. Streamlit Community Cloud runs Python entry points, so the current frontend cannot be deployed there unchanged. The recommended path is a **Python/Streamlit parity application** that reads the same audited aggregate and preserves the existing React app as the richer private reference implementation during the migration.
+The Python/Streamlit parity application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026.
 
 The public Streamlit app should be read-only and evidence-led. It should not introduce raw customer records, new causal claims or a second, inconsistent metric definition.
 
@@ -13,8 +13,8 @@ The public Streamlit app should be read-only and evidence-led. It should not int
 The public GitHub repository is `Bilal-03/platelens-food-delivery-intelligence`. The current mirror is source-and-documentation first; the data-publication decision is tracked separately in [`docs/public_data_boundary.md`](./public_data_boundary.md).
 
 - The raw `zomato_business_complete.csv` remains local and is excluded by `.gitignore`.
-- The deployment-safe aggregate and reviewable mapping CSVs are kept out of the public GitHub mirror for now. They contain derived commercial and customer-behavior metrics, so publishing them requires explicit data-publication approval and a final privacy review.
-- The public Streamlit release must use either an approved aggregate, a redacted aggregate or a synthetic fixture; it must not silently fall back to raw source rows.
+- The deployment-safe aggregate and reviewable mapping CSVs are approved for the public GitHub mirror and Streamlit runtime.
+- The public Streamlit release uses the approved aggregate and must never silently fall back to raw source rows.
 - The private Sites project configuration is intentionally not copied into the public repository.
 - No tokens, `.env` files, private visitor lists or deployment credentials belong in GitHub.
 - The README and app footer must continue to state that this is an independent portfolio analysis and is not affiliated with Zomato, Swiggy or another delivery company.
@@ -105,9 +105,8 @@ The Streamlit release is ready when a fresh visitor can:
 - use the app without credentials, secrets or raw customer-level data;
 - see a clear “directional investigation signal” boundary around opportunity scores.
 
-## Open decisions
+## Resolved decisions
 
-- Whether the public Streamlit app should launch with full module parity or an intentionally smaller first cut.
-- Whether the GitHub repository should remain public (recommended for a portfolio/public app) or be made private with additional Streamlit access configuration.
-- Whether server-backed Decision Lab sharing is needed after public launch.
-
+- Launch with all six implemented modules rather than a reduced first cut.
+- Keep the GitHub repository and Streamlit app public read-only.
+- Keep Decision Lab scenarios session-scoped for launch; server-backed sharing remains a later collaboration feature.

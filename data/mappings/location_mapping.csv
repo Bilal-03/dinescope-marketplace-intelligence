@@ -1,0 +1,823 @@
+raw_city,clean_city,metro_region,state,confidence,review_status,row_count
+Bikaner,Bikaner,Bikaner,Rajasthan,High,Reviewed rule,1666
+Unknown,Unknown,Unknown,Unknown,Low,Needs source enrichment,1617
+Noida-1,Noida,Noida,Uttar Pradesh,High,Reviewed rule,1428
+"Indirapuram,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1279
+"BTM,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,1161
+"Rohini,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1136
+"Kothrud,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,1089
+"Indiranagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,1080
+"Electronic City,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,1039
+"Greater Kailash 2,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1038
+"Vashi,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,1022
+"Kukatpally,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,1009
+"Viman Nagar,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,1001
+"sohna road,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,976
+"Koramangala,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,954
+"Laxmi Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,933
+"Gomti Nagar,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,921
+"Malviya Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,901
+"HSR,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,898
+"Madhapur,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,893
+"Wakad,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,869
+"Raj Nagar,Noida",Noida,Noida,Uttar Pradesh,High,Reviewed rule,852
+"Baner,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,814
+"Bandra West,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,796
+"Central Kolkata,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,790
+"Aliganj,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,786
+"Powai,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,759
+"Jadavpur,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,758
+Patna,Patna,Patna,Bihar,High,Reviewed rule,743
+"Whitefield,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,730
+"Dwarka,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,722
+"Magarpatta,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,714
+"Rajouri Garden,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,710
+"Banjara Hills,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,702
+"Kothapet & Dilsukhnagar,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,702
+"GTB Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,684
+"Arekere,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,677
+"Dilshad Gardens,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,677
+"Kammanahalli/Kalyan Nagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,677
+"Mayur Vihar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,675
+"Bibwewadi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,654
+Varanasi,Varanasi,Varanasi,Uttar Pradesh,High,Reviewed rule,646
+"South Chd,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,643
+"Salt Lake,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,641
+"Chattarpur,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,636
+Faridabad,Faridabad,Faridabad,Haryana,High,Reviewed rule,634
+Kanpur,Kanpur,Kanpur,Uttar Pradesh,High,Reviewed rule,632
+"Chinar Park,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,630
+"Old Gurgaon (Zone 6),Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,612
+"Zirakpur,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,609
+"Kadubeesanahalli,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,596
+"Vastrapur,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,596
+"Lake Town,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,592
+"Marathahalli,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,592
+"Vijay Nagar,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,588
+"Governorpet,Vijayawada",Vijayawada,Vijayawada,Andhra Pradesh,High,Reviewed rule,575
+"Manikonda,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,564
+"Benz Circle and Auto Nagar,Vijayawada",Vijayawada,Vijayawada,Andhra Pradesh,High,Reviewed rule,554
+"Dumdum,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,551
+"Annanagar,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,548
+Udaipur,Udaipur,Udaipur,Rajasthan,High,Reviewed rule,547
+"Kharadi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,543
+"Rajarhat,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,535
+Bhopal,Bhopal,Bhopal,Madhya Pradesh,High,Reviewed rule,534
+"Central Bangalore,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,532
+"Ashok Vihar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,531
+"Uttam Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,528
+"Sanjay Nagar, New BEL Road,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,527
+"Yelahanka,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,507
+"North Mohali,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,504
+"Rajarajeshwari Nagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,503
+"Kondhwa,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,502
+"Hadapsar,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,498
+"Mulund,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,498
+"South Kolkata,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,498
+"Porur,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,496
+"PCMC,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,495
+"Hinjewadi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,492
+"Perambur,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,491
+"Piplod,Surat",Surat,Surat,Gujarat,High,Reviewed rule,490
+"Dwarka Nagar,Vizag",Vizag,Vizag,Unmapped,Medium,Review pending,486
+Raipur,Raipur,Raipur,Unmapped,Medium,Review pending,482
+"Greater Mohali,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,480
+Allahabad,Prayagraj,Prayagraj,Uttar Pradesh,High,Reviewed rule,475
+"Sadar,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,474
+Madurai,Madurai,Madurai,Unmapped,Medium,Review pending,473
+"JP Nagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,470
+"Scruz Bandra East,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,469
+Bhubaneswar,Bhubaneswar,Bhubaneswar,Odisha,High,Reviewed rule,462
+"Miyapur,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,461
+"Himayath Nagar,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,460
+"Ruby Area,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,458
+Agra,Agra,Agra,Unmapped,Medium,Review pending,455
+"Bhosari,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,455
+"Vasant Kunj,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,455
+Gondal,Gondal,Gondal,Unmapped,Medium,Review pending,454
+"Pimple Saudagar,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,454
+"NSP,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,451
+"Lajpat Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,449
+"Vasai,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,449
+Adityapur,Adityapur,Adityapur,Unmapped,Medium,Review pending,448
+North-goa,Goa,Goa,Goa,High,Reviewed rule,446
+Amritsar,Amritsar,Amritsar,Unmapped,Medium,Review pending,441
+"Nizampet & Pragathi Nagar,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,435
+"Navrangpura,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,433
+Aurangabad,Aurangabad,Aurangabad,Unmapped,Medium,Review pending,430
+"Garia,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,429
+"Vadapalani,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,429
+"Gachibowli,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,428
+"Velachery,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,428
+"Adajan,Surat",Surat,Surat,Gujarat,High,Reviewed rule,427
+"Ganeshguri,Guwahati",Guwahati,Guwahati,Unmapped,Medium,Review pending,427
+"Wagholi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,426
+"Adyar,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,421
+Jodhpur,Jodhpur,Jodhpur,Unmapped,Medium,Review pending,419
+"Shivaji Nagar,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,415
+"Mogappair,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,414
+Ranchi,Ranchi,Ranchi,Unmapped,Medium,Review pending,414
+"Athwa,Surat",Surat,Surat,Gujarat,High,Reviewed rule,411
+"Hathibarkala,Dehradun",Dehradun,Dehradun,Unmapped,Medium,Review pending,409
+Central-goa,Goa,Goa,Goa,High,Reviewed rule,404
+"Indira Nagar,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,404
+"Vanasthalipuram,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,404
+"Jasola,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,403
+"Lingampally & Nalagandla,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,402
+"Tarnaka, Nacharam & Malkajigiri,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,401
+"Bopal,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,398
+"Madipakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,398
+"Howrah,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,395
+"Nigdi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,394
+"Medavakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,392
+"Gandhinagar,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,389
+"Chrompet,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,387
+"Attapur,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,386
+"Chandkheda,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,383
+"Nandanvan,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,381
+"Kirti Nagar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,380
+"Sector 15_FBD,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,378
+"South Extension,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,378
+"T Nagar,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,375
+Gorakhpur,Gorakhpur,Gorakhpur,Unmapped,Medium,Review pending,374
+"Maninagar,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,373
+"Tambaram,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,370
+"Chukkuwala,Dehradun",Dehradun,Dehradun,Unmapped,Medium,Review pending,364
+"Mahadevpura,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,364
+"Banashankari,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,360
+"Paltan Bazaar,Guwahati",Guwahati,Guwahati,Unmapped,Medium,Review pending,360
+"Urapakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,360
+"Swargate,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,358
+"Airoli,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,357
+"Behala,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,357
+"Hazratganj,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,356
+"OMR Perungudi,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,356
+"Akota,Vadodara",Vadodara,Vadodara,Unmapped,Medium,Review pending,353
+"Jayanagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,350
+"Bhawar Kuan,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,348
+Bareilly,Bareilly,Bareilly,Unmapped,Medium,Review pending,344
+"Mysore North,Mysore",Mysore,Mysore,Unmapped,Medium,Review pending,342
+"Virar,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,335
+Meerut,Meerut,Meerut,Unmapped,Medium,Review pending,331
+"Panchkula,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,330
+"South Campus,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,329
+"Kondapur,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,326
+"Geddalahalli,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,323
+"Dharampeth,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,320
+"Greenfields_FBD,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,320
+Pondicherry,Puducherry,Puducherry,Unmapped,High,Reviewed rule,320
+"Matunga Wadala,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,315
+"Mysore South,Mysore",Mysore,Mysore,Unmapped,Medium,Review pending,314
+"Narhe,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,309
+"Sinhgad Road,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,305
+"Fort Colaba,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,303
+"Ghatlodia,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,301
+"Santoshpur,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,301
+"Ambattur,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,300
+Gwalior,Gwalior,Gwalior,Unmapped,Medium,Review pending,300
+"Kharkhana & Trimulgherry,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,299
+"Jubilee Hills,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,293
+"Alipore,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,292
+"Burrabazar,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,290
+"East Chd,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,289
+"Nungambakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,289
+"CV Raman Nagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,285
+"Bhayandar,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,284
+"Aundh,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,281
+"Nagavara & Hennur,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,279
+Thiruvananthapuram,Thiruvananthapuram,Thiruvananthapuram,Unmapped,Medium,Review pending,279
+"Old Palasia,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,278
+"Bally,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,277
+Kolhapur,Kolhapur,Kolhapur,Unmapped,Medium,Review pending,276
+Rohtak,Rohtak,Rohtak,Unmapped,Medium,Review pending,276
+"Vadiwadi,Vadodara",Vadodara,Vadodara,Unmapped,Medium,Review pending,276
+"Kamothe,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,275
+"Begumpet,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,274
+"OMR Navalur,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,272
+"Dugri,Ludhiana",Ludhiana,Ludhiana,Unmapped,Medium,Review pending,269
+"South Mohali,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,269
+Sultanpur,Sultanpur,Sultanpur,Unmapped,Medium,Review pending,265
+"Bavdhan,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,264
+"Battarahalli,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,261
+Trichy,Tiruchirappalli,Tiruchirappalli,Unmapped,High,Reviewed rule,261
+Guntur,Guntur,Guntur,Unmapped,Medium,Review pending,260
+"Hopes,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,259
+"Connaught Place,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,258
+Siliguri,Siliguri,Siliguri,Unmapped,Medium,Review pending,258
+"Karappakam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,255
+"Basaveshwaranagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,253
+"Sangvi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,252
+"George Town,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,248
+Jabalpur,Jabalpur,Jabalpur,Unmapped,Medium,Review pending,246
+"R.T. Nagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,246
+"Tolichowki,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,245
+"GOTA,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,243
+Tirupati,Tirupati,Tirupati,Unmapped,Medium,Review pending,243
+"Sector-14,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,238
+"Panampilly Nagar,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,237
+Tirupur,Tirupur,Tirupur,Unmapped,Medium,Review pending,237
+"Yeshwanthpur,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,235
+"Royapettah,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,230
+Salem,Salem,Salem,Unmapped,Medium,Review pending,228
+"Santoshnagar & Saidabad,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,228
+Jhansi,Jhansi,Jhansi,Unmapped,Medium,Review pending,225
+"MVP Colony,Vizag",Vizag,Vizag,Unmapped,Medium,Review pending,222
+Cuttack,Cuttack,Cuttack,Unmapped,Medium,Review pending,220
+Hisar,Hisar,Hisar,Unmapped,Medium,Review pending,219
+Ajmer,Ajmer,Ajmer,Unmapped,Medium,Review pending,217
+Kozhikode,Kozhikode,Kozhikode,Unmapped,Medium,Review pending,214
+Aligarh,Aligarh,Aligarh,Unmapped,Medium,Review pending,213
+"Kadugodi,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,213
+"Frazer Town,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,212
+"Mahalaxmi Malabar Hill,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,212
+"Kompally,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,211
+Erode,Erode,Erode,Unmapped,Medium,Review pending,209
+"Naranpura,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,209
+Thrissur,Thrissur,Thrissur,Unmapped,Medium,Review pending,209
+"Manasarovar,Jaipur",Jaipur,Jaipur,Unmapped,Medium,Review pending,208
+"Kalyani Nagar,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,206
+"Vishrantwadi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,206
+"Arumbakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,204
+"NIT_FBD,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,204
+Panipat,Panipat,Panipat,Unmapped,Medium,Review pending,204
+"West Chd,Chandigarh",Chandigarh,Chandigarh,Chandigarh,High,Reviewed rule,200
+"Purasawalkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,199
+Hubli,Hubballi,Hubballi,Unmapped,High,Reviewed rule,198
+"Manish Nagar,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,197
+Nellore,Nellore,Nellore,Unmapped,Medium,Review pending,197
+Vellore,Vellore,Vellore,Unmapped,Medium,Review pending,197
+Bhilai,Bhilai,Bhilai,Unmapped,Medium,Review pending,196
+Mangaluru,Mangaluru,Mangaluru,Unmapped,Medium,Review pending,196
+Anand,Anand,Anand,Unmapped,Medium,Review pending,195
+"Nanakramguda,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,194
+Belgaum,Belagavi,Belagavi,Unmapped,High,Reviewed rule,191
+"Gajuwaka,Vizag",Vizag,Vizag,Unmapped,Medium,Review pending,190
+"Kumaraswamy Layout & Uttarahalli,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,190
+"New Palasia,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,188
+"Saravanampatti,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,188
+"Kanakapura Road,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,187
+"Punjabi Bagh,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,186
+"Ameerpet,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,185
+"ECR-Kottivakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,183
+Solapur,Solapur,Solapur,Unmapped,Medium,Review pending,182
+Mansa,Mansa,Mansa,Unmapped,Medium,Review pending,178
+Yamuna-nagar,Yamunanagar,Yamunanagar,Unmapped,High,Reviewed rule,178
+"N A D,Vizag",Vizag,Vizag,Unmapped,Medium,Review pending,177
+"Aminabad,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,176
+"Guindy,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,176
+"Paldi & Ambawadi,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,176
+"Villivakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,176
+Morbi,Morbi,Morbi,Unmapped,Medium,Review pending,175
+"Warje,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,175
+"Sai Baba Colony,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,174
+Bathinda,Bathinda,Bathinda,Unmapped,Medium,Review pending,173
+"Sitabuldi,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,172
+"Koregaon Park,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,170
+Anantapur,Anantapur,Anantapur,Unmapped,Medium,Review pending,166
+Agartala,Agartala,Agartala,Unmapped,Medium,Review pending,165
+"Iyyapanthangal,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,164
+Haldwani,Haldwani,Haldwani,Unmapped,Medium,Review pending,163
+"Poonamallee,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,163
+Thanjavur,Thanjavur,Thanjavur,Unmapped,Medium,Review pending,160
+Bilaspur,Bilaspur,Bilaspur,Unmapped,Medium,Review pending,159
+"Mahindra World City,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,159
+Kakinada,Kakinada,Kakinada,Unmapped,Medium,Review pending,158
+Manipal,Manipal,Manipal,Unmapped,Medium,Review pending,157
+Karnal,Karnal,Karnal,Unmapped,Medium,Review pending,155
+"Mylapore,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,155
+"Majestic,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,154
+"Gandhipuram,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,151
+Alwar,Alwar,Alwar,Unmapped,Medium,Review pending,150
+"Avadi,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,150
+Bokaro,Bokaro,Bokaro,Unmapped,Medium,Review pending,150
+"Egmore,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,150
+"Sarafa,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,149
+"Ramanathapuram,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,147
+Bahadurgarh,Bahadurgarh,Bahadurgarh,Unmapped,Medium,Review pending,146
+Ambala,Ambala,Ambala,Unmapped,Medium,Review pending,144
+"Mehdipatnam,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,143
+"Old Delhi,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,143
+"Peelamedu,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,142
+"Alwal,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,141
+"Padur,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,140
+Kollam,Kollam,Kollam,Unmapped,Medium,Review pending,138
+Mathura,Mathura,Mathura,Unmapped,Medium,Review pending,138
+Rajahmundry,Rajahmundry,Rajahmundry,Unmapped,Medium,Review pending,138
+"Bajaj Nagar,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,137
+Amravati,Amravati,Amravati,Unmapped,Medium,Review pending,136
+Durgapur,Durgapur,Durgapur,Unmapped,Medium,Review pending,135
+"BRS Nagar,Ludhiana",Ludhiana,Ludhiana,Unmapped,Medium,Review pending,134
+Bhagalpur,Bhagalpur,Bhagalpur,Unmapped,Medium,Review pending,134
+Phagwara,Phagwara,Phagwara,Unmapped,Medium,Review pending,134
+"Kilpauk,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,133
+Sirsa,Sirsa,Sirsa,Unmapped,Medium,Review pending,132
+"Wardha Road,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,131
+Haridwar,Haridwar,Haridwar,Unmapped,Medium,Review pending,130
+Sangli,Sangli,Sangli,Unmapped,Medium,Review pending,130
+"Coi_Ganapathy,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,129
+Jorhat,Jorhat,Jorhat,Unmapped,Medium,Review pending,128
+Jamnagar,Jamnagar,Jamnagar,Unmapped,Medium,Review pending,126
+Asansol,Asansol,Asansol,Unmapped,Medium,Review pending,124
+"KK Nagar,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,124
+Kurukshetra,Kurukshetra,Kurukshetra,Unmapped,Medium,Review pending,121
+Muzaffarpur,Muzaffarpur,Muzaffarpur,Unmapped,Medium,Review pending,121
+Tirunelveli,Tirunelveli,Tirunelveli,Unmapped,Medium,Review pending,121
+"Civil Lines,Ludhiana",Ludhiana,Ludhiana,Unmapped,Medium,Review pending,119
+Kurnool,Kurnool,Kurnool,Unmapped,Medium,Review pending,119
+Thoothukudi,Thoothukudi,Thoothukudi,Unmapped,Medium,Review pending,118
+Saharanpur,Saharanpur,Saharanpur,Unmapped,Medium,Review pending,117
+Sonipat,Sonipat,Sonipat,Unmapped,Medium,Review pending,117
+Firozpur,Firozpur,Firozpur,Unmapped,Medium,Review pending,116
+Sagar,Sagar,Sagar,Unmapped,Medium,Review pending,116
+Bhavnagar,Bhavnagar,Bhavnagar,Unmapped,Medium,Review pending,115
+"Ramapuram,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,115
+Gandhidham,Gandhidham,Gandhidham,Unmapped,Medium,Review pending,114
+Ujjain,Ujjain,Ujjain,Unmapped,Medium,Review pending,112
+Rewa,Rewa,Rewa,Unmapped,Medium,Review pending,111
+Sikar,Sikar,Sikar,Unmapped,Medium,Review pending,111
+Hoshiarpur,Hoshiarpur,Hoshiarpur,Unmapped,Medium,Review pending,108
+"Gandhibagh,Nagpur",Nagpur,Nagpur,Unmapped,Medium,Review pending,107
+"Khan Market,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,107
+Berhampur,Berhampur,Berhampur,Unmapped,Medium,Review pending,106
+Davanagere,Davanagere,Davanagere,Unmapped,Medium,Review pending,106
+Faizabad,Faizabad,Faizabad,Unmapped,Medium,Review pending,106
+Gaya,Gaya,Gaya,Unmapped,Medium,Review pending,105
+Nagercoil,Nagercoil,Nagercoil,Unmapped,Medium,Review pending,105
+"Abids & Koti,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,104
+"Bbd,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,104
+Latur,Latur,Latur,Unmapped,Medium,Review pending,104
+Tumakuru,Tumakuru,Tumakuru,Unmapped,Medium,Review pending,104
+Pathankot,Pathankot,Pathankot,Unmapped,Medium,Review pending,103
+"Kestopur,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,102
+Kottayam,Kottayam,Kottayam,Unmapped,Medium,Review pending,101
+Mehsana,Mehsana,Mehsana,Unmapped,Medium,Review pending,101
+"Perumbakkam,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,101
+Akola,Akola,Akola,Unmapped,Medium,Review pending,100
+Puri,Puri,Puri,Unmapped,Medium,Review pending,100
+Rishikesh,Rishikesh,Rishikesh,Unmapped,Medium,Review pending,100
+Daman,Daman,Daman,Unmapped,Medium,Review pending,99
+Halol,Halol,Halol,Unmapped,Medium,Review pending,99
+Jalgaon,Jalgaon,Jalgaon,Unmapped,Medium,Review pending,99
+Karur,Karur,Karur,Unmapped,Medium,Review pending,99
+Kota,Kota,Kota,Unmapped,Medium,Review pending,99
+Muzaffarnagar,Muzaffarnagar,Muzaffarnagar,Unmapped,Medium,Review pending,99
+Nanded,Nanded,Nanded,Unmapped,Medium,Review pending,99
+Rewari,Rewari,Rewari,Unmapped,Medium,Review pending,99
+Roorkee,Roorkee,Roorkee,Unmapped,Medium,Review pending,99
+Rudrapur,Rudrapur,Rudrapur,Unmapped,Medium,Review pending,99
+Satna,Satna,Satna,Unmapped,Medium,Review pending,99
+Shahjahanpur,Shahjahanpur,Shahjahanpur,Unmapped,Medium,Review pending,99
+Shivamogga,Shivamogga,Shivamogga,Unmapped,Medium,Review pending,99
+"South Tukoganj,Indore",Indore,Indore,Madhya Pradesh,High,Reviewed rule,99
+Dibrugarh,Dibrugarh,Dibrugarh,Unmapped,Medium,Review pending,98
+Kadapa,Kadapa,Kadapa,Unmapped,Medium,Review pending,98
+Karimnagar,Karimnagar,Karimnagar,Unmapped,Medium,Review pending,98
+Kumbakonam,Kumbakonam,Kumbakonam,Unmapped,Medium,Review pending,98
+Nadiad,Nadiad,Nadiad,Unmapped,Medium,Review pending,98
+Rourkela,Rourkela,Rourkela,Unmapped,Medium,Review pending,98
+Balasore,Balasore,Balasore,Unmapped,Medium,Review pending,97
+Chandrapur,Chandrapur,Chandrapur,Unmapped,Medium,Review pending,97
+Dindigul,Dindigul,Dindigul,Unmapped,Medium,Review pending,97
+Ongole,Ongole,Ongole,Unmapped,Medium,Review pending,97
+Palakkad,Palakkad,Palakkad,Unmapped,Medium,Review pending,97
+Purnea,Purnea,Purnea,Unmapped,Medium,Review pending,97
+Shillong,Shillong,Shillong,Unmapped,Medium,Review pending,97
+Wardha,Wardha,Wardha,Unmapped,Medium,Review pending,97
+Bhiwadi,Bhiwadi,Bhiwadi,Unmapped,Medium,Review pending,96
+Sambalpur,Sambalpur,Sambalpur,Unmapped,Medium,Review pending,96
+"Ashiyana,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,95
+Ballari,Ballari,Ballari,Unmapped,Medium,Review pending,95
+Bardhaman,Bardhaman,Bardhaman,Unmapped,Medium,Review pending,95
+Bharatpur,Bharatpur,Bharatpur,Unmapped,Medium,Review pending,95
+Khammam,Khammam,Khammam,Unmapped,Medium,Review pending,95
+Ratlam,Ratlam,Ratlam,Unmapped,Medium,Review pending,95
+Ahmednagar,Ahmednagar,Ahmednagar,Unmapped,Medium,Review pending,94
+Alappuzha,Alappuzha,Alappuzha,Unmapped,Medium,Review pending,94
+Deoghar,Deoghar,Deoghar,Unmapped,Medium,Review pending,94
+Kalady,Kalady,Kalady,Unmapped,Medium,Review pending,94
+Kannur,Kannur,Kannur,Unmapped,Medium,Review pending,94
+Eluru,Eluru,Eluru,Unmapped,Medium,Review pending,93
+Jammu,Jammu,Jammu,Unmapped,Medium,Review pending,93
+Lonavala,Lonavala,Lonavala,Unmapped,Medium,Review pending,93
+Nizamabad,Nizamabad,Nizamabad,Unmapped,Medium,Review pending,93
+Satara,Satara,Satara,Unmapped,Medium,Review pending,93
+Valsad,Valsad,Valsad,Unmapped,Medium,Review pending,93
+"Esplanade,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,92
+Gondia,Gondia,Gondia,Unmapped,Medium,Review pending,92
+Namakkal,Namakkal,Namakkal,Unmapped,Medium,Review pending,92
+Sri-ganganagar,Sri-Ganganagar,Sri-Ganganagar,Unmapped,Medium,Review pending,92
+Bhilwara,Bhilwara,Bhilwara,Unmapped,Medium,Review pending,91
+Darbhanga,Darbhanga,Darbhanga,Unmapped,Medium,Review pending,91
+Kalaburagi,Kalaburagi,Kalaburagi,Unmapped,Medium,Review pending,91
+Ratnagiri,Ratnagiri,Ratnagiri,Unmapped,Medium,Review pending,91
+Solan,Solan,Solan,Unmapped,Medium,Review pending,91
+Imphal,Imphal,Imphal,Unmapped,Medium,Review pending,90
+Bhiwani,Bhiwani,Bhiwani,Unmapped,Medium,Review pending,89
+Dhar,Dhar,Dhar,Unmapped,Medium,Review pending,88
+Hassan,Hassan,Hassan,Unmapped,Medium,Review pending,88
+Kanchrapara,Kanchrapara,Kanchrapara,Unmapped,Medium,Review pending,88
+"Thrippunithura,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,88
+"Thakurpukur,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,87
+Bharuch,Bharuch,Bharuch,Unmapped,Medium,Review pending,86
+Bhimavaram,Bhimavaram,Bhimavaram,Unmapped,Medium,Review pending,86
+"Race Course,Coimbatore",Coimbatore,Coimbatore,Unmapped,Medium,Review pending,85
+"Shantinagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,85
+Thiruvallur,Thiruvallur,Thiruvallur,Unmapped,Medium,Review pending,85
+"Hatibagan,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,84
+Junagadh,Junagadh,Junagadh,Unmapped,Medium,Review pending,84
+Virudhunagar,Virudhunagar,Virudhunagar,Unmapped,Medium,Review pending,84
+Karad,Karad,Karad,Unmapped,Medium,Review pending,83
+Kashipur,Kashipur,Kashipur,Unmapped,Medium,Review pending,83
+Khanna,Khanna,Khanna,Unmapped,Medium,Review pending,83
+Moga,Moga,Moga,Unmapped,Medium,Review pending,83
+Dharmapuri,Dharmapuri,Dharmapuri,Unmapped,Medium,Review pending,82
+Habra,Habra,Habra,Unmapped,Medium,Review pending,82
+Karaikkudi,Karaikkudi,Karaikkudi,Unmapped,Medium,Review pending,82
+Moradabad,Moradabad,Moradabad,Unmapped,Medium,Review pending,82
+"Greater Kailash New,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,81
+Tiruvannamalai,Tiruvannamalai,Tiruvannamalai,Unmapped,Medium,Review pending,81
+Pudukkottai,Pudukkottai,Pudukkottai,Unmapped,Medium,Review pending,80
+Changanassery,Changanassery,Changanassery,Unmapped,Medium,Review pending,79
+Chhindwara,Chhindwara,Chhindwara,Unmapped,Medium,Review pending,79
+Chitradurga,Chitradurga,Chitradurga,Unmapped,Medium,Review pending,79
+"Aluva,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,78
+Navsari,Navsari,Navsari,Unmapped,Medium,Review pending,78
+Sangrur,Sangrur,Sangrur,Unmapped,Medium,Review pending,78
+Cuddalore,Cuddalore,Cuddalore,Unmapped,Medium,Review pending,77
+Madanapalle,Madanapalle,Madanapalle,Unmapped,Medium,Review pending,77
+Sivakasi,Sivakasi,Sivakasi,Unmapped,Medium,Review pending,77
+Bagdogra,Bagdogra,Bagdogra,Unmapped,Medium,Review pending,76
+Ambikapur,Ambikapur,Ambikapur,Unmapped,Medium,Review pending,75
+Baddi,Baddi,Baddi,Unmapped,Medium,Review pending,74
+Barnala,Barnala,Barnala,Unmapped,Medium,Review pending,74
+Kharagpur,Kharagpur,Kharagpur,Unmapped,Medium,Review pending,74
+Lakhimpur,Lakhimpur,Lakhimpur,Unmapped,Medium,Review pending,74
+Orai,Orai,Orai,Unmapped,Medium,Review pending,74
+Tezpur,Tezpur,Tezpur,Unmapped,Medium,Review pending,74
+Vizianagaram,Vizianagaram,Vizianagaram,Unmapped,Medium,Review pending,74
+Firozabad,Firozabad,Firozabad,Unmapped,Medium,Review pending,73
+Dhule,Dhule,Dhule,Unmapped,Medium,Review pending,72
+Etawah,Etawah,Etawah,Unmapped,Medium,Review pending,72
+Jaunpur,Jaunpur,Jaunpur,Unmapped,Medium,Review pending,72
+Kapurthala,Kapurthala,Kapurthala,Unmapped,Medium,Review pending,72
+Rae-bareli,Rae-Bareli,Rae-Bareli,Unmapped,Medium,Review pending,72
+Pali,Pali,Pali,Unmapped,Medium,Review pending,71
+"Fort Kochi,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,70
+Mandya,Mandya,Mandya,Unmapped,Medium,Review pending,70
+Nagaon,Nagaon,Nagaon,Unmapped,Medium,Review pending,70
+Sivasagar,Sivasagar,Sivasagar,Unmapped,Medium,Review pending,70
+Mancherial,Mancherial,Mancherial,Unmapped,Medium,Review pending,69
+Abohar,Abohar,Abohar,Unmapped,Medium,Review pending,68
+Ambur,Ambur,Ambur,Unmapped,Medium,Review pending,68
+Hanumangarh,Hanumangarh,Hanumangarh,Unmapped,Medium,Review pending,68
+Proddatur,Proddatur,Proddatur,Unmapped,Medium,Review pending,68
+Batala,Batala,Batala,Unmapped,Medium,Review pending,67
+Krishnagiri,Krishnagiri,Krishnagiri,Unmapped,Medium,Review pending,67
+Silchar,Silchar,Silchar,Unmapped,Medium,Review pending,67
+Bharabanki,Bharabanki,Bharabanki,Unmapped,Medium,Review pending,66
+Yavatmal,Yavatmal,Yavatmal,Unmapped,Medium,Review pending,66
+Chittoor,Chittoor,Chittoor,Unmapped,Medium,Review pending,65
+Jind,Jind,Jind,Unmapped,Medium,Review pending,65
+Katni,Katni,Katni,Unmapped,Medium,Review pending,65
+Mahbubnagar,Mahbubnagar,Mahbubnagar,Unmapped,Medium,Review pending,65
+Rajapalayam,Rajapalayam,Rajapalayam,Unmapped,Medium,Review pending,65
+Budaun,Budaun,Budaun,Unmapped,Medium,Review pending,64
+Ropar,Ropar,Ropar,Unmapped,Medium,Review pending,64
+Bijapur,Bijapur,Bijapur,Unmapped,Medium,Review pending,63
+"Hinjewadi Phase-3,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,63
+"Kalamassery,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,63
+Ooty,Ooty,Ooty,Unmapped,Medium,Review pending,63
+Begusarai,Begusarai,Begusarai,Unmapped,Medium,Review pending,62
+Jamshedpur,Jamshedpur,Jamshedpur,Unmapped,Medium,Review pending,62
+Nandyal,Nandyal,Nandyal,Unmapped,Medium,Review pending,62
+Rampur,Rampur,Rampur,Unmapped,Medium,Review pending,62
+Berhampore,Berhampore,Berhampore,Unmapped,Medium,Review pending,61
+Farrukhabad,Farrukhabad,Farrukhabad,Unmapped,Medium,Review pending,61
+Hapur,Hapur,Hapur,Unmapped,Medium,Review pending,61
+Bulandshahr,Bulandshahr,Bulandshahr,Unmapped,Medium,Review pending,60
+Srikakulam,Srikakulam,Srikakulam,Unmapped,Medium,Review pending,60
+"Vyttila,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,59
+Beawar,Beawar,Beawar,Unmapped,Medium,Review pending,58
+Beed,Beed,Beed,Unmapped,Medium,Review pending,58
+Machilipatnam,Machilipatnam,Machilipatnam,Unmapped,Medium,Review pending,58
+Malda,Malda,Malda,Unmapped,Medium,Review pending,58
+Sitapur,Sitapur,Sitapur,Unmapped,Medium,Review pending,58
+Kaithal,Kaithal,Kaithal,Unmapped,Medium,Review pending,57
+Kothamanagalam,Kothamanagalam,Kothamanagalam,Unmapped,Medium,Review pending,57
+Muktsar,Muktsar,Muktsar,Unmapped,Medium,Review pending,57
+Vidisha,Vidisha,Vidisha,Unmapped,Medium,Review pending,57
+Dewas,Dewas,Dewas,Unmapped,Medium,Review pending,56
+Korba,Korba,Korba,Unmapped,Medium,Review pending,56
+Veraval,Veraval,Veraval,Unmapped,Medium,Review pending,56
+Bhuj,Bhuj,Bhuj,Unmapped,Medium,Review pending,55
+Kotdwar,Kotdwar,Kotdwar,Unmapped,Medium,Review pending,55
+Ankleshwar,Ankleshwar,Ankleshwar,Unmapped,Medium,Review pending,54
+Chhatarpur,Chhatarpur,Chhatarpur,Unmapped,Medium,Review pending,54
+Jalpaiguri,Jalpaiguri,Jalpaiguri,Unmapped,Medium,Review pending,54
+Mirzapur,Mirzapur,Mirzapur,Unmapped,Medium,Review pending,54
+"Naktala,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,54
+Nalgonda,Nalgonda,Nalgonda,Unmapped,Medium,Review pending,54
+Rajkot,Rajkot,Rajkot,Unmapped,Medium,Review pending,54
+Faridkot,Faridkot,Faridkot,Unmapped,Medium,Review pending,53
+Hoshangabad,Hoshangabad,Hoshangabad,Unmapped,Medium,Review pending,53
+Biharsharif,Biharsharif,Biharsharif,Unmapped,Medium,Review pending,52
+Chikmagalur,Chikmagalur,Chikmagalur,Unmapped,Medium,Review pending,52
+Duliajan,Duliajan,Duliajan,Unmapped,Medium,Review pending,52
+Pilibhit,Pilibhit,Pilibhit,Unmapped,Medium,Review pending,52
+Banda,Banda,Banda,Unmapped,Medium,Review pending,51
+Basti,Basti,Basti,Unmapped,Medium,Review pending,51
+Chidambaram,Chidambaram,Chidambaram,Unmapped,Medium,Review pending,51
+Gonda,Gonda,Gonda,Unmapped,Medium,Review pending,51
+Kovilpatti,Kovilpatti,Kovilpatti,Unmapped,Medium,Review pending,51
+Raichur,Raichur,Raichur,Unmapped,Medium,Review pending,51
+Adilabad,Adilabad,Adilabad,Unmapped,Medium,Review pending,50
+Arrah,Arrah,Arrah,Unmapped,Medium,Review pending,50
+Aurangabad_bihar,Aurangabad_Bihar,Aurangabad_Bihar,Unmapped,Medium,Review pending,50
+Purulia,Purulia,Purulia,Unmapped,Medium,Review pending,50
+Baramati,Baramati,Baramati,Unmapped,Medium,Review pending,49
+Dumka,Dumka,Dumka,Unmapped,Medium,Review pending,49
+Fatehpur,Fatehpur,Fatehpur,Unmapped,Medium,Review pending,49
+Himmatnagar,Himmatnagar,Himmatnagar,Unmapped,Medium,Review pending,49
+Motihari,Motihari,Motihari,Unmapped,Medium,Review pending,49
+Porbandar,Porbandar,Porbandar,Unmapped,Medium,Review pending,49
+Tinsukia,Tinsukia,Tinsukia,Unmapped,Medium,Review pending,49
+Azamgarh,Azamgarh,Azamgarh,Unmapped,Medium,Review pending,48
+Chhapra,Chhapra,Chhapra,Unmapped,Medium,Review pending,48
+Chittorgarh,Chittorgarh,Chittorgarh,Unmapped,Medium,Review pending,48
+Karunagappaly,Karunagappaly,Karunagappaly,Unmapped,Medium,Review pending,48
+Medinipur,Medinipur,Medinipur,Unmapped,Medium,Review pending,48
+Siddipet,Siddipet,Siddipet,Unmapped,Medium,Review pending,48
+"Kachiguda,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,47
+Katihar,Katihar,Katihar,Unmapped,Medium,Review pending,47
+Parbhani,Parbhani,Parbhani,Unmapped,Medium,Review pending,47
+Ramanathapuram,Ramanathapuram,Ramanathapuram,Unmapped,Medium,Review pending,47
+Bongaigaon,Bongaigaon,Bongaigaon,Unmapped,Medium,Review pending,46
+Dimapur,Dimapur,Dimapur,Unmapped,Medium,Review pending,46
+Hardoi,Hardoi,Hardoi,Unmapped,Medium,Review pending,46
+Modinagar,Modinagar,Modinagar,Unmapped,Medium,Review pending,46
+Gudivada,Gudivada,Gudivada,Unmapped,Medium,Review pending,45
+Jagdalpur,Jagdalpur,Jagdalpur,Unmapped,Medium,Review pending,45
+Jhunjhunu,Jhunjhunu,Jhunjhunu,Unmapped,Medium,Review pending,45
+Patiala,Patiala,Patiala,Unmapped,Medium,Review pending,45
+Tadepalligudem,Tadepalligudem,Tadepalligudem,Unmapped,Medium,Review pending,45
+Bardoli,Bardoli,Bardoli,Unmapped,Medium,Review pending,44
+Bhusawal,Bhusawal,Bhusawal,Unmapped,Medium,Review pending,44
+Gangapur-city,Gangapur-City,Gangapur-City,Unmapped,Medium,Review pending,44
+Siwan,Siwan,Siwan,Unmapped,Medium,Review pending,44
+Bijnor,Bijnor,Bijnor,Unmapped,Medium,Review pending,43
+Khandwa,Khandwa,Khandwa,Unmapped,Medium,Review pending,43
+Neemuch,Neemuch,Neemuch,Unmapped,Medium,Review pending,43
+Palampur,Palampur,Palampur,Unmapped,Medium,Review pending,43
+Samastipur,Samastipur,Samastipur,Unmapped,Medium,Review pending,43
+Alipurduar,Alipurduar,Alipurduar,Unmapped,Medium,Review pending,42
+Fatehabad,Fatehabad,Fatehabad,Unmapped,Medium,Review pending,42
+Jagraon,Jagraon,Jagraon,Unmapped,Medium,Review pending,42
+Ramagundam,Ramagundam,Ramagundam,Unmapped,Medium,Review pending,42
+Bahraich,Bahraich,Bahraich,Unmapped,Medium,Review pending,41
+Bidar,Bidar,Bidar,Unmapped,Medium,Review pending,41
+Guna,Guna,Guna,Unmapped,Medium,Review pending,40
+Palani,Palani,Palani,Unmapped,Medium,Review pending,40
+Raigarh,Raigarh,Raigarh,Unmapped,Medium,Review pending,40
+Burhanpur,Burhanpur,Burhanpur,Unmapped,Medium,Review pending,39
+Cooch-behar,Cooch-Behar,Cooch-Behar,Unmapped,Medium,Review pending,39
+Dahod,Dahod,Dahod,Unmapped,Medium,Review pending,39
+Fatehgarh-sahib,Fatehgarh-Sahib,Fatehgarh-Sahib,Unmapped,Medium,Review pending,39
+Kishangarh,Kishangarh,Kishangarh,Unmapped,Medium,Review pending,39
+Kolar,Kolar,Kolar,Unmapped,Medium,Review pending,39
+Kopargaon,Kopargaon,Kopargaon,Unmapped,Medium,Review pending,39
+Shivpuri,Shivpuri,Shivpuri,Unmapped,Medium,Review pending,39
+Betul,Betul,Betul,Unmapped,Medium,Review pending,38
+Dharamshala,Dharamshala,Dharamshala,Unmapped,Medium,Review pending,38
+Ichalkaranji,Ichalkaranji,Ichalkaranji,Unmapped,Medium,Review pending,38
+Mandsaur,Mandsaur,Mandsaur,Unmapped,Medium,Review pending,38
+Pusad,Pusad,Pusad,Unmapped,Medium,Review pending,38
+Adoni,Adoni,Adoni,Unmapped,Medium,Review pending,37
+Chalakkudy,Chalakkudy,Chalakkudy,Unmapped,Medium,Review pending,37
+Gurdaspur,Gurdaspur,Gurdaspur,Unmapped,Medium,Review pending,37
+Rajnandgaon,Rajnandgaon,Rajnandgaon,Unmapped,Medium,Review pending,37
+Hospet,Hospet,Hospet,Unmapped,Medium,Review pending,36
+Maunath-bhanjan,Maunath-Bhanjan,Maunath-Bhanjan,Unmapped,Medium,Review pending,36
+Nangal,Nangal,Nangal,Unmapped,Medium,Review pending,36
+Narnaul,Narnaul,Narnaul,Unmapped,Medium,Review pending,36
+Suratgarh,Suratgarh,Suratgarh,Unmapped,Medium,Review pending,36
+Tenkasi,Tenkasi,Tenkasi,Unmapped,Medium,Review pending,36
+Bapatlachirala,Bapatlachirala,Bapatlachirala,Unmapped,Medium,Review pending,35
+Chikkaballapur,Chikkaballapur,Chikkaballapur,Unmapped,Medium,Review pending,35
+Tanuku,Tanuku,Tanuku,Unmapped,Medium,Review pending,35
+Theni,Theni,Theni,Unmapped,Medium,Review pending,35
+Thiruvarur,Thiruvarur,Thiruvarur,Unmapped,Medium,Review pending,35
+Bettiah,Bettiah,Bettiah,Unmapped,Medium,Review pending,34
+Mughalsarai,Mughalsarai,Mughalsarai,Unmapped,Medium,Review pending,34
+Perinthalmanna,Perinthalmanna,Perinthalmanna,Unmapped,Medium,Review pending,34
+Kunnamkullam,Kunnamkullam,Kunnamkullam,Unmapped,Medium,Review pending,33
+Munger,Munger,Munger,Unmapped,Medium,Review pending,33
+Balurghat,Balurghat,Balurghat,Unmapped,Medium,Review pending,32
+Bela-pratapgarh,Bela-Pratapgarh,Bela-Pratapgarh,Unmapped,Medium,Review pending,32
+Bhandara,Bhandara,Bhandara,Unmapped,Medium,Review pending,32
+Kumarakom,Kumarakom,Kumarakom,Unmapped,Medium,Review pending,32
+Mayiladuthurai,Mayiladuthurai,Mayiladuthurai,Unmapped,Medium,Review pending,32
+Morena,Morena,Morena,Unmapped,Medium,Review pending,32
+Nainital,Nainital,Nainital,Unmapped,Medium,Review pending,32
+Saharsa,Saharsa,Saharsa,Unmapped,Medium,Review pending,32
+Silvassa,Silvassa,Silvassa,Unmapped,Medium,Review pending,32
+Surendranagar-dudhrej,Surendranagar-Dudhrej,Surendranagar-Dudhrej,Unmapped,Medium,Review pending,32
+Jagtial,Jagtial,Jagtial,Unmapped,Medium,Review pending,31
+Jhalawar,Jhalawar,Jhalawar,Unmapped,Medium,Review pending,31
+Malegaon,Malegaon,Malegaon,Unmapped,Medium,Review pending,31
+Raiganj,Raiganj,Raiganj,Unmapped,Medium,Review pending,31
+"Suncity & Bandlaguda,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,31
+Aizawl,Aizawl,Aizawl,Unmapped,Medium,Review pending,30
+Chalisgaon,Chalisgaon,Chalisgaon,Unmapped,Medium,Review pending,30
+Chengannur,Chengannur,Chengannur,Unmapped,Medium,Review pending,30
+Cherthala,Cherthala,Cherthala,Unmapped,Medium,Review pending,30
+Doddaballapura,Doddaballapura,Doddaballapura,Unmapped,Medium,Review pending,30
+Giridih,Giridih,Giridih,Unmapped,Medium,Review pending,30
+Gopalganj,Gopalganj,Gopalganj,Unmapped,Medium,Review pending,30
+"Model Town,Ludhiana",Ludhiana,Ludhiana,Unmapped,Medium,Review pending,30
+Rajsamand,Rajsamand,Rajsamand,Unmapped,Medium,Review pending,30
+Uran-islampur,Uran-Islampur,Uran-Islampur,Unmapped,Medium,Review pending,30
+Golaghat,Golaghat,Golaghat,Unmapped,Medium,Review pending,29
+Madhubani,Madhubani,Madhubani,Unmapped,Medium,Review pending,29
+Madikeri,Madikeri,Madikeri,Unmapped,Medium,Review pending,29
+Malout,Malout,Malout,Unmapped,Medium,Review pending,29
+Narasaraopet,Narasaraopet,Narasaraopet,Unmapped,Medium,Review pending,29
+Pala,Pala,Pala,Unmapped,Medium,Review pending,29
+Suryapet,Suryapet,Suryapet,Unmapped,Medium,Review pending,29
+Chakdaha,Chakdaha,Chakdaha,Unmapped,Medium,Review pending,28
+Lalitpur,Lalitpur,Lalitpur,Unmapped,Medium,Review pending,28
+Udgir,Udgir,Udgir,Unmapped,Medium,Review pending,28
+Warangal,Warangal,Warangal,Unmapped,Medium,Review pending,28
+"West Marredpally,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,28
+Amreli,Amreli,Amreli,Unmapped,Medium,Review pending,27
+Barmer,Barmer,Barmer,Unmapped,Medium,Review pending,27
+"Kankurgachi,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,27
+Kannauj,Kannauj,Kannauj,Unmapped,Medium,Review pending,27
+Kendujhar,Kendujhar,Kendujhar,Unmapped,Medium,Review pending,27
+"Kidderpore,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,27
+Thalassery,Thalassery,Thalassery,Unmapped,Medium,Review pending,27
+Tuni,Tuni,Tuni,Unmapped,Medium,Review pending,27
+Barshi,Barshi,Barshi,Unmapped,Medium,Review pending,26
+Guntakal,Guntakal,Guntakal,Unmapped,Medium,Review pending,26
+Narsinghpur,Narsinghpur,Narsinghpur,Unmapped,Medium,Review pending,26
+Osmanabad,Osmanabad,Osmanabad,Unmapped,Medium,Review pending,26
+Balrampur,Balrampur,Balrampur,Unmapped,Medium,Review pending,25
+Godhra,Godhra,Godhra,Unmapped,Medium,Review pending,25
+Kishanganj,Kishanganj,Kishanganj,Unmapped,Medium,Review pending,25
+Tadpatri,Tadpatri,Tadpatri,Unmapped,Medium,Review pending,25
+Vyara,Vyara,Vyara,Unmapped,Medium,Review pending,25
+Waidhan,Waidhan,Waidhan,Unmapped,Medium,Review pending,25
+Washim,Washim,Washim,Unmapped,Medium,Review pending,25
+Buxar,Buxar,Buxar,Unmapped,Medium,Review pending,24
+Dehri,Dehri,Dehri,Unmapped,Medium,Review pending,24
+Irinjalakuda,Irinjalakuda,Irinjalakuda,Unmapped,Medium,Review pending,24
+Itarsi,Itarsi,Itarsi,Unmapped,Medium,Review pending,24
+Khamgaon,Khamgaon,Khamgaon,Unmapped,Medium,Review pending,24
+Kottarakkara,Kottarakkara,Kottarakkara,Unmapped,Medium,Review pending,24
+Nabadwip,Nabadwip,Nabadwip,Unmapped,Medium,Review pending,24
+Thodupuzha,Thodupuzha,Thodupuzha,Unmapped,Medium,Review pending,24
+Balaghat,Balaghat,Balaghat,Unmapped,Medium,Review pending,23
+Baran,Baran,Baran,Unmapped,Medium,Review pending,23
+Bhadohi,Bhadohi,Bhadohi,Unmapped,Medium,Review pending,23
+Bhind,Bhind,Bhind,Unmapped,Medium,Review pending,23
+Bolpur,Bolpur,Bolpur,Unmapped,Medium,Review pending,23
+Gauriganj,Gauriganj,Gauriganj,Unmapped,Medium,Review pending,23
+Kanyakumari,Kanyakumari,Kanyakumari,Unmapped,Medium,Review pending,23
+Raghunathpur,Raghunathpur,Raghunathpur,Unmapped,Medium,Review pending,23
+Raniganj,Raniganj,Raniganj,Unmapped,Medium,Review pending,23
+Arakkonam,Arakkonam,Arakkonam,Unmapped,Medium,Review pending,22
+Kodaikanal,Kodaikanal,Kodaikanal,Unmapped,Medium,Review pending,22
+Neyveli,Neyveli,Neyveli,Unmapped,Medium,Review pending,22
+Shikohabad,Shikohabad,Shikohabad,Unmapped,Medium,Review pending,22
+Shimla,Shimla,Shimla,Unmapped,Medium,Review pending,22
+Balangir,Balangir,Balangir,Unmapped,Medium,Review pending,21
+Chikhli,Chikhli,Chikhli,Unmapped,Medium,Review pending,21
+"Dhankawadi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,21
+Gadag-betigeri,Gadag-Betigeri,Gadag-Betigeri,Unmapped,Medium,Review pending,21
+Jhargram,Jhargram,Jhargram,Unmapped,Medium,Review pending,21
+Kamareddy,Kamareddy,Kamareddy,Unmapped,Medium,Review pending,21
+Miryalaguda,Miryalaguda,Miryalaguda,Unmapped,Medium,Review pending,21
+Palanpur,Palanpur,Palanpur,Unmapped,Medium,Review pending,21
+Bhatkal,Bhatkal,Bhatkal,Unmapped,Medium,Review pending,20
+Chiplun,Chiplun,Chiplun,Unmapped,Medium,Review pending,20
+Dausa,Dausa,Dausa,Unmapped,Medium,Review pending,20
+Diu,Diu,Diu,Unmapped,Medium,Review pending,20
+Jahanabad,Jahanabad,Jahanabad,Unmapped,Medium,Review pending,20
+Kavali,Kavali,Kavali,Unmapped,Medium,Review pending,20
+Sehore,Sehore,Sehore,Unmapped,Medium,Review pending,20
+Varkala,Varkala,Varkala,Unmapped,Medium,Review pending,20
+Buldana,Buldana,Buldana,Unmapped,Medium,Review pending,19
+Churu,Churu,Churu,Unmapped,Medium,Review pending,19
+Dhoraji,Dhoraji,Dhoraji,Unmapped,Medium,Review pending,19
+Hansi,Hansi,Hansi,Unmapped,Medium,Review pending,19
+Hindaun,Hindaun,Hindaun,Unmapped,Medium,Review pending,19
+Kadiri,Kadiri,Kadiri,Unmapped,Medium,Review pending,19
+Kottakkal,Kottakkal,Kottakkal,Unmapped,Medium,Review pending,19
+Nagda,Nagda,Nagda,Unmapped,Medium,Review pending,19
+Ranaghat-wb,Ranaghat-Wb,Ranaghat-Wb,Unmapped,Medium,Review pending,19
+Muvattupuzha,Muvattupuzha,Muvattupuzha,Unmapped,Medium,Review pending,18
+Shrirampur,Shrirampur,Shrirampur,Unmapped,Medium,Review pending,18
+Sirsi,Sirsi,Sirsi,Unmapped,Medium,Review pending,18
+Arambagh,Arambagh,Arambagh,Unmapped,Medium,Review pending,17
+Aruppukottai,Aruppukottai,Aruppukottai,Unmapped,Medium,Review pending,17
+Bhadrachalam,Bhadrachalam,Bhadrachalam,Unmapped,Medium,Review pending,17
+Haldia,Haldia,Haldia,Unmapped,Medium,Review pending,17
+Manjeri,Manjeri,Manjeri,Unmapped,Medium,Review pending,17
+Moodbidri,Moodbidri,Moodbidri,Unmapped,Medium,Review pending,17
+"New Sohna Road,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,17
+Tohana,Tohana,Tohana,Unmapped,Medium,Review pending,17
+Bagalkot,Bagalkot,Bagalkot,Unmapped,Medium,Review pending,16
+Bhawanipatna,Bhawanipatna,Bhawanipatna,Unmapped,Medium,Review pending,16
+Hinganghat,Hinganghat,Hinganghat,Unmapped,Medium,Review pending,16
+Krishnanagar,Krishnanagar,Krishnanagar,Unmapped,Medium,Review pending,16
+Malappuram,Malappuram,Malappuram,Unmapped,Medium,Review pending,16
+Nirmal,Nirmal,Nirmal,Unmapped,Medium,Review pending,16
+Rayachoty,Rayachoty,Rayachoty,Unmapped,Medium,Review pending,16
+Bundi,Bundi,Bundi,Unmapped,Medium,Review pending,15
+Fazilka,Fazilka,Fazilka,Unmapped,Medium,Review pending,15
+Nagapattinam,Nagapattinam,Nagapattinam,Unmapped,Medium,Review pending,15
+Naraingarh,Naraingarh,Naraingarh,Unmapped,Medium,Review pending,15
+Sindhanur,Sindhanur,Sindhanur,Unmapped,Medium,Review pending,15
+"Tangra,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,15
+Basirhat,Basirhat,Basirhat,Unmapped,Medium,Review pending,14
+Chandausi,Chandausi,Chandausi,Unmapped,Medium,Review pending,14
+Mandi-dabwali,Mandi-Dabwali,Mandi-Dabwali,Unmapped,Medium,Review pending,14
+Ramanagara,Ramanagara,Ramanagara,Unmapped,Medium,Review pending,14
+Sasaram,Sasaram,Sasaram,Unmapped,Medium,Review pending,14
+Singrauli,Singrauli,Singrauli,Unmapped,Medium,Review pending,14
+South-goa,South-Goa,South-Goa,Unmapped,Medium,Review pending,14
+Chopda,Chopda,Chopda,Unmapped,Medium,Review pending,13
+Koppal,Koppal,Koppal,Unmapped,Medium,Review pending,13
+Nandurbar,Nandurbar,Nandurbar,Unmapped,Medium,Review pending,13
+Sawai-madhopur,Sawai-Madhopur,Sawai-Madhopur,Unmapped,Medium,Review pending,13
+Visnagar,Visnagar,Visnagar,Unmapped,Medium,Review pending,13
+Bongaon,Bongaon,Bongaon,Unmapped,Medium,Review pending,12
+Gokak,Gokak,Gokak,Unmapped,Medium,Review pending,12
+Kadayanallur,Kadayanallur,Kadayanallur,Unmapped,Medium,Review pending,12
+Karwar,Karwar,Karwar,Unmapped,Medium,Review pending,12
+"New Cyber City,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,12
+Sangamner,Sangamner,Sangamner,Unmapped,Medium,Review pending,12
+"Wanowrie,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,12
+"Alambagh,Lucknow",Lucknow,Lucknow,Uttar Pradesh,High,Reviewed rule,11
+"Balanagar & Idpl,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,11
+Dharwad,Dharwad,Dharwad,Unmapped,Medium,Review pending,11
+Gadwal,Gadwal,Gadwal,Unmapped,Medium,Review pending,11
+Jalaun,Jalaun,Jalaun,Unmapped,Medium,Review pending,11
+Kayamkulam,Kayamkulam,Kayamkulam,Unmapped,Medium,Review pending,11
+"LalDarwaja,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,11
+"Lulu Mall,Kochi",Kochi,Kochi,Unmapped,Medium,Review pending,11
+Markapur,Markapur,Markapur,Unmapped,Medium,Review pending,11
+"New DLF Phase 4,Gurgaon",Gurgaon,Gurgaon,Haryana,High,Reviewed rule,11
+Puttur,Puttur,Puttur,Unmapped,Medium,Review pending,11
+Tiptur,Tiptur,Tiptur,Unmapped,Medium,Review pending,11
+Uluberia,Uluberia,Uluberia,Unmapped,Medium,Review pending,11
+Vapi,Vapi,Vapi,Unmapped,Medium,Review pending,11
+Barwani,Barwani,Barwani,Unmapped,Medium,Review pending,10
+Kothagudem,Kothagudem,Kothagudem,Unmapped,Medium,Review pending,10
+Mussoorie,Mussoorie,Mussoorie,Unmapped,Medium,Review pending,10
+Bantwal,Bantwal,Bantwal,Unmapped,Medium,Review pending,9
+Gangtok,Gangtok,Gangtok,Unmapped,Medium,Review pending,9
+Nipani,Nipani,Nipani,Unmapped,Medium,Review pending,9
+Bodhan-rural,Bodhan-Rural,Bodhan-Rural,Unmapped,Medium,Review pending,8
+Budhwal,Budhwal,Budhwal,Unmapped,Medium,Review pending,7
+Kundapura,Kundapura,Kundapura,Unmapped,Medium,Review pending,7
+Lonavla,Lonavla,Lonavla,Unmapped,Medium,Review pending,7
+Srivilliputhur,Srivilliputhur,Srivilliputhur,Unmapped,Medium,Review pending,7
+Tarn-taran-sahib,Tarn-Taran-Sahib,Tarn-Taran-Sahib,Unmapped,Medium,Review pending,7
+"Jakhan,Dehradun",Dehradun,Dehradun,Unmapped,Medium,Review pending,6
+Kasaragod,Kasaragod,Kasaragod,Unmapped,Medium,Review pending,6
+"Nampally,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,6
+Thiruvalla,Thiruvalla,Thiruvalla,Unmapped,Medium,Review pending,6
+Bodinayakanur,Bodinayakanur,Bodinayakanur,Unmapped,Medium,Review pending,5
+"Greater Noida,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,5
+"Royapuram,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,5
+"Science City,Ahmedabad",Ahmedabad,Ahmedabad,Gujarat,High,Reviewed rule,5
+"Bopodi,Pune",Pune,Pune,Maharashtra,High,Reviewed rule,4
+Kumta,Kumta,Kumta,Unmapped,Medium,Review pending,4
+Murshidabad,Murshidabad,Murshidabad,Unmapped,Medium,Review pending,4
+"North Dumdum,Kolkata",Kolkata,Kolkata,West Bengal,High,Reviewed rule,4
+Bilimora,Bilimora,Bilimora,Unmapped,Medium,Review pending,3
+Dahanu,Dahanu,Dahanu,Unmapped,Medium,Review pending,3
+Darjeeling,Darjeeling,Darjeeling,Unmapped,Medium,Review pending,3
+Dhanbad,Dhanbad,Dhanbad,Unmapped,Medium,Review pending,3
+Mandi-gobindgarh,Mandi-Gobindgarh,Mandi-Gobindgarh,Unmapped,Medium,Review pending,3
+"Race Course Dehradun,Dehradun",Dehradun,Dehradun,Unmapped,Medium,Review pending,3
+"Rajajinagar,Bangalore",Bangalore,Bangalore,Karnataka,High,Reviewed rule,3
+Ranibennur,Ranibennur,Ranibennur,Unmapped,Medium,Review pending,3
+"Sector 18,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,3
+Boisar,Boisar,Boisar,Unmapped,Medium,Review pending,2
+Itanagar,Itanagar,Itanagar,Unmapped,Medium,Review pending,2
+"Jagadamba Junction,Vizag",Vizag,Vizag,Unmapped,Medium,Review pending,2
+Mount-abu,Mount-Abu,Mount-Abu,Unmapped,Medium,Review pending,2
+"Padmarao Nagar,Hyderabad",Hyderabad,Hyderabad,Telangana,High,Reviewed rule,2
+"Alkapuri,Vadodara",Vadodara,Vadodara,Unmapped,Medium,Review pending,1
+"Alwarpet,Chennai",Chennai,Chennai,Tamil Nadu,High,Reviewed rule,1
+"BBK_Chattarpur,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1
+"BBK_MayurVihar,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1
+Hampi,Hampi,Hampi,Unmapped,Medium,Review pending,1
+Kohima,Kohima,Kohima,Unmapped,Medium,Review pending,1
+"Mahim Dadar,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,1
+Manali,Manali,Manali,Unmapped,Medium,Review pending,1
+Naharlagun,Naharlagun,Naharlagun,Unmapped,Medium,Review pending,1
+"Noida Expressway,Delhi",Delhi,Delhi,Delhi,High,Reviewed rule,1
+Rangpo,Rangpo,Rangpo,Unmapped,Medium,Review pending,1
+"Starbucks_BKC,Mumbai",Mumbai,Mumbai,Maharashtra,High,Reviewed rule,1

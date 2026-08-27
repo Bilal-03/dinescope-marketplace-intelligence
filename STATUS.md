@@ -1,8 +1,8 @@
 # PlateLens implementation status
 
-Updated: 27 August 2026
+Updated: 28 August 2026
 
-## Current release: Foundation + Product/Growth + Market + Cuisine Opportunity + Decision Lab + Hardening + Portfolio Package
+## Current release: Full analytics suite + public Streamlit implementation
 
 - [x] Phase 0 — Product framing, neutral PlateLens brand, repository and deployment-ready shell
 - [x] Phase 1 — Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
@@ -20,7 +20,11 @@ Updated: 27 August 2026
 - [x] Phase 6 — Decision Lab and configurable opportunity score
 - [x] Phase 7 — Expanded interaction/accessibility test coverage and performance budget
 - [x] Phase 8a — Portfolio case study, production screenshots and release-readiness package
-- [ ] Public release decision — awaiting explicit owner approval; current deployment remains private
+- [x] Public release decision — owner approved public read-only Streamlit access on 28 August 2026
+- [x] Streamlit parity foundation — all six modules, global filters, aggregate exports and PlateLens theme
+- [x] Streamlit data contract — fail-loud aggregate validation and Decision Lab scoring parity
+- [x] Streamlit local acceptance — dependency install, Python tests and browser-rendered module checks
+- [ ] Streamlit Community Cloud publication — GitHub sync and public URL verification in progress
 
 ## Verified acceptance checks
 
@@ -47,8 +51,11 @@ Updated: 27 August 2026
 - [x] Keyboard focus states are visible and selectable market/cuisine rows support Enter/Space
 - [x] Performance budgets cover the aggregate payload, client JavaScript and client CSS
 - [x] Portfolio case study links evidence boundaries, three representative production captures and a release gate
+- [x] Public Streamlit adapter reconciles 148,668 valid transactions to the existing aggregate
+- [x] All six Streamlit workspaces render locally with no raw-record dependency
 
 ## Next recommended build sequence
 
-1. Decide whether the deployment should remain private, become invite-only or become public read-only; rerun access and privacy checks if it changes.
-2. Add server-backed team sharing for saved decision scenarios when durable collaboration is needed.
+1. Sync the approved aggregate-backed Streamlit release to the sanitized public GitHub history and deploy `streamlit_app.py` from `main`.
+2. Verify the public URL, unauthenticated access and module/filter behavior, then add the URL to this checklist.
+3. Add server-backed team sharing for saved Decision Lab scenarios only when durable collaboration becomes a product requirement.

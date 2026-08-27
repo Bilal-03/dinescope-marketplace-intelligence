@@ -1,0 +1,127 @@
+raw_cuisine,canonical_cuisine,cuisine_group,confidence,review_status,row_count
+Chinese,Chinese,Global & niche,High,Standardized label,36508
+North Indian,North Indian,Indian regional,High,Standardized label,32555
+Indian,Indian,Indian regional,High,Reviewed alias,25743
+Snacks,Snacks,Quick service & snacks,High,Standardized label,17244
+Biryani,Biryani,Indian regional,High,Standardized label,14537
+Beverages,Beverages,Desserts & beverages,High,Standardized label,14276
+Fast Food,Fast Food,Quick service & snacks,High,Standardized label,13896
+South Indian,South Indian,Indian regional,High,Standardized label,12031
+Desserts,Desserts,Desserts & beverages,High,Standardized label,11201
+Pizzas,Pizza,Quick service & snacks,High,Reviewed alias,9850
+Bakery,Bakery,Desserts & beverages,High,Standardized label,8851
+Italian,Italian,Global & niche,High,Standardized label,5371
+Ice Cream,Ice Cream,Desserts & beverages,High,Standardized label,5340
+Continental,Continental,Global & niche,High,Standardized label,3964
+American,American,Global & niche,High,Standardized label,3815
+Sweets,Sweets,Desserts & beverages,High,Standardized label,3040
+Mughlai,Mughlai,Indian regional,High,Standardized label,2753
+Arabian,Arabian,Global & niche,High,Standardized label,2464
+Tandoor,Tandoor,Quick service & snacks,High,Standardized label,2351
+Street Food,Street Food,Quick service & snacks,High,Standardized label,1996
+Punjabi,Punjabi,Indian regional,High,Standardized label,1916
+Thalis,Thali,Global & niche,High,Reviewed alias,1840
+Juices,Juice,Desserts & beverages,High,Reviewed alias,1785
+Chaat,Chaat,Quick service & snacks,High,Standardized label,1756
+Healthy Food,Healthy Food,Health & home-style,High,Standardized label,1677
+Asian,Asian,Global & niche,High,Standardized label,1256
+Kebabs,Kebab,Quick service & snacks,High,Reviewed alias,1252
+Pastas,Pasta,Quick service & snacks,High,Reviewed alias,1200
+Salads,Salads,Health & home-style,High,Standardized label,1082
+Combo,Combo,Quick service & snacks,High,Standardized label,1021
+Bengali,Bengali,Indian regional,High,Standardized label,941
+Burgers,Burgers,Quick service & snacks,High,Standardized label,911
+Seafood,Seafood,Global & niche,High,Standardized label,894
+Maharashtrian,Maharashtrian,Indian regional,High,Standardized label,792
+Lebanese,Lebanese,Global & niche,High,Standardized label,721
+Mexican,Mexican,Global & niche,High,Standardized label,662
+Thai,Thai,Global & niche,High,Standardized label,651
+Italian-American,Italian American,Global & niche,High,Reviewed alias,630
+Barbecue,Barbecue,Quick service & snacks,High,Standardized label,620
+Andhra,Andhra,Indian regional,High,Standardized label,612
+Tibetan,Tibetan,Global & niche,High,Standardized label,590
+Hyderabadi,Hyderabadi,Indian regional,High,Standardized label,552
+Kerala,Kerala,Indian regional,High,Standardized label,473
+Gujarati,Gujarati,Indian regional,High,Standardized label,383
+Pan-Asian,Pan Asian,Global & niche,High,Reviewed alias,382
+Home Food,Home Food,Health & home-style,High,Standardized label,371
+Cafe,Cafe,Desserts & beverages,High,Standardized label,314
+Grill,Grill,Quick service & snacks,High,Standardized label,309
+Waffle,Waffle,Desserts & beverages,High,Standardized label,284
+Chettinad,Chettinad,Indian regional,High,Standardized label,266
+Paan,Paan,Desserts & beverages,High,Standardized label,224
+Japanese,Japanese,Global & niche,High,Standardized label,211
+Rajasthani,Rajasthani,Indian regional,High,Standardized label,194
+European,European,Global & niche,High,Standardized label,181
+Afghani,Afghani,Global & niche,High,Standardized label,138
+Oriental,Oriental,Global & niche,High,Standardized label,136
+Bihari,Bihari,Indian regional,High,Standardized label,104
+Goan,Goan,Indian regional,High,Standardized label,100
+Sushi,Sushi,Global & niche,High,Standardized label,90
+Mediterranean,Mediterranean,Global & niche,High,Standardized label,72
+Keto,Keto,Health & home-style,High,Standardized label,71
+Assamese,Assamese,Indian regional,High,Standardized label,68
+Burmese,Burmese,Global & niche,High,Standardized label,67
+Ice Cream Cakes,Ice Cream Cakes,Desserts & beverages,High,Standardized label,66
+Jain,Jain,Health & home-style,High,Standardized label,64
+Middle Eastern,Middle Eastern,Global & niche,High,Standardized label,64
+Coastal,Coastal,Indian regional,High,Standardized label,58
+Korean,Korean,Global & niche,High,Standardized label,56
+Malwani,Malwani,Indian regional,High,Standardized label,56
+Mangalorean,Mangalorean,Indian regional,High,Standardized label,54
+Nepalese,Nepalese,Global & niche,High,Standardized label,54
+North Eastern,North Eastern,Indian regional,High,Standardized label,53
+Turkish,Turkish,Global & niche,High,Standardized label,52
+British,British,Global & niche,High,Standardized label,45
+Haleem,Haleem,Global & niche,High,Standardized label,42
+Lucknowi,Lucknowi,Indian regional,High,Standardized label,39
+French,French,Global & niche,High,Standardized label,38
+Awadhi,Awadhi,Indian regional,High,Standardized label,36
+Oriya,Oriya,Indian regional,High,Standardized label,31
+Naga,Naga,Indian regional,High,Standardized label,28
+Bangladeshi,Bangladeshi,Global & niche,High,Standardized label,24
+Malaysian,Malaysian,Global & niche,High,Standardized label,21
+Kashmiri,Kashmiri,Indian regional,High,Standardized label,18
+Sindhi,Sindhi,Indian regional,High,Standardized label,15
+African,African,Global & niche,High,Standardized label,14
+Parsi,Parsi,Indian regional,High,Standardized label,14
+Portuguese,Portuguese,Global & niche,High,Standardized label,14
+Tex-Mex,Tex Mex,Global & niche,High,Reviewed alias,14
+Indonesian,Indonesian,Global & niche,High,Standardized label,13
+Singaporean,Singaporean,Global & niche,High,Standardized label,12
+Vietnamese,Vietnamese,Global & niche,High,Standardized label,12
+Spanish,Spanish,Global & niche,High,Standardized label,11
+Persian,Persian,Global & niche,High,Standardized label,10
+Steakhouse,Steakhouse,Global & niche,High,Standardized label,10
+8:15 To 11:30 Pm,Excluded,Invalid,Low,Excluded non-cuisine label,9
+Rayalaseema,Rayalaseema,Indian regional,High,Standardized label,8
+SVANidhi Street Food Vendor,Street Food,Quick service & snacks,High,Reviewed alias,8
+Bhutanese,Bhutanese,Global & niche,High,Standardized label,6
+German,German,Global & niche,High,Standardized label,6
+Greek,Greek,Global & niche,High,Standardized label,6
+South American,South American,Global & niche,High,Standardized label,6
+Telangana,Telangana,Indian regional,High,Standardized label,6
+Konkan,Konkan,Indian regional,High,Standardized label,5
+Popular Brand Store,Excluded,Invalid,Low,Excluded non-cuisine label,4
+Tribal,Tribal,Global & niche,High,Standardized label,4
+Mongolian,Mongolian,Global & niche,High,Standardized label,3
+Australian,Australian,Global & niche,High,Standardized label,2
+Sri Lankan,Sri Lankan,Global & niche,High,Standardized label,2
+Attractive Combos Available,Excluded,Invalid,Low,Excluded non-cuisine label,1
+BEVERAGE,Beverages,Desserts & beverages,High,Reviewed alias,1
+Bakery products,Bakery,Desserts & beverages,High,Reviewed alias,1
+Biryani - Shivaji Military Hotel,Biryani,Indian regional,High,Reviewed alias,1
+Bowl Company,Bowl Company,Global & niche,High,Standardized label,1
+Code valid on bill over Rs.99,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Default,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Discount offer from Garden Cafe Express Kankurgachi,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Free Delivery ! Limited Stocks!,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Grocery products,Grocery Products,Global & niche,High,Standardized label,1
+Khasi,Khasi,Indian regional,High,Standardized label,1
+MAX 2 Combos per Order!,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Meat,Meat,Global & niche,High,Standardized label,1
+Navratri Special,Navratri Special,Global & niche,High,Standardized label,1
+Special Discount from (Hotel Swagath),Excluded,Invalid,Low,Excluded non-cuisine label,1
+Use Code JUMBO30 to avail,Excluded,Invalid,Low,Excluded non-cuisine label,1
+Use code XPRESS121 to avail.,Excluded,Invalid,Low,Excluded non-cuisine label,1
+indian,Indian,Indian regional,High,Reviewed alias,1
