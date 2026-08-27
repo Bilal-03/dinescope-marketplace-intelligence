@@ -4,7 +4,7 @@ Updated: 28 August 2026
 
 ## Executive decision
 
-The Python/Streamlit parity application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026.
+The Python/Streamlit parity application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://platelens-food-delivery-intelligence.streamlit.app/.
 
 The public Streamlit app should be read-only and evidence-led. It should not introduce raw customer records, new causal claims or a second, inconsistent metric definition.
 
@@ -88,8 +88,8 @@ Streamlit Community Cloud uses the GitHub repository as the app source, watches 
 3. Choose a stable public subdomain and a Python version that matches local validation.
 4. Confirm `requirements.txt` resolves without unpinned or unnecessary packages.
 5. Deploy and inspect logs plus the first-run experience.
-6. In app settings, choose **public and searchable** only after the privacy and disclaimer checks pass.
-7. Add the Streamlit URL to the README and portfolio case study; retain the existing private Sites URL as the React reference until the migration is complete.
+6. In app settings, choose **public and searchable** only after the privacy and disclaimer checks pass. **Completed:** the app is public read-only.
+7. Add the Streamlit URL to the README and portfolio case study; retain the existing private Sites URL as the React reference until the migration is complete. **Completed:** URL recorded in README, status and release readiness.
 
 Community Cloud supports deploying from public repositories and lets the owner manage public/private sharing in app settings. See [connecting GitHub](https://docs.streamlit.io/deploy/streamlit-community-cloud/get-started/connect-your-github-account) and [sharing an app](https://docs.streamlit.io/deploy/streamlit-community-cloud/share-your-app).
 

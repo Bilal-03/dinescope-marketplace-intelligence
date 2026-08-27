@@ -24,7 +24,7 @@ Updated: 28 August 2026
 - [x] Streamlit parity foundation — all six modules, global filters, aggregate exports and PlateLens theme
 - [x] Streamlit data contract — fail-loud aggregate validation and Decision Lab scoring parity
 - [x] Streamlit local acceptance — dependency install, Python tests and browser-rendered module checks
-- [ ] Streamlit Community Cloud publication — GitHub sync and public URL verification in progress
+- [x] Streamlit Community Cloud publication — [public app](https://platelens-food-delivery-intelligence.streamlit.app/) is live from `main` with Python 3.11
 
 ## Verified acceptance checks
 
@@ -53,9 +53,9 @@ Updated: 28 August 2026
 - [x] Portfolio case study links evidence boundaries, three representative production captures and a release gate
 - [x] Public Streamlit adapter reconciles 148,668 valid transactions to the existing aggregate
 - [x] All six Streamlit workspaces render locally with no raw-record dependency
+- [x] Public URL smoke check — aggregate KPIs, disclaimer and Cuisine Opportunity navigation verified unauthenticated
 
 ## Next recommended build sequence
 
-1. Sync the approved aggregate-backed Streamlit release to the sanitized public GitHub history and deploy `streamlit_app.py` from `main`.
-2. Verify the public URL, unauthenticated access and module/filter behavior, then add the URL to this checklist.
-3. Add server-backed team sharing for saved Decision Lab scenarios only when durable collaboration becomes a product requirement.
+1. Monitor the public app after changes and keep the aggregate checksum/reconciliation tests green.
+2. Add server-backed team sharing for saved Decision Lab scenarios only when durable collaboration becomes a product requirement.
