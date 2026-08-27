@@ -2,15 +2,20 @@
 
 ## Source contract
 
+- Aggregate contract version: `1.1.0`
 - Source file: `zomato_business_complete.csv`
 - SHA-256: `fc5ca0ca1043e3cfb17ab467a7b87bbcc0a516cd766e962b4850a202d5a88be7`
 - Grain used by the product: one source row per unique Order ID
 - Date interpretation: explicit `%m/%d/%Y` parsing
 - Observed window: 4 October 2017 through 26 June 2020
 
+The aggregate builder fails before processing when required source fields are missing or the input does not contain exactly the audited 36 columns. The published artifact records `expected_columns` and `schema_matches` so Python and TypeScript consumers can fail loudly on schema drift.
+
 ## Valid transaction rule
 
 A business KPI transaction must have a non-null order ID, a parsed date, a true `Sales Amount Valid` flag, non-null sales greater than zero, and INR currency. Exclusions are preserved in quality aggregates and are never silently deleted.
+
+Coverage is measured against all 150,281 source rows. The published contract therefore carries explicit missing-field counts—88,755 rows without a rating and 138,145 rows without menu attributes—in addition to the coverage percentages. These counts must reconcile to `round(raw_rows × (1 − coverage))`.
 
 ## Customer definitions
 

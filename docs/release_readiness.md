@@ -13,6 +13,10 @@ Product: PlateLens — Food Delivery Marketplace Intelligence
 
 The owner explicitly approved public Streamlit publication on 28 August 2026. This record authorizes the aggregate-only deployment described in `docs/public_data_boundary.md`; it does not authorize publication of raw records, secrets or private Sites metadata.
 
+## Current Streamlit parity gate
+
+The public Streamlit baseline is live and Phases 0–5 are complete: the aggregate contract and shell are hardened, Overview plus Customer Growth match the reference KPI, chart, cohort, lifecycle and export contracts, Reliability plus Market Demand expose the reference trust and eligibility surfaces, Cuisine Opportunity includes proportional demand, heatmap, selected diagnostics and restaurant identity evidence, and Decision Lab includes session-only scenarios, comparison and rank movement. Durable server-backed scenario sharing remains a separate collaboration backlog item.
+
 ## Readiness checklist
 
 ### Product and narrative
@@ -67,4 +71,4 @@ The existing private React/Sites deployment remains unchanged; the separate publ
 
 ## Next build after release decision
 
-The next product capability after a release decision is server-backed team sharing for saved Decision Lab scenarios. Local presets are deliberately device-scoped today; durable collaboration needs an explicit persistence model, authorization policy and audit trail.
+The next optional capability is server-backed team sharing for saved Decision Lab scenarios. Local/session presets are deliberately session-scoped today and require a separate persistence, authorization and audit design before collaboration is enabled.

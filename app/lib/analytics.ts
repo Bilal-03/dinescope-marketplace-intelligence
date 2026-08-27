@@ -1,5 +1,7 @@
 import rawAnalytics from '@/app/data/analytics.json';
 
+export const AGGREGATE_VERSION = '1.1.0';
+
 export type MonthlyPoint = {
   month: string;
   orders: number;
@@ -132,12 +134,16 @@ export type CuisineView = {
 };
 
 export type AnalyticsData = {
+  aggregate_version: string;
   generated_at: string;
   source: {
     filename: string;
+    bytes: number;
     sha256: string;
     rows: number;
     columns: number;
+    expected_columns: number;
+    schema_matches: boolean;
     date_format: string;
     date_min: string;
     date_max: string;
@@ -150,6 +156,8 @@ export type AnalyticsData = {
     zero_sales: number;
     missing_sales: number;
     unsupported_currency: number;
+    missing_rating_rows: number;
+    missing_menu_attribute_rows: number;
     rating_coverage: number;
     menu_coverage: number;
     restaurant_match_rate: number;
@@ -193,3 +201,31 @@ export type AnalyticsData = {
 };
 
 export const analytics = rawAnalytics as AnalyticsData;
+
+export function analyticsContractErrors(data: AnalyticsData): string[] {
+  const errors: string[] = [];
+  if (data.aggregate_version !== AGGREGATE_VERSION) {
+    errors.push(`aggregate_version must be ${AGGREGATE_VERSION}`);
+  }
+  if (!data.source.schema_matches || data.source.columns !== data.source.expected_columns) {
+    errors.push('source schema does not match the expected column contract');
+  }
+  if (data.source.rows !== data.quality.raw_rows) {
+    errors.push('source rows must equal quality raw rows');
+  }
+  if (data.quality.valid_transactions + data.quality.excluded_transactions !== data.quality.raw_rows) {
+    errors.push('valid plus excluded transactions must equal raw rows');
+  }
+  if (data.quality.missing_rating_rows !== Math.round(data.quality.raw_rows * (1 - data.quality.rating_coverage))) {
+    errors.push('missing rating rows must reconcile to raw rating coverage');
+  }
+  if (data.quality.missing_menu_attribute_rows !== Math.round(data.quality.raw_rows * (1 - data.quality.menu_coverage))) {
+    errors.push('missing menu rows must reconcile to raw menu coverage');
+  }
+  return errors;
+}
+
+const contractErrors = analyticsContractErrors(analytics);
+if (contractErrors.length > 0) {
+  throw new Error(`Invalid PlateLens aggregate contract: ${contractErrors.join('; ')}`);
+}

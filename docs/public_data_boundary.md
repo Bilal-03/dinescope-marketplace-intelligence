@@ -6,6 +6,8 @@ Updated: 28 August 2026
 
 The owner explicitly approved publishing the deployment-safe analytics artifacts required by the public Streamlit app on 28 August 2026. The public app may include derived market, customer-behavior, cuisine-opportunity and data-quality aggregates after automated reconciliation checks pass.
 
+The current aggregate contract is version `1.1.0`. It includes source schema metadata and raw-row coverage counts for auditability; it does not include source-level records.
+
 Approved public artifacts:
 
 - `app/data/analytics.json` — derived market, customer-behavior and opportunity aggregates.

@@ -20,13 +20,13 @@ Live public Streamlit app: [platelens-food-delivery-intelligence.streamlit.app](
 - Automated reconciliation tests for source, customer, market, cuisine and opportunity-score contracts
 - Auditable locality, cuisine and conservative restaurant-name mappings with explicit coverage context
 - Portfolio-ready case study, evidence boundaries, representative screenshots and a private/public release gate
-- Public Streamlit parity app with all six analytics modules, audited aggregate-only data loading and evidence-table exports
+- Public Streamlit app with six aggregate-only workspaces, evidence-table exports and full staged visual/interaction parity
 
 See [STATUS.md](./STATUS.md) for the phase checklist and next build order.
 
 The Phase 8 evidence package is in [docs/portfolio_case_study.md](./docs/portfolio_case_study.md), with access, privacy and deployment sign-off tracked in [docs/release_readiness.md](./docs/release_readiness.md).
 
-The Streamlit implementation and public-release sequence are documented in [docs/streamlit_public_deployment_plan.md](./docs/streamlit_public_deployment_plan.md). The Python entry point has reached module and metric parity; the React/Vinext app remains the richer private reference build.
+The Streamlit implementation and public-release sequence are documented in [docs/streamlit_public_deployment_plan.md](./docs/streamlit_public_deployment_plan.md). Streamlit Phases 0–5 (data-contract hardening, parity shell, Overview/Customer Growth, Reliability, Market Demand, Cuisine Opportunity, restaurant evidence and session-only Decision Lab parity) are complete; the React/Vinext app remains the visual reference while server-backed scenario sharing stays an explicit future capability.
 
 The project owner approved publishing the deployment-safe aggregate and mapping artifacts for the public read-only app. Raw order/customer records, secrets and private Sites metadata remain excluded. See [docs/public_data_boundary.md](./docs/public_data_boundary.md).
 
@@ -73,7 +73,7 @@ python3.11 -m venv .venv
 .venv/bin/streamlit run streamlit_app.py
 ```
 
-The public deployment is configured from the `main` branch, uses Python 3.11 and Streamlit 1.62.0, and loads only the checked-in deployment-safe aggregate.
+The public deployment is configured from the `main` branch, uses Python 3.11 and Streamlit 1.62.0, and loads only the checked-in deployment-safe aggregate. For staged validation, set `PLATELENS_FEATURE_FLAGS` to a comma-separated allowlist such as `shell_v2,markets_v2`; leaving it blank enables all known flags.
 
 Private React reference app:
 

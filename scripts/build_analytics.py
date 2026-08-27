@@ -14,6 +14,26 @@ import numpy as np
 import pandas as pd
 
 
+AGGREGATE_VERSION = "1.1.0"
+EXPECTED_SOURCE_COLUMNS = 36
+REQUIRED_SOURCE_COLUMNS = {
+    "Order Date",
+    "Sales Amount",
+    "Sales Quantity",
+    "Order Currency",
+    "Sales Amount Valid",
+    "Order ID",
+    "User ID",
+    "Restaurant City",
+    "Restaurant Cuisine",
+    "Restaurant Name",
+    "Restaurant ID",
+    "Restaurant Rating",
+    "Menu_Item_Count",
+    "Restaurant Match",
+}
+
+
 SEGMENT_ACTIONS = {
     "Champions": "Protect the experience; test referral and early-access benefits.",
     "Loyal": "Deepen habit with relevant reorder and discovery journeys.",
@@ -23,6 +43,19 @@ SEGMENT_ACTIONS = {
     "Dormant": "Use low-cost win-back tests; suppress after repeated inactivity.",
     "Occasional": "Learn the job-to-be-done before increasing incentive spend.",
 }
+
+
+def validate_source_frame(frame: pd.DataFrame) -> None:
+    """Fail before building when the source schema is not the audited contract."""
+
+    missing = sorted(REQUIRED_SOURCE_COLUMNS.difference(frame.columns))
+    if missing:
+        raise ValueError(f"Source CSV is missing required columns: {', '.join(missing)}")
+    if len(frame.columns) != EXPECTED_SOURCE_COLUMNS:
+        raise ValueError(
+            f"Source CSV has {len(frame.columns)} columns; expected {EXPECTED_SOURCE_COLUMNS}."
+        )
+
 
 CITY_ALIASES = {
     "noida-1": "Noida",
@@ -555,12 +588,20 @@ def main() -> None:
     source = args.source.expanduser().resolve()
 
     raw = pd.read_csv(source, low_memory=False, encoding="utf-8-sig")
+    validate_source_frame(raw)
     order_date = pd.to_datetime(raw["Order Date"], format="%m/%d/%Y", errors="coerce")
     sales = pd.to_numeric(raw["Sales Amount"], errors="coerce")
     quantity = pd.to_numeric(raw["Sales Quantity"], errors="coerce")
     currency = raw["Order Currency"].astype("string").str.upper().str.strip()
     valid_flag = raw["Sales Amount Valid"].astype("string").str.upper().eq("TRUE")
-    valid = raw["Order ID"].notna() & order_date.notna() & valid_flag & sales.gt(0) & currency.eq("INR")
+    valid = (
+        raw["Order ID"].notna()
+        & order_date.notna()
+        & valid_flag
+        & sales.notna()
+        & sales.gt(0)
+        & currency.eq("INR")
+    )
 
     raw_market = raw["Restaurant City"].fillna("Unknown").astype(str).str.strip()
     location_mapping = build_location_mapping(raw_market)
@@ -639,17 +680,23 @@ def main() -> None:
         "unsupported_currency": int((currency.ne("INR") & currency.notna()).sum()),
         "rating_coverage": float(raw["Restaurant Rating"].notna().mean()),
         "menu_coverage": float(raw["Menu_Item_Count"].notna().mean()),
+        "missing_rating_rows": int(raw["Restaurant Rating"].isna().sum()),
+        "missing_menu_attribute_rows": int(raw["Menu_Item_Count"].isna().sum()),
         "restaurant_match_rate": float(raw["Restaurant Match"].astype("string").str.upper().eq("TRUE").mean()),
         "duplicate_order_ids": int(raw["Order ID"].duplicated().sum()),
         "invalid_dates": int(order_date.isna().sum()),
     }
     output = {
+        "aggregate_version": AGGREGATE_VERSION,
         "generated_at": pd.Timestamp.utcnow().isoformat(),
         "source": {
             "filename": source.name,
+            "bytes": source.stat().st_size,
             "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
             "rows": int(len(raw)),
             "columns": int(len(raw.columns)),
+            "expected_columns": EXPECTED_SOURCE_COLUMNS,
+            "schema_matches": len(raw.columns) == EXPECTED_SOURCE_COLUMNS,
             "date_format": "MM/DD/YYYY",
             "date_min": order_date.min().date().isoformat(),
             "date_max": order_date.max().date().isoformat(),
@@ -686,6 +733,8 @@ def main() -> None:
             "repeat_rate": "Customers with at least two valid transactions in the filtered scope divided by active customers in that scope.",
             "cohort_retention": "Customers active at cohort age m divided by customers first observed in that acquisition month within the filtered scope.",
             "average_transaction_value": "Gross valid INR sales divided by valid transactions; not labelled AOV because the source grain is unverified.",
+            "rating_coverage": "Rows with a non-null Restaurant Rating divided by all source rows; this is an evidence-availability measure, not a quality score.",
+            "menu_coverage": "Rows with a non-null Menu_Item_Count divided by all source rows; this is an evidence-availability measure, not a quality score.",
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

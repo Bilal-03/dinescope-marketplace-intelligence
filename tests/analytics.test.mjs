@@ -6,11 +6,18 @@ const analytics = JSON.parse(await readFile(new URL('../app/data/analytics.json'
 const all = analytics.scopes['All markets|All years'];
 
 test('source contract and transaction reconciliation are exact', () => {
+  assert.equal(analytics.aggregate_version, '1.1.0');
   assert.equal(analytics.source.rows, 150_281);
   assert.equal(analytics.source.columns, 36);
+  assert.equal(analytics.source.expected_columns, 36);
+  assert.equal(analytics.source.schema_matches, true);
   assert.equal(analytics.source.date_format, 'MM/DD/YYYY');
   assert.equal(analytics.quality.valid_transactions, 148_668);
   assert.equal(analytics.quality.valid_transactions + analytics.quality.excluded_transactions, analytics.quality.raw_rows);
+  assert.equal(analytics.quality.missing_rating_rows, 88_755);
+  assert.equal(analytics.quality.missing_menu_attribute_rows, 138_145);
+  assert.equal(analytics.quality.missing_rating_rows, Math.round(analytics.quality.raw_rows * (1 - analytics.quality.rating_coverage)));
+  assert.equal(analytics.quality.missing_menu_attribute_rows, Math.round(analytics.quality.raw_rows * (1 - analytics.quality.menu_coverage)));
   assert.equal(analytics.quality.duplicate_order_ids, 0);
   assert.equal(analytics.quality.invalid_dates, 0);
 });

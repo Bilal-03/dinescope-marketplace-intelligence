@@ -4,7 +4,19 @@ Updated: 28 August 2026
 
 ## Executive decision
 
-The Python/Streamlit parity application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://platelens-food-delivery-intelligence.streamlit.app/.
+The Python/Streamlit application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://platelens-food-delivery-intelligence.streamlit.app/. Streamlit Phases 0–5 are complete; durable server-backed scenario sharing remains an explicit future capability.
+
+Phase 0 contract status: aggregate version `1.1.0`, audited 36-column source validation, explicit raw-denominator coverage counts, fail-loud Python/TypeScript validation and shared evidence helpers are implemented and tested.
+
+Phase 1 shell status: the Streamlit workspace now mirrors the reference navigation/page copy, persists period and market filters in session state, resets Market Demand to an all-cleaned-market comparison, exposes the locked Valid INR rule and source window, and opens the metric dictionary from the top bar or sidebar. Staged module flags are controlled with `PLATELENS_FEATURE_FLAGS`; a blank value enables all known flags, while a comma-separated allowlist enables only the named flags.
+
+Phase 2 analytics status: Overview and Customer Growth now use the reference KPI labels and definitions, Altair-backed monthly performance/customer-mix charts with tooltips, a Transactions/Sales toggle, top-five market and decision-boundary panels, lifecycle/action evidence, frequency depth and Cohort/Size/M0–M6 retention tables. `altair==6.2.2` is pinned in `requirements.txt`.
+
+Phase 3 analytics status: Data Reliability now exposes the five reference quality KPIs, exact transaction reconciliation, the locked valid-INR rule, full source fingerprint and raw-denominator issue register. Market Demand now applies the current/comparison evidence rule, exposes the five reference KPIs, interactive scale × momentum quadrant, selected-market diagnostic brief, monthly transaction pulse, rank controls and eligible-only CSV export. The Streamlit tests assert the default 19-market ranking, exact KPI values, reliability counts and checksum.
+
+Phase 4 analytics status: Cuisine Opportunity now exposes canonical taxonomy coverage, proportional 1/n demand allocation, the five reference KPIs, current/comparison evidence thresholds, leading-demand chart, top-market/top-cuisine heatmap, selected opportunity diagnostics, sorted eligible ranking and CSV export. The restaurant identity audit shows raw/normalized/repeated name counts, repeated IDs and the most-observed normalized names while keeping the boundary that observed listings are not durable outlet supply.
+
+Phase 5 analytics status: Decision Lab now exposes adjustable demand, growth, reach, gap and quality weights, normalization to 100%, confidence discounting, evidence guardrails, session-only scenario save/load/remove, comparison leaders, rank movement versus the balanced baseline, top-25 queue display and metadata-rich aggregate-only decision-brief export. It explicitly states that session scenarios are not durable team sharing.
 
 The public Streamlit app should be read-only and evidence-led. It should not introduce raw customer records, new causal claims or a second, inconsistent metric definition.
 
@@ -49,12 +61,12 @@ The adapter should fail loudly when required aggregate keys are missing and expo
 
 ### 3. Reach module parity in priority order
 
-1. Overview: audited KPIs, monthly momentum and decision brief.
-2. Customer Growth: frequency, lifecycle segments, cohort retention and CSV export.
-3. Data Reliability: reconciliation, coverage, mappings and limitations.
-4. Market Demand: scale, growth, eligibility and confidence.
-5. Cuisine Opportunity: taxonomy, additive demand, evidence thresholds and opportunity signals.
-6. Decision Lab: weights, confidence discount, comparison and decision-brief export.
+1. Overview: audited KPIs, monthly momentum and decision brief. **Complete.**
+2. Customer Growth: frequency, lifecycle segments, cohort retention and CSV export. **Complete.**
+3. Data Reliability: reconciliation, coverage, mappings and limitations. **Complete.**
+4. Market Demand: scale, growth, eligibility and confidence. **Complete.**
+5. Cuisine Opportunity: taxonomy, additive demand, evidence thresholds and opportunity signals. **Complete.**
+6. Decision Lab: weights, confidence discount, comparison and decision-brief export. **Complete.**
 
 The first public cut can launch after Overview, Customer Growth and Data Reliability are complete, provided the app clearly labels the remaining modules as planned. Full parity is preferable before promoting it as the portfolio flagship.
 
@@ -64,6 +76,8 @@ The first public cut can launch after Overview, Customer Growth and Data Reliabi
 - Keep CSV and decision-brief downloads available without authentication.
 - Do not imply that `st.session_state` is durable storage or team sharing.
 - Keep server-backed scenario sharing as a separate future phase with explicit authorization, persistence, versioning and audit requirements.
+
+All widget state is namespaced under `pl_`. Phase 1 shell keys include `pl_page`, `pl_market`, `pl_period` and `pl_methodology_open`; Market and Cuisine controls add `pl_market_minimum`, `pl_market_sort`, `pl_selected_market`, `pl_cuisine_minimum`, `pl_cuisine_sort` and `pl_selected_cuisine`; Decision Lab controls add `pl_decision_minimum`, `pl_decision_confidence_discount`, `pl_decision_weight_*`, `pl_decision_scenario_name`, `pl_decision_scenarios` and `pl_decision_comparison_name`. Feature flags currently recognized are `shell_v2`, `overview_v2`, `customers_v2`, `reliability_v2`, `markets_v2`, `cuisines_v2` and `decision_v2`.
 
 ### 5. Pin and verify dependencies
 
