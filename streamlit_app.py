@@ -330,9 +330,11 @@ def inject_styles() -> None:
         .pl-filter-meta b { color:var(--ink); font-size:.96rem; }
         div[data-testid="stMetric"] { background:rgba(255,253,248,.92); border:1px solid #e2ded3; border-radius:16px; padding:1rem 1.05rem; box-shadow:0 10px 26px rgba(36,50,46,.05); min-height:120px; }
         div[data-testid="stMetric"] label,
-        div[data-testid="stMetric"] [data-testid="stMetricLabel"] { color:var(--muted); font-weight:700; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
-        div[data-testid="stMetric"] [data-testid="stMetricLabel"] > div:first-child { display:flex !important; align-items:flex-start !important; min-width:0 !important; max-width:100% !important; overflow:visible !important; }
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] { color:var(--muted); font-weight:700; display:grid !important; grid-template-columns:minmax(0, 1fr) auto !important; column-gap:.25rem; align-items:start !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] > div:first-child { display:flex !important; align-items:flex-start !important; flex-wrap:wrap !important; min-width:0 !important; max-width:100% !important; overflow:visible !important; }
         div[data-testid="stMetric"] [data-testid="stMetricLabel"] [data-testid="stMarkdownContainer"] { display:block !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:100% !important; min-width:0 !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; }
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] * { white-space:normal !important; overflow:visible !important; text-overflow:clip !important; overflow-wrap:anywhere; word-break:break-word; }
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] p { margin:0 !important; }
         div[data-testid="stMetric"] [data-testid="stMetricValue"],
         div[data-testid="stMetric"] [data-testid="stMetricValue"] *,
         div[data-testid="stMetric"] [data-testid="stMetricValue"] p { color:var(--ink); font-family:Georgia,serif; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.05; font-size:clamp(1.15rem, 1.9vw, 2.35rem); }
