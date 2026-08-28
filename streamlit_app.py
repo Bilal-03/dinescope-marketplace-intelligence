@@ -335,8 +335,8 @@ def inject_styles() -> None:
         div[data-testid="stMetric"] [data-testid="stMetricValue"],
         div[data-testid="stMetric"] [data-testid="stMetricValue"] *,
         div[data-testid="stMetric"] [data-testid="stMetricValue"] p { color:var(--ink); font-family:Georgia,serif; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.05; font-size:clamp(1.15rem, 1.9vw, 2.35rem); }
-        div[data-testid="stMetric"] [data-testid="stMetricDelta"],
-        div[data-testid="stMetric"] [data-testid="stMetricDelta"] * { display:block !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
+        div[data-testid="stMetric"] [data-testid="stMetricDelta"] { display:inline-flex !important; flex-shrink:1 !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:100% !important; min-width:0 !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
+        div[data-testid="stMetric"] [data-testid="stMetricDelta"] * { display:block !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:100% !important; min-width:0 !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
         div[data-testid="stMetric"] { overflow:visible !important; }
         div[data-testid="stMetric"] [data-testid="stMarkdownContainer"],
         div[data-testid="stMetric"] [data-testid="stMetricLabel"] > div,
