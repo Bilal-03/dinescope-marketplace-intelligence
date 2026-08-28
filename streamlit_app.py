@@ -1263,7 +1263,7 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
             renderer=lambda: st.bar_chart(
                 demand_data,
                 horizontal=True,
-                sort=False,
+                sort="-Allocated txns",
                 color="#194f46",
                 x_label="Cuisine",
                 y_label="Allocated transactions",
