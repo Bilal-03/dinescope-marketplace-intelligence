@@ -135,3 +135,4 @@ Updated: 28 August 2026
 - [x] Rebuilt Leading cuisine demand with a validated, branded horizontal bar chart and numeric coercion guardrails so non-empty evidence cannot render as blank bars.
 - [x] Documented lifecycle segments as order-based food-delivery customer cohorts, including definitions for recency, frequency, share, repeat rate and suggested actions.
 - [x] Added responsive wrapping, readable metric values, table column widths and sidebar button contrast for narrow and expanded layouts.
+- [x] Kept Metric dictionary access in the sidebar only and aligned Streamlit metric help controls with wrapped labels on Overview and downstream workspaces.
