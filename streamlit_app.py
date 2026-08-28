@@ -329,12 +329,14 @@ def inject_styles() -> None:
         .pl-filter-meta { color:var(--muted); font-size:.78rem; line-height:1.45; padding:.45rem .55rem; border:1px solid #e2ded3; border-radius:10px; background:rgba(255,253,248,.72); }
         .pl-filter-meta b { color:var(--ink); font-size:.96rem; }
         div[data-testid="stMetric"] { background:rgba(255,253,248,.92); border:1px solid #e2ded3; border-radius:16px; padding:1rem 1.05rem; box-shadow:0 10px 26px rgba(36,50,46,.05); min-height:120px; }
-        div[data-testid="stMetric"] label { color:var(--muted); font-weight:700; }
+        div[data-testid="stMetric"] label,
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"],
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] * { color:var(--muted); font-weight:700; display:block !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
         div[data-testid="stMetric"] [data-testid="stMetricValue"],
         div[data-testid="stMetric"] [data-testid="stMetricValue"] *,
         div[data-testid="stMetric"] [data-testid="stMetricValue"] p { color:var(--ink); font-family:Georgia,serif; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.05; font-size:clamp(1.15rem, 1.9vw, 2.35rem); }
-        div[data-testid="stMetric"] [data-testid="stMetricLabel"] { white-space:normal !important; overflow-wrap:anywhere; line-height:1.2; }
-        div[data-testid="stMetric"] [data-testid="stMetricDelta"] { white-space:normal !important; overflow-wrap:anywhere; }
+        div[data-testid="stMetric"] [data-testid="stMetricDelta"],
+        div[data-testid="stMetric"] [data-testid="stMetricDelta"] * { display:block !important; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.2; }
         div[data-testid="stDataFrame"], div[data-testid="stTable"], .pl-note, .pl-callout { background:var(--card); border:1px solid #e2ded3; border-radius:14px; overflow:hidden; }
         .pl-note, .pl-callout { padding:1rem 1.15rem; color:var(--muted); }
         .pl-callout { border-left:5px solid var(--coral); }
