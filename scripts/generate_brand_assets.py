@@ -8,12 +8,12 @@ from PIL import Image, ImageColor, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PUBLIC = ROOT / "public"
-ICON_PATH = PUBLIC / "favicon.png"
-LOCKUP_PATH = PUBLIC / "dinescope-lockup.png"
-LIGHT_ICON_PATH = PUBLIC / "dinescope-icon-light.png"
-LIGHT_LOCKUP_PATH = PUBLIC / "dinescope-lockup-light.png"
-OG_PATH = PUBLIC / "og.png"
+BRAND_ASSETS = ROOT / "assets" / "brand"
+ICON_PATH = BRAND_ASSETS / "favicon.png"
+LOCKUP_PATH = BRAND_ASSETS / "dinescope-lockup.png"
+LIGHT_ICON_PATH = BRAND_ASSETS / "dinescope-icon-light.png"
+LIGHT_LOCKUP_PATH = BRAND_ASSETS / "dinescope-lockup-light.png"
+OG_PATH = BRAND_ASSETS / "og.png"
 
 EVERGREEN = "#123C36"
 CORAL = "#EF6A50"

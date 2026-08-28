@@ -4,51 +4,37 @@ Updated: 28 August 2026
 
 ## Executive decision
 
-The Python/Streamlit application is implemented at `streamlit_app.py` and reads the same audited aggregate as the private React/Vinext reference experience. Public read-only publication was approved by the owner on 28 August 2026 and is live at https://dinescope-marketplace-intelligence.streamlit.app/. Streamlit Phases 0–5 are complete; durable server-backed scenario sharing remains an explicit future capability.
+DineScope is now a Streamlit-only product. The public application is implemented at `streamlit_app.py`, reads the audited aggregate at `data/analytics.json`, and is live at https://dinescope-marketplace-intelligence.streamlit.app/. Streamlit Phases 0–5 are complete; durable server-backed scenario sharing remains an explicit future capability.
 
-Phase 0 contract status: aggregate version `1.1.0`, audited 36-column source validation, explicit raw-denominator coverage counts, fail-loud Python/TypeScript validation and shared evidence helpers are implemented and tested.
+The repository deliberately contains one canonical runtime and one dependency manifest (`requirements.txt`). Retired frontend/site code, authentication hooks and Node build tooling have been removed so the folder structure matches the deployed product.
 
-Phase 1 shell status: the Streamlit workspace now mirrors the reference navigation/page copy, persists period and market filters in session state, resets Market Demand to an all-cleaned-market comparison, exposes the locked Valid INR rule and source window, and opens the metric dictionary from the top bar or sidebar. Staged module flags are controlled with `DINESCOPE_FEATURE_FLAGS`; a blank value enables all known flags, while a comma-separated allowlist enables only the named flags.
+## Implemented product foundation
 
-Phase 2 analytics status: Overview and Customer Growth now use the reference KPI labels and definitions, Altair-backed monthly performance/customer-mix charts with tooltips, a Transactions/Sales toggle, top-five market and decision-boundary panels, lifecycle/action evidence, frequency depth and Cohort/Size/M0–M6 retention tables. `altair==6.2.2` is pinned in `requirements.txt`.
+- Aggregate contract version `1.1.0` with audited 36-column source validation.
+- Explicit valid-INR transaction rule, raw-denominator quality counts and checksum metadata.
+- Deterministic location, cuisine and conservative restaurant-name mappings.
+- Pure Python analytics adapter in `streamlit_lib.py` with fail-loud contract validation.
+- Responsive Streamlit shell with global period/market filters, public-data boundary and metric dictionary.
+- Six connected workspaces: Overview, Customer growth, Market demand, Cuisine gaps, Data reliability and Decision Lab.
+- Aggregate-only CSV and decision-brief downloads; no raw customer/order records are loaded or downloadable.
 
-Phase 3 analytics status: Data Reliability now exposes the five reference quality KPIs, exact transaction reconciliation, the locked valid-INR rule, full source fingerprint and raw-denominator issue register. Market Demand now applies the current/comparison evidence rule, exposes the five reference KPIs, interactive scale × momentum quadrant, selected-market diagnostic brief, monthly transaction pulse, rank controls and eligible-only CSV export. The Streamlit tests assert the default 19-market ranking, exact KPI values, reliability counts and checksum.
-
-Phase 4 analytics status: Cuisine Opportunity now exposes canonical taxonomy coverage, proportional 1/n demand allocation, the five reference KPIs, current/comparison evidence thresholds, leading-demand chart, top-market/top-cuisine heatmap, selected opportunity diagnostics, sorted eligible ranking and CSV export. The restaurant identity audit shows raw/normalized/repeated name counts, repeated IDs and the most-observed normalized names while keeping the boundary that observed listings are not durable outlet supply.
-
-Phase 5 analytics status: Decision Lab now exposes adjustable demand, growth, reach, gap and quality weights, normalization to 100%, confidence discounting, evidence guardrails, session-only scenario save/load/remove, comparison leaders, rank movement versus the balanced baseline, top-25 queue display and metadata-rich aggregate-only decision-brief export. It explicitly states that session scenarios are not durable team sharing.
-
-The public Streamlit app should be read-only and evidence-led. It should not introduce raw customer records, new causal claims or a second, inconsistent metric definition.
-
-## Repository and privacy boundary
-
-The public GitHub repository is `Bilal-03/dinescope-marketplace-intelligence`. The current mirror is source-and-documentation first; the data-publication decision is tracked separately in [`docs/public_data_boundary.md`](./public_data_boundary.md).
-
-- The raw `zomato_business_complete.csv` remains local and is excluded by `.gitignore`.
-- The deployment-safe aggregate and reviewable mapping CSVs are approved for the public GitHub mirror and Streamlit runtime.
-- The public Streamlit release uses the approved aggregate and must never silently fall back to raw source rows.
-- The private Sites project configuration is intentionally not copied into the public repository.
-- No tokens, `.env` files, private visitor lists or deployment credentials belong in GitHub.
-- The README and app footer must continue to state that this is an independent portfolio analysis and is not affiliated with Zomato, Swiggy or another delivery company.
-
-## Recommended implementation sequence
-
-### 1. Add a Streamlit entry point
-
-Create `streamlit_app.py` at the repository root. Keep data loading in a small adapter module so the same metric definitions remain testable outside the UI:
+## Architecture
 
 ```text
-app/data/analytics.json
-  → Python adapter and validation
-  → Streamlit session state and filters
-  → read-only analytics pages
+Local source CSV (ignored)
+  → scripts/audit_source.py
+  → scripts/build_analytics.py
+  → data/analytics.json + data/mappings/*.csv
+  → streamlit_lib.py validation and metric frames
+  → streamlit_app.py workspaces
+  → Streamlit Community Cloud
 ```
 
-Use `st.set_page_config`, a compact sidebar filter surface and a consistent page-level header. Prefer native Streamlit components (`st.metric`, `st.dataframe`, `st.download_button`, `st.tabs`, containers and status messages) before adding another chart framework. Custom CSS can carry the DineScope visual language, but should remain small and tested against narrow widths.
+The source CSV remains local. The checked-in aggregate carries only derived metrics, reviewable mappings, definitions and quality metadata required by the public app.
 
-### 2. Preserve metric contracts
+## Metric and evidence contracts
 
-Port the current definitions instead of recomputing ad hoc in the UI:
+The adapter preserves the product definitions instead of recomputing ad hoc in the UI:
 
 - valid transactions, gross valid INR sales, active customers and average transaction value;
 - repeat rate separately from cohort retention;
@@ -57,70 +43,62 @@ Port the current definitions instead of recomputing ad hoc in the UI:
 - conservative restaurant listing context;
 - opportunity score components, confidence discounts and Decision Lab weights.
 
-The adapter should fail loudly when required aggregate keys are missing and expose the source fingerprint, date format and coverage fields in the Data Reliability view.
+The Data reliability workspace exposes the source fingerprint, date format, validity rule, coverage fields, mapping counts and issue treatment before a user interprets an opportunity.
 
-### 3. Reach module parity in priority order
+## Workspace rollout
 
-1. Overview: audited KPIs, monthly momentum and decision brief. **Complete.**
-2. Customer Growth: frequency, lifecycle segments, cohort retention and CSV export. **Complete.**
-3. Data Reliability: reconciliation, coverage, mappings and limitations. **Complete.**
-4. Market Demand: scale, growth, eligibility and confidence. **Complete.**
-5. Cuisine Opportunity: taxonomy, additive demand, evidence thresholds and opportunity signals. **Complete.**
-6. Decision Lab: weights, confidence discount, comparison and decision-brief export. **Complete.**
+1. **Overview:** audited KPIs, monthly momentum and decision brief — complete.
+2. **Customer growth:** frequency, lifecycle segments, cohort retention and CSV export — complete.
+3. **Data reliability:** reconciliation, coverage, mappings and limitations — complete.
+4. **Market demand:** scale, growth, eligibility and confidence — complete.
+5. **Cuisine opportunity:** taxonomy, additive demand, evidence thresholds and opportunity signals — complete.
+6. **Decision Lab:** weights, confidence discount, comparison and decision-brief export — complete.
 
-The first public cut can launch after Overview, Customer Growth and Data Reliability are complete, provided the app clearly labels the remaining modules as planned. Full parity is preferable before promoting it as the portfolio flagship.
+## State and sharing boundary
 
-### 4. Define Streamlit state and sharing boundaries
+- `st.session_state` stores filters and temporary scenario edits.
+- CSV and decision-brief downloads are available without authentication.
+- Session state is not durable storage or team sharing.
+- Server-backed scenario sharing remains a separate future phase requiring authorization, persistence, versioning and an audit trail.
 
-- Use `st.session_state` for filters and temporary scenario edits.
-- Keep CSV and decision-brief downloads available without authentication.
-- Do not imply that `st.session_state` is durable storage or team sharing.
-- Keep server-backed scenario sharing as a separate future phase with explicit authorization, persistence, versioning and audit requirements.
+Widget state is namespaced under `pl_`. Feature flags are controlled with `DINESCOPE_FEATURE_FLAGS`; a blank value enables all known workspaces, while a comma-separated allowlist enables only named modules during validation.
 
-All widget state is namespaced under `pl_`. Phase 1 shell keys include `pl_page`, `pl_market`, `pl_period` and `pl_methodology_open`; Market and Cuisine controls add `pl_market_minimum`, `pl_market_sort`, `pl_selected_market`, `pl_cuisine_minimum`, `pl_cuisine_sort` and `pl_selected_cuisine`; Decision Lab controls add `pl_decision_minimum`, `pl_decision_confidence_discount`, `pl_decision_weight_*`, `pl_decision_scenario_name`, `pl_decision_scenarios` and `pl_decision_comparison_name`. Feature flags currently recognized are `shell_v2`, `overview_v2`, `customers_v2`, `reliability_v2`, `markets_v2`, `cuisines_v2` and `decision_v2`.
+## Validation before release
 
-### 5. Pin and verify dependencies
+Run the complete Python suite and syntax checks:
 
-Add a Streamlit-specific dependency set to `requirements.txt` (or a clearly documented deployment requirements file) and pin the Streamlit version used in local validation. Develop and deploy with the same Python version. Avoid adding a database or secrets until a feature requires them.
+```bash
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+.venv/bin/python -m py_compile streamlit_app.py streamlit_lib.py
+git diff --check
+```
 
-Streamlit Community Cloud uses the GitHub repository as the app source, watches commits for updates and expects dependency declarations such as `requirements.txt`. See the [Community Cloud deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy), [dependency guidance](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies) and [secrets management](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management).
-
-### 6. Validate before public release
-
-- Run the existing reconciliation suite and add Streamlit adapter tests for every displayed KPI.
-- Run a headless Streamlit smoke test for startup, filter changes, downloads and empty states.
-- Check the public build at desktop and narrow viewport widths.
-- Scan the repository and rendered app for raw customer IDs, addresses, tokens and private Sites metadata.
-- Verify that warnings for rating/menu coverage and unsupported operational metrics remain visible.
-- Confirm the public app URL, title, favicon and social copy do not imply company affiliation.
-- Record the public release decision in `docs/release_readiness.md`.
+Release checks cover aggregate reconciliation, displayed KPI values, filters, workspace rendering, exports, Decision Lab scoring, evidence boundaries and representative screenshots. After a push to `main`, smoke-test the public URL at desktop and narrow viewport widths.
 
 ## Streamlit Community Cloud release steps
 
-1. Sign in to Streamlit Community Cloud with the GitHub account that administers the repository.
-2. Create an app from `Bilal-03/dinescope-marketplace-intelligence`, branch `main`, entry point `streamlit_app.py`.
-3. Choose a stable public subdomain and a Python version that matches local validation.
-4. Confirm `requirements.txt` resolves without unpinned or unnecessary packages.
-5. Deploy and inspect logs plus the first-run experience.
-6. In app settings, choose **public and searchable** only after the privacy and disclaimer checks pass. **Completed:** the app is public read-only.
-7. Add the Streamlit URL to the README and portfolio case study; retain the existing private Sites URL as the React reference until the migration is complete. **Completed:** URL recorded in README, status and release readiness.
+1. Connect the GitHub account that administers `Bilal-03/dinescope-marketplace-intelligence`.
+2. Configure branch `main` and entry point `streamlit_app.py`.
+3. Use Python 3.11 and install the pinned `requirements.txt` dependencies.
+4. Confirm the app starts without raw-data fallback and the public disclaimer is visible.
+5. Review logs and the first-run experience, then keep the app public read-only.
 
-Community Cloud supports deploying from public repositories and lets the owner manage public/private sharing in app settings. See [connecting GitHub](https://docs.streamlit.io/deploy/streamlit-community-cloud/get-started/connect-your-github-account) and [sharing an app](https://docs.streamlit.io/deploy/streamlit-community-cloud/share-your-app).
+Community Cloud deployment guidance is available in the [official deployment guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy), [dependency guidance](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies) and [secrets management guide](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management).
 
 ## Success criteria
 
-The Streamlit release is ready when a fresh visitor can:
+A fresh visitor can:
 
-- understand the source contract and the independent-portfolio disclaimer;
-- filter the data by period and market;
-- reproduce the headline KPIs and customer-growth view from the audited aggregate;
+- understand the source contract and independent-portfolio disclaimer;
+- filter by period and market;
+- reproduce headline KPIs and customer-growth views from the audited aggregate;
 - inspect reliability warnings before interpreting an opportunity;
-- download an evidence table or decision brief;
+- download an aggregate evidence table or decision brief;
 - use the app without credentials, secrets or raw customer-level data;
-- see a clear “directional investigation signal” boundary around opportunity scores.
+- see a clear directional-investigation boundary around opportunity scores.
 
 ## Resolved decisions
 
-- Launch with all six implemented modules rather than a reduced first cut.
+- Launch with all six implemented workspaces.
 - Keep the GitHub repository and Streamlit app public read-only.
 - Keep Decision Lab scenarios session-scoped for launch; server-backed sharing remains a later collaboration feature.

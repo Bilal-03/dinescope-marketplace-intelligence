@@ -1,25 +1,25 @@
 <p align="center">
-  <img src="./public/dinescope-lockup.png" width="430" alt="DineScope — Food Marketplace Intelligence">
+  <img src="./assets/brand/dinescope-lockup.png" width="430" alt="DineScope — Food Marketplace Intelligence">
 </p>
 
 <h1 align="center">DineScope — Food Marketplace Intelligence</h1>
 
 <p align="center"><strong>See demand. Understand customers. Prioritize growth.</strong></p>
 
-<p>
+<p align="center">
   <a href="https://dinescope-marketplace-intelligence.streamlit.app/"><img src="https://img.shields.io/badge/Live%20app-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Launch the live Streamlit app"></a>
   <a href="https://github.com/Bilal-03/dinescope-marketplace-intelligence"><img src="https://img.shields.io/badge/Release-Public%20read--only-123C36?style=for-the-badge" alt="Public read-only release"></a>
   <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11">
-  <img src="https://img.shields.io/badge/React%20%2B%20TypeScript-Reference%20UI-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="React and TypeScript reference UI">
+  <img src="https://img.shields.io/badge/Streamlit-1.62.0-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit 1.62.0">
 </p>
 
-<p>
+<p align="center">
   <a href="https://dinescope-marketplace-intelligence.streamlit.app/">Open the public app</a> ·
-  <a href="https://dinescope-marketplace-intelligence.streamlit.app/?embed=true">Open the anonymous embed view</a> ·
-  <a href="./STATUS.md">Read the implementation status</a>
+  <a href="./STATUS.md">Read the implementation status</a> ·
+  <a href="./docs/portfolio_case_study.md">Read the portfolio case study</a>
 </p>
 
-**DineScope** is a Food Marketplace Intelligence Platform: an interactive decision-intelligence product that helps Product and Growth teams uncover customer, market, restaurant, and cuisine opportunities from food-delivery data. It turns a messy marketplace export into a connected workflow for understanding customer behaviour, market demand, cuisine opportunity and data reliability—then makes the evidence boundary visible before a team acts on a ranking.
+**DineScope** is a Food Marketplace Intelligence Platform: an interactive decision-intelligence product that helps Product and Growth teams uncover customer, market, restaurant and cuisine opportunities from food-delivery data. It turns a messy marketplace export into a connected workflow for customer behaviour, market demand, cuisine opportunity and data reliability—then makes the evidence boundary visible before a team acts on a ranking.
 
 This is an independent portfolio case study built from a public or synthetic food-delivery dataset. It is not affiliated with, endorsed by, or based on internal data from Zomato, Swiggy or another food-delivery company.
 
@@ -30,19 +30,19 @@ This is an independent portfolio case study built from a public or synthetic foo
 | **Product problem** | Marketplace teams need to decide where to investigate next, but growth, demand, supply and data quality signals rarely share one trustworthy frame. |
 | **Primary users** | Product and Growth first; Marketplace, Category and City Operations as adjacent decision partners. |
 | **Product outcome** | A decision-ready analytics workspace that separates observed facts, assumptions and hypotheses instead of turning weak evidence into false precision. |
-| **My contribution in this case study** | Product framing, metric definitions, data-quality contract, reproducible analytics pipeline, UX architecture, Streamlit implementation, React/TypeScript reference experience, testing and public deployment. |
-| **Current status** | Six aggregate-only Streamlit workspaces are live from GitHub <code>main</code>; the private React/Vinext experience remains the richer visual reference. |
+| **My contribution** | Product framing, metric definitions, data-quality contract, reproducible analytics pipeline, UX architecture, Streamlit implementation, testing and public deployment. |
+| **Current status** | Six aggregate-only Streamlit workspaces are live from GitHub `main`; the repository contains one canonical Streamlit implementation. |
 
 ### Why this is more than a dashboard
 
 - **Decision-led:** every surface answers a product or marketplace question, not just “what can be plotted?”
 - **Trust-aware:** validity rules, denominators, comparison windows, coverage and confidence are shown alongside the metric.
-- **End-to-end:** the repository includes the data contract, transformation pipeline, typed metric layer, UI, tests and deployment configuration.
-- **Responsible:** rankings are framed as investigation signals; the product does not invent delivery, cancellation, discount, commission, funnel or campaign metrics that the source cannot support.
+- **End-to-end:** the repository includes the data contract, transformation pipeline, Streamlit UI, tests and deployment configuration.
+- **Responsible:** rankings are framed as investigation signals; the product does not invent operational metrics the source cannot support.
 
 ## Product surface
 
-The public Streamlit app has six connected workspaces. The **Customer Growth** workspace is the first working analytics module; the other surfaces extend the same audited aggregate and filter contract.
+The public Streamlit app has six connected workspaces:
 
 | Workspace | What a team can do | Key outputs |
 |---|---|---|
@@ -55,7 +55,7 @@ The public Streamlit app has six connected workspaces. The **Customer Growth** w
 
 ## Evidence snapshot
 
-The published aggregate is generated from **150,281 source rows** and an audited **36-column contract**. These are the headline values exposed by the product:
+The published aggregate is generated from **150,281 source rows** and an audited **36-column contract**.
 
 | Evidence | Verified value | How DineScope treats it |
 |---|---:|---|
@@ -70,7 +70,7 @@ The published aggregate is generated from **150,281 source rows** and an audited
 | Cuisine coverage | **98.9%** | Multi-cuisine demand is allocated proportionally so covered demand remains additive. |
 | Repeated restaurant IDs | **123 of 148,541** | Restaurant evidence is presented as observed listings, not durable outlet performance. |
 
-The observed source window is **4 October 2017 through 26 June 2020**. Dates are parsed as <code>MM/DD/YYYY</code>; duplicate order IDs and invalid dates are zero in the audited source.
+The observed source window is **4 October 2017 through 26 June 2020**. Dates are parsed as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source.
 
 ## Product decisions and trade-offs
 
@@ -84,7 +84,7 @@ Market growth uses equal-length current and comparison windows with minimum samp
 
 ### Multi-cuisine demand is additive by design
 
-If a transaction lists <code>n</code> unique canonical cuisines, each cuisine receives an equal <code>1/n</code> share of the transaction and sales value. Allocated demand therefore reconciles exactly to cuisine-covered valid transactions. This is a directional planning assumption, not item-level revenue attribution.
+If a transaction lists *n* unique canonical cuisines, each cuisine receives an equal `1/n` share of the transaction and sales value. Allocated demand therefore reconciles exactly to cuisine-covered valid transactions. This is a directional planning assumption, not item-level revenue attribution.
 
 ### Restaurant identity is deliberately conservative
 
@@ -96,148 +96,121 @@ The source has no delivery-time, cancellation, discount, commission, funnel or c
 
 ## Technical architecture
 
-~~~text
+```text
 Local source CSV (never committed)
         │
         ▼
 Python schema gate + validity audit + deterministic mappings
         │
         ▼
-Deployment-safe aggregate JSON (contract v1.1.0)
-        ├── Python metric adapter ──► public Streamlit Community Cloud app
-        └── TypeScript metric/filter layer ──► private React/Vinext reference UI
-~~~
+Deployment-safe aggregate JSON + mapping CSVs
+        │
+        ▼
+Streamlit adapter + session state + native tables/charts
+        │
+        ▼
+Public Streamlit Community Cloud app
+```
 
-The Streamlit runtime reads only <code>app/data/analytics.json</code>. It does not query, ship or provide downloads of raw customer/order records. Reviewable location, cuisine and conservative restaurant-name mappings are committed separately so normalization decisions can be inspected.
-
-### Data pipeline
-
-1. Validate the source has the required fields and exactly 36 columns.
-2. Parse <code>MM/DD/YYYY</code> dates and apply the valid INR transaction rule.
-3. Preserve raw-row quality counts, exclusions, source fingerprint and definitions.
-4. Normalize locations, cuisines and restaurant names through explicit, reviewable rules.
-5. Build customer, market, cuisine, reliability and Decision Lab aggregates.
-6. Write the deployment-safe JSON plus mapping CSVs consumed by the app.
+The Streamlit runtime reads only `data/analytics.json`. It does not query, ship or provide downloads of raw customer/order records. Reviewable location, cuisine and conservative restaurant-name mappings are committed separately so normalization decisions can be inspected.
 
 ## Tech stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| Public product | **Python 3.11, Streamlit 1.62.0** | Public read-only analytics experience and deployment entry point (<code>streamlit_app.py</code>). |
-| Analytics adapter | **pandas 2.2.3, NumPy 2.2.6, Altair 6.2.2** | Deterministic frames, scoring helpers, tables and interactive charts. |
-| Reference product | **React 19, TypeScript 5.9, Vinext, Vite** | Polished typed reference experience with the richer private-site interaction model. |
-| Build/deployment compatibility | **Cloudflare Workers/Sites tooling** | Keeps the reference interface compatible with the existing private Sites deployment. |
-| Test tooling | **Python <code>unittest</code>, Node test runner, ESLint 9** | Analytics contracts, UI interaction contracts, accessibility checks and regression tests. |
-| Hosting | **Streamlit Community Cloud + GitHub <code>main</code>** | Public Streamlit deployment with Python 3.11 and pinned dependencies. |
+| Application | **Python 3.11, Streamlit 1.62.0** | Public read-only analytics experience and deployment entry point (`streamlit_app.py`). |
+| Analytics | **pandas 2.2.3, NumPy 2.2.6, Altair 6.2.2** | Deterministic frames, scoring helpers, tables and interactive charts. |
+| Data pipeline | **Python standard library + pandas** | Source validation, validity rules, mappings, aggregates and checksums. |
+| Test tooling | **Python `unittest` + Streamlit AppTest** | Analytics contracts, rendered workspace checks and release-package checks. |
+| Hosting | **Streamlit Community Cloud + GitHub `main`** | Public aggregate-only deployment with pinned Python dependencies. |
 
 ## Run locally
 
-### Public Streamlit experience
+Create the same Python environment used by Streamlit Community Cloud:
 
-~~~bash
+```bash
 python3.11 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/streamlit run streamlit_app.py
-~~~
+```
 
 Open the local URL printed by Streamlit. The app defaults to all known feature flags. To stage a subset during validation:
 
-~~~bash
+```bash
 DINESCOPE_FEATURE_FLAGS=shell_v2,markets_v2 .venv/bin/streamlit run streamlit_app.py
-~~~
-
-### React/Vinext reference experience
-
-~~~bash
-npm install
-npm run dev
-~~~
-
-The reference interface supports the optional local role hook <code>DINESCOPE_ADMIN_EMAILS</code>. Unauthenticated local previews resolve to <code>Preview</code>; authenticated visitors resolve to <code>Analyst</code> unless their email is in the Admin allowlist.
+```
 
 ### Rebuild the audited aggregate locally
 
-The raw CSV is intentionally local and ignored by Git. The default mapping outputs are written to <code>data/mappings/</code>.
+The raw CSV is intentionally local and ignored by Git. Mapping outputs are written to `data/mappings/`.
 
-~~~bash
+```bash
 .venv/bin/python scripts/audit_source.py /path/to/zomato_business_complete.csv
-.venv/bin/python scripts/build_analytics.py /path/to/zomato_business_complete.csv app/data/analytics.json
-~~~
+.venv/bin/python scripts/build_analytics.py /path/to/zomato_business_complete.csv data/analytics.json
+```
 
 The builder fails before processing when required fields are missing or the source does not match the audited schema. Never place the raw CSV, customer-level extracts or secrets in the public repository.
 
 ## Verification and quality gates
 
-The release is covered by both pure analytics tests and rendered Streamlit checks:
+Run the complete Python suite before pushing:
 
-~~~bash
-# Python analytics + Streamlit AppTest suite
+```bash
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+.venv/bin/python -m py_compile streamlit_app.py streamlit_lib.py
+git diff --check
+```
 
-# React/reference analytics and interaction contracts
-npm test
+The tests cover the aggregate contract, reconciliation, mappings, KPI parity, all six workspaces, filters, exports, Decision Lab scoring, release documentation and representative screenshots. The public URL is smoke-tested after deployment for unauthenticated loading and module navigation.
 
-# Static quality and reference build checks
-npm run lint
-npm run build
-npm run check:performance
-~~~
-
-The latest release validation passed **24 Python tests**, **16 Node tests**, ESLint and <code>git diff --check</code>. The local Streamlit AppTest suite covers all six workspaces, while the Streamlit Cloud smoke test rendered the public shell and exercised the live Decision Lab. Engineering budgets guard against regressions in the aggregate payload (1.3 MB), client JavaScript (650 KB raw / 180 KB gzip sum) and client CSS (60 KB raw / 20 KB gzip sum).
-
-## Deployment and release boundary
+## Deployment and public-data boundary
 
 - **Repository:** [Bilal-03/dinescope-marketplace-intelligence](https://github.com/Bilal-03/dinescope-marketplace-intelligence)
-- **Branch:** <code>main</code>
-- **Streamlit entry point:** <code>streamlit_app.py</code>
-- **Runtime:** Python 3.11 with dependencies pinned in <code>requirements.txt</code>
-- **Visibility:** Streamlit Cloud app is public and searchable; the runtime is read-only and aggregate-only.
-- **Release flow:** push to <code>main</code> → Streamlit Community Cloud pulls the repository → dependency and app smoke checks run in the hosted environment.
+- **Branch:** `main`
+- **Streamlit entry point:** `streamlit_app.py`
+- **Runtime:** Python 3.11 with dependencies pinned in `requirements.txt`
+- **Visibility:** Public and read-only; the runtime is aggregate-only.
+- **Release flow:** push to `main` → Streamlit Community Cloud pulls the repository → the app rebuilds from the pinned requirements.
 
 Public artifacts are limited to:
 
-- <code>app/data/analytics.json</code> — derived aggregate contract v1.1.0.
-- <code>data/mappings/*.csv</code> — reviewable location, cuisine and restaurant-name mappings.
-- <code>docs/screenshots/*</code> — aggregate-only product captures.
+- `data/analytics.json` — derived aggregate contract v1.1.0.
+- `data/mappings/*.csv` — reviewable location, cuisine and restaurant-name mappings.
+- `assets/brand/*` — DineScope logo, icon, favicon and social assets used by the Streamlit app and README.
+- `docs/screenshots/*` — aggregate-only product captures.
 
-The raw source CSV, customer/order records, <code>.streamlit/secrets.toml</code>, credentials, tokens and private Sites metadata are excluded. See [docs/public_data_boundary.md](./docs/public_data_boundary.md) and [docs/release_readiness.md](./docs/release_readiness.md) for the recorded release gate.
+The raw source CSV, customer/order records, `.streamlit/secrets.toml`, credentials, tokens and private hosting metadata are excluded. See [docs/public_data_boundary.md](./docs/public_data_boundary.md) and [docs/release_readiness.md](./docs/release_readiness.md) for the recorded release gate.
 
 ## Five-minute portfolio walkthrough
 
 1. Open the [live Streamlit app](https://dinescope-marketplace-intelligence.streamlit.app/).
-2. Start in **Overview** to see the audited KPI baseline and the deterministic decision brief.
-3. Open **Customer growth** to inspect the acquisition-versus-return view and M0–M6 cohort retention—the clearest example of product metric discipline.
-4. Open **Cuisine gaps** or **Market demand** to see evidence thresholds, confidence and mapping context beside opportunity signals.
-5. Open **Decision lab** to change the five weights, compare the leader and inspect rank movement.
+2. Start in **Overview** to see the audited KPI baseline and deterministic decision brief.
+3. Open **Customer growth** to inspect acquisition-versus-return behaviour and M0–M6 cohort retention.
+4. Open **Market demand** or **Cuisine gaps** to see evidence thresholds, confidence and mapping context beside opportunity signals.
+5. Open **Decision Lab** to change the five weights, compare the leader and inspect rank movement.
 6. Open **Metric dictionary** or **Data reliability** to see how the source contract limits interpretation.
 
-Representative captures are available in [docs/screenshots/](./docs/screenshots/):
-
-<p>
-  <img src="./docs/screenshots/01-overview.jpg" width="31%" alt="DineScope Overview with audited KPIs and decision brief">
-  <img src="./docs/screenshots/02-decision-lab.jpg" width="31%" alt="DineScope Decision Lab with adjustable weights and evidence guardrails">
-  <img src="./docs/screenshots/03-cuisine-opportunity.jpg" width="31%" alt="DineScope Cuisine Opportunity with demand and coverage context">
-</p>
+Representative captures are available in [docs/screenshots/](./docs/screenshots/). They demonstrate the product surfaces and evidence treatment without exposing raw customer records.
 
 ## Repository map
 
-~~~text
+```text
 streamlit_app.py                 Public Streamlit application and workspace rendering
 streamlit_lib.py                 Pure metric, eligibility and Decision Lab helpers
-app/data/analytics.json          Audited deployment-safe aggregate
-app/lib/analytics.ts             Typed metric/filter layer for the reference UI
-app/components/dashboard.tsx     React/Vinext reference dashboard
+data/analytics.json              Audited deployment-safe aggregate
+data/mappings/                   Reviewable location, cuisine and restaurant mappings
+assets/brand/                    DineScope logo, icon, favicon and social assets
 scripts/audit_source.py          Read-only source profiling
 scripts/build_analytics.py       Reproducible aggregate + mapping builder
-tests/                            Python AppTest and Node analytics/interface contracts
-data/mappings/                    Reviewable location, cuisine and restaurant mappings
-docs/methodology.md               Definitions, assumptions and evidence boundaries
-docs/metric_dictionary.md         Metric formulas, grain and limitations
-docs/release_readiness.md         Public-release decision and acceptance gate
+scripts/generate_brand_assets.py Deterministic brand asset generator
+tests/                           Python analytics, AppTest and release-package checks
+docs/methodology.md              Definitions, assumptions and evidence boundaries
+docs/metric_dictionary.md        Metric formulas, grain and limitations
+docs/release_readiness.md        Public-release decision and acceptance gate
 docs/streamlit_public_deployment_plan.md
-                                  Streamlit implementation and rollout plan
-STATUS.md                         Phase checklist and next build order
-~~~
+                                  Streamlit implementation and rollout record
+STATUS.md                         Phase checklist and cleanup status
+```
 
 ## Roadmap and explicit non-goals
 
@@ -252,7 +225,7 @@ The following remain intentionally out of scope until a stronger source is avail
 
 ## Further reading
 
-- [STATUS.md](./STATUS.md) — phase-by-phase implementation checklist.
+- [STATUS.md](./STATUS.md) — phase-by-phase implementation checklist and cleanup record.
 - [docs/portfolio_case_study.md](./docs/portfolio_case_study.md) — product narrative and portfolio framing.
 - [docs/methodology.md](./docs/methodology.md) — source contract, formulas and assumptions.
 - [docs/metric_dictionary.md](./docs/metric_dictionary.md) — metric definitions by grain and limitation.

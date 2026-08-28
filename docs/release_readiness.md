@@ -7,15 +7,14 @@ Product: DineScope — Food Marketplace Intelligence
 
 | Release surface | Status | Decision |
 | --- | --- | --- |
-| Private production workspace | **Ready** | Keep the current owner-only deployment available for review. |
+| Public Streamlit deployment | **Live** | Aggregate-only Streamlit app is public and owner-controlled. |
 | Portfolio case-study package | **Ready** | Case study, screenshots and evidence boundaries are checked into the repository. |
-| Public unauthenticated deployment | **Live** | Aggregate-only Streamlit app is public; raw records/private Sites metadata remain excluded. |
 
-The owner explicitly approved public Streamlit publication on 28 August 2026. This record authorizes the aggregate-only deployment described in `docs/public_data_boundary.md`; it does not authorize publication of raw records, secrets or private Sites metadata.
+The owner explicitly approved public Streamlit publication on 28 August 2026. This record authorizes the aggregate-only deployment described in `docs/public_data_boundary.md`; it does not authorize publication of raw records, secrets or private hosting metadata.
 
 ## Current Streamlit parity gate
 
-The public Streamlit baseline is live and Phases 0–5 are complete: the aggregate contract and shell are hardened, Overview plus Customer Growth match the reference KPI, chart, cohort, lifecycle and export contracts, Reliability plus Market Demand expose the reference trust and eligibility surfaces, Cuisine Opportunity includes proportional demand, heatmap, selected diagnostics and restaurant identity evidence, and Decision Lab includes session-only scenarios, comparison and rank movement. Durable server-backed scenario sharing remains a separate collaboration backlog item.
+The public Streamlit baseline is live and Phases 0–5 are complete: the aggregate contract and shell are hardened, Overview plus Customer Growth expose KPI, chart, cohort, lifecycle and export surfaces, Reliability plus Market Demand expose trust and eligibility surfaces, Cuisine Opportunity includes proportional demand, heatmap, selected diagnostics and restaurant identity evidence, and Decision Lab includes session-only scenarios, comparison and rank movement. Durable server-backed scenario sharing remains a separate collaboration backlog item.
 
 ## Readiness checklist
 
@@ -39,11 +38,9 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 
 ### Engineering and experience
 
-- [x] Automated analytics and interface-contract tests pass.
-- [x] Lint and production build pass.
-- [x] Performance budgets pass for aggregate, JavaScript and CSS bundles.
-- [x] Keyboard focus, named controls, table-row selection and export affordances have contract coverage.
-- [x] Local previews have an explicit auth fallback and role resolution path.
+- [x] Automated analytics and Streamlit AppTest checks pass.
+- [x] The deployment-safe aggregate remains below the documented payload budget.
+- [x] Named navigation, stable filters, table views and export affordances have rendered coverage.
 - [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://dinescope-marketplace-intelligence.streamlit.app/
 - [x] Streamlit UI hardening pass verifies sidebar/logo contrast, responsive metric and table text, safe percentage formats, reversible chart/data controls and non-empty cuisine demand rendering.
 - [x] Overview polish keeps Metric dictionary access in the sidebar and aligns metric help icons with wrapped labels.
@@ -51,12 +48,13 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 
 ### Deployment and ownership
 
-- [x] Production deployment is private and owner-controlled.
-- [x] The repository includes the deployment configuration and repeatable build commands.
+- [x] Public Streamlit deployment is owner-controlled through the GitHub `main` branch.
+- [x] The repository includes `requirements.txt`, the Streamlit entry point and repeatable aggregate build commands.
 - [x] The product states that it is an independent portfolio case study and is not affiliated with a food-delivery company.
 - [x] Public access policy is selected: public read-only.
 - [x] DineScope title, original plate-and-scope identity and favicon do not imply company affiliation.
 - [x] Streamlit sidebar includes a visible independent-portfolio disclaimer and public repository support path.
+- [x] Retired frontend/site source, configuration and generated build artifacts are removed from the repository.
 
 ## Public-release decision record
 
@@ -67,10 +65,10 @@ Decision:       [ ] Keep private   [ ] Invite-only   [x] Public read-only
 Approved by:    Project owner
 Date:           28 August 2026
 Notes:          Publish the deployment-safe aggregate and required mappings;
-                exclude raw records, secrets and private Sites metadata.
+                exclude raw records, secrets and private hosting metadata.
 ```
 
-The existing private React/Sites deployment remains unchanged; the separate public Streamlit surface is live at https://dinescope-marketplace-intelligence.streamlit.app/.
+The public Streamlit surface is live at https://dinescope-marketplace-intelligence.streamlit.app/.
 
 ## Next build after release decision
 

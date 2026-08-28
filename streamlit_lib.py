@@ -11,7 +11,7 @@ from typing import Any
 import pandas as pd
 
 
-DATA_PATH = Path(__file__).parent / "app" / "data" / "analytics.json"
+DATA_PATH = Path(__file__).parent / "data" / "analytics.json"
 AGGREGATE_VERSION = "1.1.0"
 DEFAULT_WEIGHTS = {"demand": 25, "growth": 25, "reach": 20, "gap": 15, "quality": 15}
 DECISION_DIMENSIONS = ("demand", "growth", "reach", "gap", "quality")

@@ -10,14 +10,15 @@ The current aggregate contract is version `1.1.0`. It includes source schema met
 
 Approved public artifacts:
 
-- `app/data/analytics.json` — derived market, customer-behavior and opportunity aggregates.
+- `data/analytics.json` — derived market, customer-behavior and opportunity aggregates.
 - `data/mappings/*.csv` — reviewable normalization mappings used to make metrics auditable.
+- `assets/brand/*` — DineScope identity assets used by the Streamlit shell and repository documentation.
 - `docs/screenshots/*` — product captures containing only published aggregate metrics.
 
 Artifacts that remain private and must not be copied into the public repository or Streamlit runtime:
 
 - The raw source CSV and any equivalent order-level/customer-level extract.
-- `.openai/hosting.json` — private Sites project metadata.
+- Private hosting metadata and deployment configuration from retired site tooling.
 - `.streamlit/secrets.toml`, credentials, access tokens and local environment files.
 
 The raw source CSV is excluded independently by `.gitignore` and should never be committed.

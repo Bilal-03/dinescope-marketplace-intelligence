@@ -9,7 +9,7 @@
 - Date interpretation: explicit `%m/%d/%Y` parsing
 - Observed window: 4 October 2017 through 26 June 2020
 
-The aggregate builder fails before processing when required source fields are missing or the input does not contain exactly the audited 36 columns. The published artifact records `expected_columns` and `schema_matches` so Python and TypeScript consumers can fail loudly on schema drift.
+The aggregate builder fails before processing when required source fields are missing or the input does not contain exactly the audited 36 columns. The published artifact records `expected_columns` and `schema_matches` so the Python adapter and Streamlit release checks can fail loudly on schema drift.
 
 ## Valid transaction rule
 
@@ -47,7 +47,7 @@ Decision Lab starts from the balanced cuisine opportunity signal but recalculate
 
 ## Interaction and performance guardrails
 
-The interface contract tests require named primary navigation and Decision Lab controls, explicit button types, keyboard handling for selectable market and cuisine rows, visible focus treatment and CSV export wiring. The performance check runs against the deployment build and currently budgets the aggregate analytics payload at 1.3 MB, client JavaScript at 650 KB raw / 180 KB gzip-sum, and client CSS at 60 KB raw / 20 KB gzip-sum. These are engineering guardrails for regressions, not claims about end-user network speed.
+The Streamlit AppTest suite requires named navigation and Decision Lab controls, stable filter state, export wiring and error-free rendering for every public workspace. Aggregate checks keep the published analytics payload below the documented 1.3 MB budget. These are engineering guardrails for regressions, not claims about end-user network speed.
 
 ## Location mapping and market eligibility
 

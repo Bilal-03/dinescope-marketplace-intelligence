@@ -57,9 +57,10 @@ BRAND_DESCRIPTION = (
     "uncover customer, market, restaurant, and cuisine opportunities from food-delivery data."
 )
 REPOSITORY_URL = "https://github.com/Bilal-03/dinescope-marketplace-intelligence"
-BRAND_LOCKUP = Path(__file__).parent / "public" / "dinescope-lockup-light.png"
-BRAND_ICON = Path(__file__).parent / "public" / "favicon.png"
-BRAND_ICON_LIGHT = Path(__file__).parent / "public" / "dinescope-icon-light.png"
+BRAND_ASSETS = Path(__file__).parent / "assets" / "brand"
+BRAND_LOCKUP = BRAND_ASSETS / "dinescope-lockup-light.png"
+BRAND_ICON = BRAND_ASSETS / "favicon.png"
+BRAND_ICON_LIGHT = BRAND_ASSETS / "dinescope-icon-light.png"
 PAGE_FEATURE_FLAGS = {
     "Overview": "overview_v2",
     "Customer growth": "customers_v2",
@@ -899,9 +900,8 @@ def render_markets(data: dict, market: str, period: str) -> None:
     sort_label = st.selectbox("Rank markets by", list(sort_options), key="pl_market_sort")
     sort_field = sort_options[sort_label]
     if st.session_state.get("pl_market_sort_previous") != sort_label:
-        # React's reference view derives its default selection from the newly
-        # ranked list. Preserve an explicit diagnosis only while the ranking
-        # dimension stays unchanged.
+        # Re-seed the selected market from the newly ranked list. Preserve an
+        # explicit diagnosis only while the ranking dimension stays unchanged.
         st.session_state["pl_market_sort_previous"] = sort_label
         st.session_state["pl_selected_market"] = ""
     ranked = sorted(

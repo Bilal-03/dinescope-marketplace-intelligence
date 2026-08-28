@@ -4,12 +4,12 @@
 
 **Role:** Product manager / product-minded engineer  
 **Audience:** Product, Growth, Marketplace, Category and City Operations teams  
-**Product:** An interactive decision-intelligence platform that helps Product and Growth teams uncover customer, market, restaurant, and cuisine opportunities from food-delivery data.
+**Product:** An interactive decision-intelligence platform that helps Product and Growth teams uncover customer, market, restaurant and cuisine opportunities from food-delivery data.
 **Status:** Public read-only Streamlit deployment; aggregate-only portfolio release is live.
 
 This is an independent portfolio case study. It is not affiliated with a food-delivery company, endorsed by Zomato or Swiggy, or based on internal company data.
 
-DineScope is designed around a practical product question: *where should a marketplace team investigate next, and how much confidence should it have in the evidence?* It connects customer behavior, market demand, cuisine opportunity and source reliability in one workspace. The interface makes uncertainty visible at the same moment that it presents an opportunity, so a high ranking cannot be mistaken for a proven causal recommendation.
+DineScope is designed around a practical product question: *where should a marketplace team investigate next, and how much confidence should it have in the evidence?* It connects customer behaviour, market demand, cuisine opportunity and source reliability in one workspace. The interface makes uncertainty visible at the same moment that it presents an opportunity, so a high ranking cannot be mistaken for a proven causal recommendation.
 
 ## The problem
 
@@ -20,26 +20,25 @@ Marketplace teams rarely struggle to find a chart. They struggle to reconcile co
 - A repeat rate can be mistaken for retention even when cohort maturity is unknown.
 - A polished dashboard can hide missing ratings, menu coverage or invalid transactions.
 
-The source file contains enough customer, order, location, cuisine and restaurant context to explore these questions, but not enough operational fields to claim delivery speed, cancellation, discount, commission, funnel or campaign performance. DineScope therefore makes the source contract part of the product rather than burying it in an appendix.
+The source contains enough customer, order, location, cuisine and restaurant context to explore these questions, but not enough operational fields to claim delivery-time, cancellation, discount, commission, funnel or campaign performance. DineScope therefore makes the source contract part of the product rather than burying it in an appendix.
 
 ## What was built
 
-The product is a responsive, keyboard-usable analytics workspace with five connected modules:
+The product is a responsive, keyboard-usable Streamlit analytics workspace with six connected workspaces:
 
 1. **Overview** — audited marketplace KPIs, customer mix, monthly acquisition-versus-return trend and a deterministic decision brief.
-2. **Customers** — repeat behavior, frequency, lifecycle segments, cohort retention and a downloadable segment evidence table.
-3. **Markets** — cleaned metro demand, equal-length current-versus-comparison growth, scale-versus-growth quadrant, eligibility thresholds, mapping coverage and confidence.
-4. **Cuisines** — canonical taxonomy, additive multi-cuisine allocation, cuisine-market opportunity signals, observed listing context, evidence thresholds and CSV export.
-5. **Decision Lab** — configurable demand, growth, reach, gap and data-quality weights; confidence discounting; presets stored locally; comparison; rank movement; and a decision-brief export.
-
-The **Data Reliability Center** is intentionally cross-cutting. It exposes reconciliation, field coverage, source fingerprint and mapping warnings at the point where a user interprets a metric.
+2. **Customer growth** — repeat behaviour, frequency, lifecycle segments, cohort retention and a downloadable segment evidence table.
+3. **Market demand** — cleaned metro demand, equal-length current-versus-comparison growth, scale-versus-growth quadrant, eligibility thresholds, mapping coverage and confidence.
+4. **Cuisine gaps** — canonical taxonomy, additive multi-cuisine allocation, cuisine-market opportunity signals, observed listing context, evidence thresholds and CSV export.
+5. **Data reliability** — reconciliation, field coverage, source fingerprint and mapping warnings at the point where a metric is interpreted.
+6. **Decision Lab** — configurable demand, growth, reach, gap and data-quality weights; confidence discounting; session-only presets; comparison; rank movement; and decision-brief export.
 
 ## Evidence at a glance
 
 The current aggregate is generated from 150,281 source rows and 36 columns.
 
 | Evidence | Verified value | Product implication |
-| --- | ---: | --- |
+|---|---:|---|
 | Valid transactions | 148,668 | The KPI layer uses a transparent validity rule and preserves 1,613 exclusions. |
 | Gross valid sales | ₹986,564,268 | Sales are reported as gross valid INR sales, not net revenue. |
 | Active customers | 77,584 | Customer scope is based on distinct customers with at least one valid transaction. |
@@ -54,7 +53,7 @@ The source window is 4 October 2017 through 26 June 2020. Dates are parsed expli
 
 ## Product decisions and trade-offs
 
-### Separate repeat behavior from retention
+### Separate repeat behaviour from retention
 
 Repeat rate answers “how many active customers ordered at least twice in this scope?” Cohort retention answers “what share of a first-observed cohort returned at month age *m*?” Keeping both avoids overstating marketplace habit from a single aggregate number.
 
@@ -77,19 +76,18 @@ There are no delivery-time, cancellation, discount, commission, funnel or campai
 ## Technical architecture
 
 ```text
-Source CSV
+Source CSV (local and ignored)
   → Python schema + validity audit
   → deployment-safe aggregate JSON + reviewable mapping CSVs
-  → typed metric/filter layer
-  → React/Vinext analytics workspace
-  → private Cloudflare Worker-compatible Sites deployment
+  → Streamlit adapter + session state + native tables/charts
+  → public Streamlit Community Cloud app
 ```
 
 Raw customer-level records and addresses are not shipped to the browser. The checked-in aggregate contains only the measures and evidence rows needed by the interface. The build is reproducible through `scripts/audit_source.py` and `scripts/build_analytics.py`; the source fingerprint and definitions travel with the aggregate.
 
 ## What each team can do with it
 
-- **Product:** distinguish acquisition volume from repeat behavior, inspect cohort maturity and frame activation hypotheses without calling them causal results.
+- **Product:** distinguish acquisition volume from repeat behaviour, inspect cohort maturity and frame activation hypotheses without calling them causal results.
 - **Growth:** size lifecycle segments, identify first-to-second-order opportunities and export evidence for a test brief.
 - **Marketplace:** compare market scale and momentum while seeing mapping coverage and confidence.
 - **Category:** find cuisine-market pairs worth validating, with demand, growth, reach, listing context and quality coverage in one row.
@@ -101,12 +99,12 @@ Every recommendation is an investigation signal. The product does not claim incr
 
 The current release passes:
 
-- 16 automated reconciliation, interface-contract and portfolio-package tests (`npm test`).
-- ESLint and a production build (`npm run lint`, `npm run build`).
-- A repeatable performance budget (`npm run check:performance`) covering the aggregate payload, client JavaScript and client CSS.
-- Accessibility contracts for named navigation and controls, explicit button types, visible keyboard focus, keyboard-selectable evidence rows and export affordances.
+- Python aggregate-contract and reconciliation tests.
+- Streamlit AppTest coverage for all six workspaces, filters, exports and Decision Lab scenarios.
+- Release-package checks for evidence boundaries, deployment status and representative screenshots.
+- `py_compile` and `git diff --check` before release.
 
-The active budgets are 1.3 MB for the aggregate, 650 KB raw / 180 KB gzip-sum for client JavaScript, and 60 KB raw / 20 KB gzip-sum for client CSS. These are regression guardrails, not promises about a user's network speed.
+The public URL is smoke-tested after deployment for unauthenticated loading, aggregate KPI rendering and module navigation. The published aggregate is intentionally kept below the documented 1.3 MB payload budget.
 
 ## Limitations and responsible interpretation
 
@@ -116,20 +114,18 @@ The active budgets are 1.3 MB for the aggregate, 650 KB raw / 180 KB gzip-sum fo
 - Ratings cover roughly two-fifths of rows and menu fields roughly one-twelfth.
 - Cuisine allocation assumes equal contribution from each listed cuisine.
 - Listing counts are observational and do not prove availability, quality or unmet demand.
-- Decision Lab weights change prioritization inside the eligible set; they do not change the underlying facts or create a forecast.
+- Decision Lab weights change prioritisation inside the eligible set; they do not change the underlying facts or create a forecast.
 
 ## Portfolio presentation plan
 
-The representative screenshots in [`docs/screenshots/`](./screenshots/) show the overview, Decision Lab and cuisine opportunity surfaces using the private production build:
+The representative screenshots in [`docs/screenshots/`](./screenshots/) show the Overview, Decision Lab and Cuisine Opportunity surfaces. They are intended to demonstrate the product surfaces and evidence treatment, not to expose raw customer records:
 
 - [`01-overview.jpg`](./screenshots/01-overview.jpg) — audited KPIs, marketplace momentum and the decision brief.
 - [`02-decision-lab.jpg`](./screenshots/02-decision-lab.jpg) — explicit weighting, evidence guardrails and the current investigation lead.
 - [`03-cuisine-opportunity.jpg`](./screenshots/03-cuisine-opportunity.jpg) — canonical cuisine coverage, thresholds and demand-to-coverage context.
 
-They are intended to demonstrate the interaction model and evidence treatment, not to expose raw customer records.
-
 For a public portfolio page, the recommended framing is:
 
 > “I built a deployment-ready marketplace intelligence product that makes customer growth, demand opportunity and data reliability legible in one workflow. The product is intentionally conservative: it exposes missing evidence, enforces minimum samples and labels directional signals as hypotheses.”
 
-The release checklist in [`docs/release_readiness.md`](./release_readiness.md) records what is ready now, what still needs owner sign-off and what must be rechecked before any public access change.
+The release checklist in [`docs/release_readiness.md`](./release_readiness.md) records what is ready now and what must be rechecked before any public access change.
