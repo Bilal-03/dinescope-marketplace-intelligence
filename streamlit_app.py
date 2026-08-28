@@ -57,8 +57,9 @@ BRAND_DESCRIPTION = (
     "uncover customer, market, restaurant, and cuisine opportunities from food-delivery data."
 )
 REPOSITORY_URL = "https://github.com/Bilal-03/dinescope-marketplace-intelligence"
-BRAND_LOCKUP = Path(__file__).parent / "public" / "dinescope-lockup.png"
+BRAND_LOCKUP = Path(__file__).parent / "public" / "dinescope-lockup-light.png"
 BRAND_ICON = Path(__file__).parent / "public" / "favicon.png"
+BRAND_ICON_LIGHT = Path(__file__).parent / "public" / "dinescope-icon-light.png"
 PAGE_FEATURE_FLAGS = {
     "Overview": "overview_v2",
     "Customer growth": "customers_v2",
@@ -121,6 +122,15 @@ DECISION_WEIGHT_HELP = {
     "gap": "Relative demand-to-listing index.",
     "quality": "Rating and menu field coverage.",
 }
+LIFECYCLE_DEFINITIONS = {
+    "New customers": "One observed order and a first order within the last 90 days of the selected scope.",
+    "Potential loyalists": "Exactly two observed orders, with the latest order within the last 180 days.",
+    "Loyal": "Three or more observed orders, with recency or frequency indicating an established habit.",
+    "Champions": "Four or more observed orders and a latest order within the last 180 days.",
+    "Occasional": "The remaining customers with some observed activity but no stronger lifecycle signal.",
+    "At risk": "Two or more observed orders, but no order in the last 270 days of the selected scope.",
+    "Dormant": "Exactly one observed order and no order in the last 270 days of the selected scope.",
+}
 
 
 st.set_page_config(
@@ -133,7 +143,7 @@ st.logo(
     str(BRAND_LOCKUP),
     size="large",
     link=REPOSITORY_URL,
-    icon_image=str(BRAND_ICON),
+    icon_image=str(BRAND_ICON_LIGHT),
 )
 
 
@@ -299,6 +309,15 @@ def inject_styles() -> None:
         [data-testid="stSidebar"] { background:#123c36; }
         [data-testid="stSidebar"] * { color:#f6f3e9 !important; }
         [data-testid="stSidebar"] [data-baseweb="select"] > div { background:#1c4c44; }
+        [data-testid="stSidebar"] .stButton button,
+        [data-testid="stSidebar"] .stButton button p,
+        [data-testid="stSidebar"] .stButton button span { color:#123c36 !important; background:#fffdf8 !important; border-color:#fffdf8 !important; }
+        [data-testid="stSidebar"] .stButton button:hover,
+        [data-testid="stSidebar"] .stButton button:hover p,
+        [data-testid="stSidebar"] .stButton button:hover span { color:#fffdf8 !important; background:#ef6a50 !important; border-color:#ef6a50 !important; }
+        [data-testid="stSidebar"] .stButton button:focus-visible { outline:3px solid #ef6a50 !important; outline-offset:2px; }
+        [data-testid="stSidebar"] [data-testid="stMarkdownContainer"],
+        [data-testid="stSidebar"] [data-testid="stCaptionContainer"] { overflow-wrap:anywhere; }
         .block-container { max-width:1480px; padding-top:2.4rem; padding-bottom:4rem; }
         .pl-hero { padding:1.5rem 0 1.2rem; border-bottom:1px solid #d9d6cd; margin-bottom:1.3rem; }
         .pl-kicker { color:var(--coral); font-size:.76rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
@@ -311,15 +330,41 @@ def inject_styles() -> None:
         .pl-filter-meta b { color:var(--ink); font-size:.96rem; }
         div[data-testid="stMetric"] { background:rgba(255,253,248,.92); border:1px solid #e2ded3; border-radius:16px; padding:1rem 1.05rem; box-shadow:0 10px 26px rgba(36,50,46,.05); min-height:120px; }
         div[data-testid="stMetric"] label { color:var(--muted); font-weight:700; }
-        div[data-testid="stMetric"] [data-testid="stMetricValue"] { color:var(--ink); font-family:Georgia,serif; }
+        div[data-testid="stMetric"] [data-testid="stMetricValue"],
+        div[data-testid="stMetric"] [data-testid="stMetricValue"] *,
+        div[data-testid="stMetric"] [data-testid="stMetricValue"] p { color:var(--ink); font-family:Georgia,serif; white-space:normal !important; overflow:visible !important; text-overflow:clip !important; max-width:none !important; width:auto !important; overflow-wrap:anywhere; word-break:break-word; line-height:1.05; font-size:clamp(1.15rem, 1.9vw, 2.35rem); }
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] { white-space:normal !important; overflow-wrap:anywhere; line-height:1.2; }
+        div[data-testid="stMetric"] [data-testid="stMetricDelta"] { white-space:normal !important; overflow-wrap:anywhere; }
         div[data-testid="stDataFrame"], div[data-testid="stTable"], .pl-note, .pl-callout { background:var(--card); border:1px solid #e2ded3; border-radius:14px; overflow:hidden; }
         .pl-note, .pl-callout { padding:1rem 1.15rem; color:var(--muted); }
         .pl-callout { border-left:5px solid var(--coral); }
         .pl-callout b { color:var(--ink); }
         h2, h3 { font-family:Georgia,serif !important; color:var(--ink) !important; letter-spacing:-.02em; }
-        .stButton button, .stDownloadButton button { border-radius:99px; border:1px solid var(--green); color:var(--green); font-weight:750; }
+        .stButton button, .stDownloadButton button { border-radius:99px; border:1px solid var(--green); color:var(--green); font-weight:750; white-space:normal; overflow-wrap:anywhere; line-height:1.2; min-height:2.5rem; }
         .stButton button:hover, .stDownloadButton button:hover { background:var(--green); color:white; }
         .stButton button:disabled { color:#8a948f !important; border-color:#cfd5d0 !important; background:rgba(255,253,248,.7) !important; opacity:1; }
+        [data-testid="stDataFrame"] { max-width:100%; }
+        /* Use the app-level Chart/Data table control so the native Vega
+           "Show data" popover cannot strand a user without a return action. */
+        [data-testid="stVegaLiteChart"] button[aria-label="Show data"],
+        [data-testid="stVegaLiteChart"] button[title="Show data"],
+        [data-testid="stElementToolbar"] button[aria-label="Show data"],
+        [data-testid="stElementToolbar"] button[title="Show data"] { display:none !important; }
+        [data-testid="stDialog"] [data-testid="stMarkdownContainer"] { overflow-wrap:anywhere; }
+        div[data-testid="stHorizontalBlock"] { align-items:stretch; }
+        @media (max-width: 900px) {
+            .block-container { padding:1.25rem 1rem 3rem; }
+            div[data-testid="stHorizontalBlock"] { flex-wrap:wrap !important; }
+            div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] { min-width:min(100%, 260px) !important; flex:1 1 260px !important; }
+            .pl-hero h1 { font-size:clamp(2.15rem, 10vw, 3.6rem); }
+            .pl-hero p { font-size:1rem; }
+            h2, h3 { overflow-wrap:anywhere; }
+            div[data-testid="stMetric"] { min-height:100px; padding:.8rem .85rem; }
+            div[data-testid="stMetric"] [data-testid="stMetricValue"],
+            div[data-testid="stMetric"] [data-testid="stMetricValue"] *,
+            div[data-testid="stMetric"] [data-testid="stMetricValue"] p { font-size:clamp(1.1rem, 5.5vw, 1.9rem); }
+            .stRadio > div { flex-wrap:wrap; row-gap:.35rem; }
+        }
         [data-testid="stExpander"] { background:rgba(255,253,248,.72); border-radius:12px; }
         footer { visibility:hidden; }
         </style>
@@ -350,6 +395,70 @@ def fmt_inr(value: float) -> str:
     if abs(value) >= 100_000:
         return f"₹{value / 100_000:.1f} L"
     return f"₹{value:,.0f}"
+
+
+def render_chart_view(
+    chart: alt.Chart | None,
+    frame: pd.DataFrame,
+    *,
+    key: str,
+    label: str,
+    column_config: dict | None = None,
+    renderer=None,
+) -> None:
+    """Render an explicit chart/data-table switch beside every analytical chart.
+
+    Altair's native toolbar can open a data view, but it does not expose a
+    reliable return control on every Streamlit viewport. Keeping the view in
+    Streamlit state makes the switch back to the chart explicit and keyboard-
+    accessible, while preserving the native download/fullscreen toolbar.
+    """
+
+    view = st.radio(label, ["Chart", "Data table"], horizontal=True, key=key)
+    if view == "Data table":
+        st.dataframe(
+            frame,
+            width="stretch",
+            hide_index=True,
+            column_config=column_config or {},
+        )
+    else:
+        if renderer is not None:
+            renderer()
+        else:
+            st.altair_chart(chart, width="stretch")
+
+
+def render_lifecycle_explainer(scope: dict) -> None:
+    """Explain the order-based lifecycle model before showing its table."""
+
+    st.caption(
+        "Yes — lifecycle segments describe food-delivery customer behaviour in the selected scope. "
+        "They use valid orders, order recency and observed spend; they are not app-activity or demographic labels."
+    )
+    with st.expander("How to read lifecycle segments and values"):
+        st.markdown(
+            "**Customers** is the number of unique customers in the segment. "
+            "**Share** is that segment's share of active customers. "
+            "**Orders / customer** and **Sales / customer** are averages of valid transactions and sales in the scope. "
+            "**Repeat rate** is the share with at least two valid orders. "
+            "**Median recency** is the median days since a customer's last observed order."
+        )
+        definition_rows = [
+            {"Segment": name, "Plain-language definition": definition}
+            for name, definition in LIFECYCLE_DEFINITIONS.items()
+            if any(row.get("segment") == name for row in scope.get("segments", []))
+        ]
+        if definition_rows:
+            st.dataframe(
+                pd.DataFrame(definition_rows),
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "Segment": st.column_config.TextColumn(width="medium"),
+                    "Plain-language definition": st.column_config.TextColumn(width="large"),
+                },
+            )
 
 
 def hero(page: str, subtitle: str, data: dict) -> None:
@@ -393,7 +502,7 @@ def show_methodology(data: dict) -> None:
 
 
 def render_topbar(data: dict, flags: dict[str, bool]) -> None:
-    left, right = st.columns([2.3, 1])
+    left, right = st.columns([2.3, 1], gap="small")
     with left:
         st.markdown(f"### {BRAND_NAME}")
         st.caption(f"{BRAND_DESCRIPTOR} · {BRAND_TAGLINE}")
@@ -436,8 +545,10 @@ def render_global_filters(data: dict, page: str) -> tuple[str, str]:
 
 def render_sidebar(data: dict, flags: dict[str, bool]) -> str:
     with st.sidebar:
-        st.markdown(f"## {BRAND_NAME}")
-        st.caption(BRAND_DESCRIPTOR)
+        if BRAND_LOCKUP.exists():
+            st.image(str(BRAND_LOCKUP), width=230)
+        else:
+            st.markdown(f"## {BRAND_NAME}")
         st.caption(BRAND_TAGLINE)
         page = st.radio(
             "Workspace",
@@ -499,7 +610,17 @@ def render_overview(data: dict, market: str, period: str) -> None:
             .configure_view(stroke=None)
             .configure_axis(gridColor="#e2ded3", titleColor="#65716d")
         )
-        st.altair_chart(chart, width="stretch")
+        render_chart_view(
+            chart,
+            monthly,
+            key="pl_overview_performance_view",
+            label="Display monthly performance as",
+            column_config={
+                "Month": st.column_config.DatetimeColumn(format="MMM YYYY", width="medium"),
+                "Value": st.column_config.NumberColumn(format="₹%,.0f" if metric == "sales" else "%,.0f", width="medium"),
+                "Metric": st.column_config.TextColumn(width="medium"),
+            },
+        )
         st.caption(f"{value_title} · {len(monthly):,} monthly points · Partial boundary months remain labelled.")
     with right:
         st.markdown('<span class="pl-section-kicker">Decision brief</span>', unsafe_allow_html=True)
@@ -526,8 +647,9 @@ def render_overview(data: dict, market: str, period: str) -> None:
             width="stretch",
             hide_index=True,
             column_config={
+                "Market": st.column_config.TextColumn(width="medium"),
                 "Gross sales": st.column_config.NumberColumn(format="₹%.0f"),
-                "Repeat rate": st.column_config.NumberColumn(format="%.1%%"),
+                "Repeat rate": st.column_config.NumberColumn(format="percent"),
             },
         )
     with lower_right:
@@ -540,15 +662,20 @@ def render_overview(data: dict, market: str, period: str) -> None:
     st.markdown('<span class="pl-section-kicker">Lifecycle signal</span>', unsafe_allow_html=True)
     st.subheader("Lifecycle mix")
     display = lifecycle_frame(scope)
+    render_lifecycle_explainer(scope)
     st.dataframe(
         display,
         width="stretch",
         hide_index=True,
         column_config={
-            "Share": st.column_config.NumberColumn(format="%.1%%"),
-            "Repeat rate": st.column_config.NumberColumn(format="%.1%%"),
-            "Sales / customer": st.column_config.NumberColumn(format="₹%.0f"),
-            "Median recency": st.column_config.NumberColumn(format="%.0f days"),
+            "Segment": st.column_config.TextColumn(width="medium"),
+            "Customers": st.column_config.NumberColumn(format="%,.0f", width="small"),
+            "Share": st.column_config.NumberColumn(format="percent", width="small"),
+            "Orders / customer": st.column_config.NumberColumn(format="%.2f", width="medium"),
+            "Sales / customer": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
+            "Repeat rate": st.column_config.NumberColumn(format="percent", width="small"),
+            "Median recency": st.column_config.NumberColumn(format="%.0f days", width="medium"),
+            "Suggested action": st.column_config.TextColumn(width="large", help="The recommended next growth experiment for this observed segment."),
         },
     )
 
@@ -593,7 +720,17 @@ def render_customers(data: dict, market: str, period: str) -> None:
             .configure_view(stroke=None)
             .configure_axis(gridColor="#e2ded3", titleColor="#65716d")
         )
-        st.altair_chart(chart, width="stretch")
+        render_chart_view(
+            chart,
+            monthly,
+            key="pl_customer_mix_view",
+            label="Display customer mix as",
+            column_config={
+                "Month": st.column_config.DatetimeColumn(format="MMM YYYY", width="medium"),
+                "Customer type": st.column_config.TextColumn(width="medium"),
+                "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+            },
+        )
         st.caption(f"{len(scope.get('monthly', [])):,} monthly points · New customers are first observed in the filtered market.")
     with right:
         st.markdown('<span class="pl-section-kicker">Habit depth</span>', unsafe_allow_html=True)
@@ -614,7 +751,16 @@ def render_customers(data: dict, market: str, period: str) -> None:
             .configure_view(stroke=None)
             .configure_axis(gridColor="#e2ded3", titleColor="#65716d")
         )
-        st.altair_chart(chart, width="stretch")
+        render_chart_view(
+            chart,
+            frequency,
+            key="pl_customer_frequency_view",
+            label="Display transaction frequency as",
+            column_config={
+                "Label": st.column_config.TextColumn(width="medium"),
+                "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+            },
+        )
         st.caption("Frequency is calculated inside the selected scope; it is not a lifetime app-engagement measure.")
     cohort_frame = customer_cohort_frame(scope.get("cohorts", []))
     cohort_left, cohort_right = st.columns([1.55, 1])
@@ -659,7 +805,17 @@ def render_customers(data: dict, market: str, period: str) -> None:
                 .configure_view(stroke=None)
                 .configure_axis(gridColor="#e2ded3", titleColor="#65716d")
             )
-            st.altair_chart(chart, width="stretch")
+            render_chart_view(
+                chart,
+                segment_chart,
+                key="pl_customer_segment_mix_view",
+                label="Display segment mix as",
+                column_config={
+                    "segment": st.column_config.TextColumn(label="Segment", width="medium"),
+                    "customers": st.column_config.NumberColumn(label="Customers", format="%,.0f", width="medium"),
+                    "Share": st.column_config.NumberColumn(format="percent", width="small"),
+                },
+            )
             insight = scope["insight"]
             st.markdown(
                 f'<div class="pl-note"><b>{insight["headline"]}</b><br>{insight["action"]}<br><small>{insight["confidence"]} confidence</small></div>',
@@ -668,15 +824,20 @@ def render_customers(data: dict, market: str, period: str) -> None:
     st.markdown('<span class="pl-section-kicker">Action workspace</span>', unsafe_allow_html=True)
     st.subheader("Segment evidence & recommended action")
     segment_table = lifecycle_frame(scope)
+    render_lifecycle_explainer(scope)
     st.dataframe(
         segment_table,
         width="stretch",
         hide_index=True,
         column_config={
-            "Share": st.column_config.NumberColumn(format="%.1%%"),
-            "Repeat rate": st.column_config.NumberColumn(format="%.1%%"),
-            "Sales / customer": st.column_config.NumberColumn(format="₹%.0f"),
-            "Median recency": st.column_config.NumberColumn(format="%.0f days"),
+            "Segment": st.column_config.TextColumn(width="medium"),
+            "Customers": st.column_config.NumberColumn(format="%,.0f", width="small"),
+            "Share": st.column_config.NumberColumn(format="percent", width="small"),
+            "Orders / customer": st.column_config.NumberColumn(format="%.2f", width="medium"),
+            "Sales / customer": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
+            "Repeat rate": st.column_config.NumberColumn(format="percent", width="small"),
+            "Median recency": st.column_config.NumberColumn(format="%.0f days", width="medium"),
+            "Suggested action": st.column_config.TextColumn(width="large", help="The recommended next growth experiment for this observed segment."),
         },
     )
     st.download_button(
@@ -850,11 +1011,25 @@ def render_markets(data: dict, market: str, period: str) -> None:
         zero_rule = alt.Chart(pd.DataFrame({"Growth": [0]})).mark_rule(color="#c8c2b5").encode(y="Growth:Q")
         median_transactions = float(quadrant["Transactions"].median())
         scale_rule = alt.Chart(pd.DataFrame({"Transactions": [median_transactions]})).mark_rule(color="#c8c2b5").encode(x="Transactions:Q")
-        st.altair_chart(
+        quadrant_chart = (
             (point_chart + zero_rule + scale_rule)
             .configure_view(stroke=None)
-            .configure_axis(gridColor="#e2ded3", titleColor="#65716d", labelColor="#65716d"),
-            width="stretch",
+            .configure_axis(gridColor="#e2ded3", titleColor="#65716d", labelColor="#65716d")
+        )
+        render_chart_view(
+            quadrant_chart,
+            quadrant,
+            key="pl_market_quadrant_view",
+            label="Display market growth quadrant as",
+            column_config={
+                "Market": st.column_config.TextColumn(width="medium"),
+                "Transactions": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Growth": st.column_config.NumberColumn(format="+.1f%", width="medium"),
+                "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Repeat rate": st.column_config.NumberColumn(format="percent", width="medium"),
+                "Avg. txn value": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
+                "Confidence": st.column_config.TextColumn(width="medium"),
+            },
         )
         st.caption("Scale & protect · Investigate decline · Selective bets · Build evidence · Confidence is shown by colour.")
 
@@ -910,7 +1085,17 @@ def render_markets(data: dict, market: str, period: str) -> None:
             .configure_view(stroke=None)
             .configure_axis(gridColor="#e2ded3", titleColor="#65716d")
         )
-        st.altair_chart(pulse_chart, width="stretch")
+        render_chart_view(
+            pulse_chart,
+            pulse,
+            key="pl_market_pulse_view",
+            label="Display monthly transaction pulse as",
+            column_config={
+                "Market": st.column_config.TextColumn(width="medium"),
+                "Month": st.column_config.DatetimeColumn(format="MMM YYYY", width="medium"),
+                "Transactions": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+            },
+        )
 
     st.markdown('<span class="pl-section-kicker">Evidence table</span>', unsafe_allow_html=True)
     st.subheader("Eligible market ranking")
@@ -921,11 +1106,11 @@ def render_markets(data: dict, market: str, period: str) -> None:
         hide_index=True,
         column_config={
             "Transactions": st.column_config.NumberColumn(format="%,.0f"),
-            "Growth": st.column_config.NumberColumn(format="+.1%"),
+            "Growth": st.column_config.NumberColumn(format="+.1f%"),
             "Customers": st.column_config.NumberColumn(format="%,.0f"),
-            "Repeat rate": st.column_config.NumberColumn(format=".1%"),
+            "Repeat rate": st.column_config.NumberColumn(format="percent"),
             "Avg. txn value": st.column_config.NumberColumn(format="₹%,.0f"),
-            "Txn share": st.column_config.NumberColumn(format=".1%"),
+            "Txn share": st.column_config.NumberColumn(format="percent"),
         },
     )
     st.download_button(
@@ -1054,25 +1239,38 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
     st.caption("Additive 1/n allocation · top 10 cuisines in the selected market scope")
     summary_frame = cuisine_summary_frame(summary_rows[:10])
     if not summary_frame.empty:
-        demand_chart = (
-            alt.Chart(summary_frame)
-            .mark_bar(color="#194f46", cornerRadiusEnd=5)
-            .encode(
-                y=alt.Y("Cuisine:N", sort="-x", title=None),
-                x=alt.X("Allocated txns:Q", title="Allocated transactions", axis=alt.Axis(format=",.0f")),
-                tooltip=[
-                    alt.Tooltip("Cuisine:N", title="Cuisine"),
-                    alt.Tooltip("Allocated txns:Q", title="Allocated transactions", format=",.1f"),
-                    alt.Tooltip("Allocated sales:Q", title="Allocated sales", format="₹,.0f"),
-                    alt.Tooltip("Customers:Q", title="Customers", format=",.0f"),
-                    alt.Tooltip("Observed listings:Q", title="Observed listings", format=",.0f"),
-                ],
-            )
-            .properties(height=340)
-            .configure_view(stroke=None)
-            .configure_axis(gridColor="#e2ded3", titleColor="#65716d", labelColor="#65716d")
+        summary_frame["Cuisine"] = summary_frame["Cuisine"].fillna("Unknown").astype(str)
+        for numeric_column in ["Allocated txns", "Allocated sales", "Customers", "Markets", "Observed listings"]:
+            summary_frame[numeric_column] = pd.to_numeric(summary_frame[numeric_column], errors="coerce").fillna(0.0)
+    if not summary_frame.empty:
+        summary_display = summary_frame[["Cuisine", "Allocated txns", "Allocated sales", "Customers", "Markets", "Observed listings"]]
+        demand_data = summary_display.sort_values("Allocated txns", ascending=False).set_index("Cuisine")[["Allocated txns"]]
+        render_chart_view(
+            None,
+            summary_display,
+            key="pl_cuisine_demand_view",
+            label="Display leading cuisine demand as",
+            column_config={
+                "Cuisine": st.column_config.TextColumn(width="medium"),
+                "Allocated txns": st.column_config.NumberColumn(format="%,.1f", width="medium"),
+                "Allocated sales": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
+                "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Markets": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Observed listings": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+            },
+            renderer=lambda: st.bar_chart(
+                demand_data,
+                horizontal=True,
+                sort=False,
+                color="#194f46",
+                x_label="Cuisine",
+                y_label="Allocated transactions",
+                width="stretch",
+                height=340,
+            ),
         )
-        st.altair_chart(demand_chart, width="stretch")
+    else:
+        st.info("No cuisine demand values are available for this scope.")
 
     st.markdown('<span class="pl-section-kicker">Selected signal</span>', unsafe_allow_html=True)
     st.subheader(f'{selected["market"]} · {selected["cuisine"]}')
@@ -1096,6 +1294,7 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
     st.subheader("Cuisine-market demand heatmap")
     heatmap = cuisine_heatmap_frame(scoped_pairs)
     if not heatmap.empty:
+        heatmap["Allocated txns"] = pd.to_numeric(heatmap["Allocated txns"], errors="coerce").fillna(0.0)
         heatmap_chart = (
             alt.Chart(heatmap)
             .mark_rect(stroke="#fffdf8", strokeWidth=1)
@@ -1117,7 +1316,17 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
             .configure_view(stroke=None)
             .configure_axis(labelAngle=-35, gridColor="#e2ded3", titleColor="#65716d", labelColor="#65716d")
         )
-        st.altair_chart(heatmap_chart, width="stretch")
+        render_chart_view(
+            heatmap_chart,
+            heatmap,
+            key="pl_cuisine_heatmap_view",
+            label="Display cuisine-market demand as",
+            column_config={
+                "Market": st.column_config.TextColumn(width="medium"),
+                "Cuisine": st.column_config.TextColumn(width="medium"),
+                "Allocated txns": st.column_config.NumberColumn(format="%,.1f", width="medium"),
+            },
+        )
         st.caption("Top seven markets × top eight cuisines. Darker cells represent greater proportionally allocated demand; use Selected opportunity above to inspect a pair.")
 
     st.markdown('<span class="pl-section-kicker">Category action queue</span>', unsafe_allow_html=True)
@@ -1129,14 +1338,17 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
             width="stretch",
             hide_index=True,
             column_config={
+                "Market · Cuisine": st.column_config.TextColumn(width="medium"),
                 "Signal": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f"),
-                "Allocated txns": st.column_config.NumberColumn(format="%,.1f"),
-                "Growth": st.column_config.NumberColumn(format="+.1%"),
-                "Customers": st.column_config.NumberColumn(format="%,.0f"),
-                "Listings": st.column_config.NumberColumn(format="%,.0f"),
-                "Demand / listing": st.column_config.NumberColumn(format="%.2f×"),
-                "Rating cov.": st.column_config.NumberColumn(format=".1%"),
-                "Menu cov.": st.column_config.NumberColumn(format=".1%"),
+                "Allocated txns": st.column_config.NumberColumn(format="%,.1f", width="medium"),
+                "Growth": st.column_config.NumberColumn(format="+.1f%", width="medium"),
+                "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Listings": st.column_config.NumberColumn(format="%,.0f", width="medium"),
+                "Demand / listing": st.column_config.NumberColumn(format="%.2f×", width="medium"),
+                "Rating cov.": st.column_config.NumberColumn(format="percent", width="medium"),
+                "Menu cov.": st.column_config.NumberColumn(format="percent", width="medium"),
+                "Confidence": st.column_config.TextColumn(width="medium"),
+                "Recommended action": st.column_config.TextColumn(width="large", help="Recommended validation step for the selected evidence signal."),
             },
         )
         st.download_button(
@@ -1177,11 +1389,12 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
         width="stretch",
         hide_index=True,
         column_config={
+            "Normalized name": st.column_config.TextColumn(width="large"),
             "Observed rows": st.column_config.NumberColumn(format="%,.0f"),
             "Distinct IDs": st.column_config.NumberColumn(format="%,.0f"),
             "Markets": st.column_config.NumberColumn(format="%,.0f"),
-            "Rating coverage": st.column_config.NumberColumn(format=".1%"),
-            "Menu coverage": st.column_config.NumberColumn(format=".1%"),
+            "Rating coverage": st.column_config.NumberColumn(format="percent"),
+            "Menu coverage": st.column_config.NumberColumn(format="percent"),
         },
     )
     st.markdown(
@@ -1365,16 +1578,21 @@ def render_decision_lab(data: dict, market: str, period: str) -> None:
             width="stretch",
             hide_index=True,
             column_config={
-                "Lab score": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f"),
-                "Baseline rank": st.column_config.NumberColumn(format="%,.0f"),
+                "Rank": st.column_config.NumberColumn(format="%,.0f", width="small"),
+                "Market": st.column_config.TextColumn(width="medium"),
+                "Cuisine": st.column_config.TextColumn(width="medium"),
+                "Lab score": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.1f", width="medium"),
+                "Baseline rank": st.column_config.NumberColumn(format="%,.0f", width="small"),
+                "Move": st.column_config.TextColumn(width="small"),
                 "Demand": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                 "Growth": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                 "Reach": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                 "Gap": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                 "Quality": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                 "Allocated transactions": st.column_config.NumberColumn(format="%,.1f"),
-                "Transaction growth": st.column_config.NumberColumn(format="+.1%"),
+                "Transaction growth": st.column_config.NumberColumn(format="+.1f%"),
                 "Observed listings": st.column_config.NumberColumn(format="%,.0f"),
+                "Recommended next action": st.column_config.TextColumn(width="large", help="Recommended validation step for the ranked opportunity."),
             },
         )
         if len(frame) > 25:
@@ -1455,7 +1673,16 @@ def render_reliability(data: dict) -> None:
             .configure_view(stroke=None)
             .configure_axis(gridColor="#e2ded3", titleColor="#65716d", labelColor="#65716d")
         )
-        st.altair_chart(coverage_chart, width="stretch")
+        render_chart_view(
+            coverage_chart,
+            coverage,
+            key="pl_reliability_coverage_view",
+            label="Display field coverage as",
+            column_config={
+                "Metric": st.column_config.TextColumn(width="medium"),
+                "Coverage": st.column_config.NumberColumn(format="percent", width="medium"),
+            },
+        )
         st.caption("Coverage is descriptive. Missing fields are never imputed into opportunity metrics.")
     with right:
         st.markdown('<span class="pl-section-kicker">Source fingerprint</span>', unsafe_allow_html=True)

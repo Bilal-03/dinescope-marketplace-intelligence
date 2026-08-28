@@ -4,13 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
 ICON_PATH = PUBLIC / "favicon.png"
 LOCKUP_PATH = PUBLIC / "dinescope-lockup.png"
+LIGHT_ICON_PATH = PUBLIC / "dinescope-icon-light.png"
+LIGHT_LOCKUP_PATH = PUBLIC / "dinescope-lockup-light.png"
 OG_PATH = PUBLIC / "og.png"
 
 EVERGREEN = "#123C36"
@@ -19,6 +21,9 @@ INK = "#172033"
 MUTED = "#65736F"
 CANVAS = "#F5F4EE"
 WHITE = "#FFFFFF"
+LIGHT_INK = "#FFF8EF"
+LIGHT_MUTED = "#B9D0C7"
+LIGHT_MARK = "#E7F3EE"
 
 FONT_REGULAR = Path("/System/Library/Fonts/Supplemental/Trebuchet MS.ttf")
 FONT_BOLD = Path("/System/Library/Fonts/Supplemental/Trebuchet MS Bold.ttf")
@@ -51,6 +56,43 @@ def build_lockup(icon: Image.Image) -> None:
         spacing=4,
     )
     canvas.save(LOCKUP_PATH, optimize=True)
+
+
+def build_light_icon(icon: Image.Image) -> Image.Image:
+    """Create a high-contrast mark for the evergreen Streamlit sidebar."""
+
+    light = Image.new("RGBA", icon.size, (0, 0, 0, 0))
+    source = icon.load()
+    target = light.load()
+    for y in range(icon.height):
+        for x in range(icon.width):
+            red, green, blue, alpha = source[x, y]
+            if alpha == 0:
+                continue
+            # Preserve the coral growth arrow; lift the evergreen compass and
+            # chart marks to a pale mint that remains legible on #123C36.
+            if red > 150 and red > green * 1.15:
+                target[x, y] = (red, green, blue, alpha)
+            else:
+                target[x, y] = (*ImageColor.getrgb(LIGHT_MARK), alpha)
+    light.save(LIGHT_ICON_PATH, optimize=True)
+    return light
+
+
+def build_light_lockup(icon: Image.Image) -> None:
+    canvas = Image.new("RGBA", (700, 180), (0, 0, 0, 0))
+    mark = contain(icon, (132, 132))
+    canvas.alpha_composite(mark, (14, (canvas.height - mark.height) // 2))
+    draw = ImageDraw.Draw(canvas)
+    draw.text((164, 36), "DineScope", fill=LIGHT_INK, font=font(FONT_BOLD, 55))
+    draw.text(
+        (166, 102),
+        "FOOD MARKETPLACE INTELLIGENCE",
+        fill=LIGHT_MUTED,
+        font=font(FONT_BOLD, 20),
+        spacing=4,
+    )
+    canvas.save(LIGHT_LOCKUP_PATH, optimize=True)
 
 
 def build_social_card(icon: Image.Image) -> None:
@@ -89,6 +131,8 @@ def build_social_card(icon: Image.Image) -> None:
 def main() -> None:
     icon = Image.open(ICON_PATH).convert("RGBA")
     build_lockup(icon)
+    light_icon = build_light_icon(icon)
+    build_light_lockup(light_icon)
     build_social_card(icon)
 
 

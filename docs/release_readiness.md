@@ -45,6 +45,7 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 - [x] Keyboard focus, named controls, table-row selection and export affordances have contract coverage.
 - [x] Local previews have an explicit auth fallback and role resolution path.
 - [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://dinescope-marketplace-intelligence.streamlit.app/
+- [x] Streamlit UI hardening pass verifies sidebar/logo contrast, responsive metric and table text, safe percentage formats, reversible chart/data controls and non-empty cuisine demand rendering.
 
 ### Deployment and ownership
 

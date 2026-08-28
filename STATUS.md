@@ -30,6 +30,7 @@ Updated: 28 August 2026
 - [x] Streamlit Phase 5 — session-only Decision Lab scenarios, comparison and rank movement
 - [x] Streamlit local acceptance — dependency install, Python tests and browser-rendered module checks
 - [x] Streamlit Community Cloud publication — [public app](https://dinescope-marketplace-intelligence.streamlit.app/) is live from `main` with Python 3.11
+- [x] Streamlit UI hardening — high-contrast sidebar brand lockup, responsive metric/table sizing, safe percentage formats, explicit Chart/Data table switches and repaired cuisine demand visual
 
 ## Verified acceptance checks
 
@@ -125,3 +126,12 @@ Updated: 28 August 2026
 
 1. Keep the aggregate checksum/reconciliation tests green while the full-parity Streamlit baseline is monitored.
 2. Consider server-backed team sharing for saved Decision Lab scenarios only when durable collaboration becomes a product requirement.
+
+## UI hardening completion record — 28 August 2026
+
+- [x] Added a light-on-evergreen DineScope lockup and icon for Streamlit's sidebar/logo surfaces; the original dark lockup remains available for light backgrounds and README/social assets.
+- [x] Replaced invalid `%.1%%`/`.1%` Streamlit column formats with the supported `percent` and `+.1f%` formats, removing the number-format toast while preserving ratio semantics.
+- [x] Added a reversible Chart/Data table control to every analytical chart and hid the native one-way `Show data` popover so users always have a visible return path.
+- [x] Rebuilt Leading cuisine demand with a validated, branded horizontal bar chart and numeric coercion guardrails so non-empty evidence cannot render as blank bars.
+- [x] Documented lifecycle segments as order-based food-delivery customer cohorts, including definitions for recency, frequency, share, repeat rate and suggested actions.
+- [x] Added responsive wrapping, readable metric values, table column widths and sidebar button contrast for narrow and expanded layouts.
