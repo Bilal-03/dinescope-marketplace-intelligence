@@ -136,3 +136,4 @@ Updated: 28 August 2026
 - [x] Documented lifecycle segments as order-based food-delivery customer cohorts, including definitions for recency, frequency, share, repeat rate and suggested actions.
 - [x] Added responsive wrapping, readable metric values, table column widths and sidebar button contrast for narrow and expanded layouts.
 - [x] Kept Metric dictionary access in the sidebar only and aligned Streamlit metric help controls with wrapped labels on Overview and downstream workspaces.
+- [x] Added extra responsive top spacing below Streamlit's mobile toolbar so the DineScope hero never renders beneath the fixed header.

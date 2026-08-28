@@ -47,6 +47,7 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 - [x] Public URL smoke check passes for unauthenticated load, aggregate KPI render and module navigation: https://dinescope-marketplace-intelligence.streamlit.app/
 - [x] Streamlit UI hardening pass verifies sidebar/logo contrast, responsive metric and table text, safe percentage formats, reversible chart/data controls and non-empty cuisine demand rendering.
 - [x] Overview polish keeps Metric dictionary access in the sidebar and aligns metric help icons with wrapped labels.
+- [x] Mobile responsive spacing keeps the hero content below Streamlit's fixed toolbar.
 
 ### Deployment and ownership
 

@@ -363,7 +363,10 @@ def inject_styles() -> None:
         [data-testid="stDialog"] [data-testid="stMarkdownContainer"] { overflow-wrap:anywhere; }
         div[data-testid="stHorizontalBlock"] { align-items:stretch; }
         @media (max-width: 900px) {
-            .block-container { padding:1.25rem 1rem 3rem; }
+            /* Streamlit keeps its toolbar over the app on narrow screens.
+               Keep the first hero line below that toolbar instead of letting
+               the responsive padding pull it underneath the white header. */
+            .block-container { padding:4rem 1rem 3rem; }
             div[data-testid="stHorizontalBlock"] { flex-wrap:wrap !important; }
             div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] { min-width:min(100%, 260px) !important; flex:1 1 260px !important; }
             .pl-hero h1 { font-size:clamp(2.15rem, 10vw, 3.6rem); }
