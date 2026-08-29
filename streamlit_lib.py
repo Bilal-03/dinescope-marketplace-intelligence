@@ -12,7 +12,7 @@ import pandas as pd
 
 
 DATA_PATH = Path(__file__).parent / "data" / "analytics.json"
-AGGREGATE_VERSION = "1.1.0"
+AGGREGATE_VERSION = "1.2.0"
 DEFAULT_WEIGHTS = {"demand": 25, "growth": 25, "reach": 20, "gap": 15, "quality": 15}
 DECISION_DIMENSIONS = ("demand", "growth", "reach", "gap", "quality")
 CONFIDENCE_FACTORS = {"High": 1.0, "Medium": 0.85, "Low": 0.65}
@@ -30,6 +30,7 @@ REQUIRED_TOP_LEVEL_KEYS = {
     "source",
     "quality",
     "filters",
+    "cleaning",
     "market_views",
     "cuisine_views",
     "scopes",
@@ -51,6 +52,15 @@ REQUIRED_QUALITY_KEYS = {
     "valid_transactions",
     "excluded_transactions",
     "valid_rate",
+    "analysis_transactions",
+    "analysis_rate",
+    "plausibility_excluded_transactions",
+    "high_value_excluded_transactions",
+    "invalid_order_value_excluded_transactions",
+    "source_valid_sales",
+    "analysis_sales",
+    "plausibility_excluded_sales",
+    "high_value_excluded_sales",
     "zero_sales",
     "missing_sales",
     "unsupported_currency",
@@ -61,6 +71,25 @@ REQUIRED_QUALITY_KEYS = {
     "restaurant_match_rate",
     "duplicate_order_ids",
     "invalid_dates",
+}
+REQUIRED_CLEANING_KEYS = {
+    "field",
+    "rule",
+    "method",
+    "max_order_value_inr",
+    "source_valid_distribution",
+    "source_valid_transactions",
+    "analysis_transactions",
+    "analysis_retention_rate",
+    "plausibility_excluded_transactions",
+    "high_value_excluded_transactions",
+    "high_value_excluded_rate",
+    "source_valid_sales",
+    "analysis_sales",
+    "analysis_sales_retention_rate",
+    "plausibility_excluded_sales",
+    "high_value_excluded_sales",
+    "high_value_excluded_sales_share",
 }
 
 
@@ -199,7 +228,7 @@ def monthly_performance_frame(scope: dict[str, Any], metric: str = "orders") -> 
         {
             "Month": pd.to_datetime(row["month"]),
             "Value": row[metric],
-            "Metric": "Valid transactions" if metric == "orders" else "Gross sales",
+            "Metric": "Included transactions" if metric == "orders" else "Filtered sales",
         }
         for row in scope.get("monthly", [])
     ]
@@ -247,11 +276,11 @@ def market_summary_frame(data: dict[str, Any], limit: int = 5) -> pd.DataFrame:
                 "Rank": index,
                 "Market": row.get("market"),
                 "Transactions": row.get("orders"),
-                "Gross sales": row.get("sales"),
+                "Filtered sales": row.get("sales"),
                 "Repeat rate": row.get("repeat_rate"),
             }
         )
-    return pd.DataFrame(rows, columns=["Rank", "Market", "Transactions", "Gross sales", "Repeat rate"])
+    return pd.DataFrame(rows, columns=["Rank", "Market", "Transactions", "Filtered sales", "Repeat rate"])
 
 
 def market_ranking_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
@@ -269,7 +298,7 @@ def market_ranking_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
             "Growth": row.get("growth_orders"),
             "Customers": row.get("customers"),
             "Repeat rate": row.get("repeat_rate"),
-            "Avg. txn value": row.get("average_transaction_value"),
+            "Avg. order value": row.get("average_transaction_value"),
             "Txn share": row.get("order_share"),
             "Confidence": row.get("confidence"),
         }
@@ -283,7 +312,7 @@ def market_ranking_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
             "Growth",
             "Customers",
             "Repeat rate",
-            "Avg. txn value",
+            "Avg. order value",
             "Txn share",
             "Confidence",
         ],
@@ -419,38 +448,52 @@ def restaurant_observation_frame(observations: list[dict[str, Any]], limit: int 
 
 
 def reliability_issue_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
-    """Return the source-level issue register with raw-row denominators."""
+    """Return the source and analytical issue register with raw-row denominators."""
 
     quality = data.get("quality", data)
+    cleaning = data.get("cleaning", {})
+    cutoff = cleaning.get("max_order_value_inr", 7_500)
     return [
         {
             "Issue": "Zero sales",
             "Affected rows": int(quality.get("zero_sales", 0)),
             "Treatment": "Excluded from business KPIs",
+            "Sales impact (INR)": 0,
             "Severity": "High",
         },
         {
             "Issue": "Missing sales",
             "Affected rows": int(quality.get("missing_sales", 0)),
             "Treatment": "Excluded; preserved in audit totals",
+            "Sales impact (INR)": None,
             "Severity": "High",
         },
         {
             "Issue": "Unsupported currency",
             "Affected rows": int(quality.get("unsupported_currency", 0)),
             "Treatment": "USD rows excluded from INR KPIs",
+            "Sales impact (INR)": None,
+            "Severity": "High",
+        },
+        {
+            "Issue": f"Order value above ₹{cutoff:,.0f}",
+            "Affected rows": int(cleaning.get("high_value_excluded_transactions", quality.get("high_value_excluded_transactions", 0))),
+            "Treatment": "Excluded from all headline analytics; retained in the local exclusion audit",
+            "Sales impact (INR)": cleaning.get("high_value_excluded_sales", quality.get("high_value_excluded_sales")),
             "Severity": "High",
         },
         {
             "Issue": "Missing rating",
             "Affected rows": int(quality.get("missing_rating_rows", 0)),
             "Treatment": "Coverage shown beside opportunity signals",
+            "Sales impact (INR)": 0,
             "Severity": "Medium",
         },
         {
             "Issue": "Missing menu attributes",
             "Affected rows": int(quality.get("missing_menu_attribute_rows", 0)),
             "Treatment": "Coverage shown beside opportunity signals",
+            "Sales impact (INR)": 0,
             "Severity": "Medium",
         },
     ]
@@ -636,6 +679,10 @@ def contract_errors(data: Any) -> list[str]:
             "missing_menu_attribute_rows",
             "duplicate_order_ids",
             "invalid_dates",
+            "analysis_transactions",
+            "plausibility_excluded_transactions",
+            "high_value_excluded_transactions",
+            "invalid_order_value_excluded_transactions",
         ]
         for key in numeric_counts:
             value = quality.get(key)
@@ -654,6 +701,57 @@ def contract_errors(data: Any) -> list[str]:
                 valid_rate, valid_transactions / raw_rows if raw_rows else 0.0, rel_tol=0, abs_tol=1e-12
             ):
                 errors.append("quality.valid_rate does not reconcile to valid/raw rows")
+            analysis_transactions = quality.get("analysis_transactions")
+            plausibility_excluded_transactions = quality.get("plausibility_excluded_transactions")
+            if isinstance(analysis_transactions, (int, float)) and analysis_transactions > valid_transactions:
+                errors.append("quality.analysis_transactions cannot exceed quality.valid_transactions")
+            if all(
+                isinstance(value, (int, float))
+                for value in (analysis_transactions, plausibility_excluded_transactions)
+            ) and analysis_transactions + plausibility_excluded_transactions != valid_transactions:
+                errors.append("quality analysis plus plausibility exclusions must equal source-valid transactions")
+            high_value_excluded_transactions = quality.get("high_value_excluded_transactions")
+            invalid_order_value_excluded_transactions = quality.get("invalid_order_value_excluded_transactions")
+            if all(
+                isinstance(value, (int, float))
+                for value in (
+                    plausibility_excluded_transactions,
+                    high_value_excluded_transactions,
+                    invalid_order_value_excluded_transactions,
+                )
+            ) and high_value_excluded_transactions + invalid_order_value_excluded_transactions != plausibility_excluded_transactions:
+                errors.append("quality high-value plus invalid-order-value exclusions must equal plausibility exclusions")
+            analysis_rate = quality.get("analysis_rate")
+            if not isinstance(analysis_rate, (int, float)) or not isinstance(analysis_transactions, (int, float)) or not math.isclose(
+                analysis_rate,
+                analysis_transactions / valid_transactions if valid_transactions else 0.0,
+                rel_tol=0,
+                abs_tol=1e-12,
+            ):
+                errors.append("quality.analysis_rate does not reconcile to analysis/source-valid transactions")
+        numeric_amounts = [
+            "source_valid_sales",
+            "analysis_sales",
+            "plausibility_excluded_sales",
+            "high_value_excluded_sales",
+        ]
+        for key in numeric_amounts:
+            value = quality.get(key)
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+                errors.append(f"quality.{key} must be a non-negative number")
+        source_valid_sales = quality.get("source_valid_sales")
+        analysis_sales = quality.get("analysis_sales")
+        plausibility_excluded_sales = quality.get("plausibility_excluded_sales")
+        if all(
+            isinstance(value, (int, float))
+            for value in (source_valid_sales, analysis_sales, plausibility_excluded_sales)
+        ) and not math.isclose(
+            analysis_sales + plausibility_excluded_sales,
+            source_valid_sales,
+            rel_tol=0,
+            abs_tol=1e-6,
+        ):
+            errors.append("quality analysis plus plausibility sales do not reconcile to source-valid sales")
         for key in ("rating_coverage", "menu_coverage", "restaurant_match_rate"):
             value = quality.get(key)
             if not isinstance(value, (int, float)) or not 0 <= value <= 1:
@@ -669,6 +767,71 @@ def contract_errors(data: Any) -> list[str]:
                     expected_missing = round(raw_rows * (1 - coverage))
                     if missing != expected_missing:
                         errors.append(f"quality.{missing_key} does not reconcile to raw coverage")
+    cleaning = data.get("cleaning")
+    if not isinstance(cleaning, dict):
+        errors.append("cleaning must be an object")
+    else:
+        missing_cleaning = sorted(REQUIRED_CLEANING_KEYS.difference(cleaning))
+        if missing_cleaning:
+            errors.append(f"missing cleaning keys: {', '.join(missing_cleaning)}")
+        max_order_value = cleaning.get("max_order_value_inr")
+        if not isinstance(max_order_value, (int, float)) or isinstance(max_order_value, bool) or max_order_value <= 0:
+            errors.append("cleaning.max_order_value_inr must be a positive number")
+        distribution = cleaning.get("source_valid_distribution")
+        if not isinstance(distribution, dict):
+            errors.append("cleaning.source_valid_distribution must be an object")
+        else:
+            for key in ("q1", "q3", "iqr", "upper_fence"):
+                value = distribution.get(key)
+                if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+                    errors.append(f"cleaning.source_valid_distribution.{key} must be a non-negative number")
+        cleaning_numeric = [
+            "source_valid_transactions",
+            "analysis_transactions",
+            "plausibility_excluded_transactions",
+            "high_value_excluded_transactions",
+            "source_valid_sales",
+            "analysis_sales",
+            "plausibility_excluded_sales",
+            "high_value_excluded_sales",
+        ]
+        for key in cleaning_numeric:
+            value = cleaning.get(key)
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+                errors.append(f"cleaning.{key} must be a non-negative number")
+        for key in ("analysis_retention_rate", "high_value_excluded_rate", "analysis_sales_retention_rate", "high_value_excluded_sales_share"):
+            value = cleaning.get(key)
+            if not isinstance(value, (int, float)) or not 0 <= value <= 1:
+                errors.append(f"cleaning.{key} must be between 0 and 1")
+
+        cleaning_source_valid = cleaning.get("source_valid_transactions")
+        cleaning_analysis = cleaning.get("analysis_transactions")
+        cleaning_plausibility = cleaning.get("plausibility_excluded_transactions")
+        if all(
+            isinstance(value, (int, float))
+            for value in (cleaning_source_valid, cleaning_analysis, cleaning_plausibility)
+        ):
+            if cleaning_analysis + cleaning_plausibility != cleaning_source_valid:
+                errors.append("cleaning analysis plus exclusions must equal cleaning source-valid transactions")
+        if isinstance(quality, dict):
+            for cleaning_key, quality_key in (
+                ("source_valid_transactions", "valid_transactions"),
+                ("analysis_transactions", "analysis_transactions"),
+                ("plausibility_excluded_transactions", "plausibility_excluded_transactions"),
+                ("high_value_excluded_transactions", "high_value_excluded_transactions"),
+            ):
+                if cleaning.get(cleaning_key) != quality.get(quality_key):
+                    errors.append(f"cleaning.{cleaning_key} does not reconcile to quality.{quality_key}")
+            for cleaning_key, quality_key in (
+                ("source_valid_sales", "source_valid_sales"),
+                ("analysis_sales", "analysis_sales"),
+                ("plausibility_excluded_sales", "plausibility_excluded_sales"),
+                ("high_value_excluded_sales", "high_value_excluded_sales"),
+            ):
+                if isinstance(cleaning.get(cleaning_key), (int, float)) and not math.isclose(
+                    cleaning[cleaning_key], quality.get(quality_key, -1), rel_tol=0, abs_tol=1e-6
+                ):
+                    errors.append(f"cleaning.{cleaning_key} does not reconcile to quality.{quality_key}")
 
     if isinstance(source, dict) and isinstance(quality, dict):
         if source.get("rows") != quality.get("raw_rows"):
@@ -680,6 +843,19 @@ def contract_errors(data: Any) -> list[str]:
     for key in ("market_views", "cuisine_views", "scopes", "definitions"):
         if not isinstance(data.get(key), dict):
             errors.append(f"{key} must be an object")
+    scopes = data.get("scopes")
+    if isinstance(scopes, dict):
+        for scope_key_value, scope in scopes.items():
+            if not isinstance(scope, dict) or scope.get("empty"):
+                continue
+            metrics = scope.get("metrics")
+            if not isinstance(metrics, dict):
+                errors.append(f"scope {scope_key_value} metrics must be an object")
+                continue
+            for metric_key in ("analysis_transactions", "gross_sales", "average_transaction_value", "median_transaction_value"):
+                value = metrics.get(metric_key)
+                if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+                    errors.append(f"scope {scope_key_value} metrics.{metric_key} must be a non-negative number")
     return errors
 
 

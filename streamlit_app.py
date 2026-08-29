@@ -298,7 +298,7 @@ def record_count(data: dict, page: str, market: str, period: str) -> tuple[int, 
         count = len(pairs) if market == "All markets" else sum(row.get("market") == market for row in pairs)
         return count, "cuisine-market signals"
     scope = data["scopes"].get(scope_key(market, period), {})
-    return int(scope.get("metrics", {}).get("valid_transactions", 0)), "records in view"
+    return int(scope.get("metrics", {}).get("analysis_transactions", 0)), "included records in view"
 
 
 def inject_styles() -> None:
@@ -448,14 +448,14 @@ def render_lifecycle_explainer(scope: dict) -> None:
 
     st.caption(
         "Yes — lifecycle segments describe food-delivery customer behaviour in the selected scope. "
-        "They use valid orders, order recency and observed spend; they are not app-activity or demographic labels."
+        "They use included orders, order recency and observed spend; they are not app-activity or demographic labels."
     )
     with st.expander("How to read lifecycle segments and values"):
         st.markdown(
             "**Customers** is the number of unique customers in the segment. "
             "**Share** is that segment's share of active customers. "
-            "**Orders / customer** and **Sales / customer** are averages of valid transactions and sales in the scope. "
-            "**Repeat rate** is the share with at least two valid orders. "
+            "**Orders / customer** and **Sales / customer** are averages of included transactions and filtered sales in the scope. "
+            "**Repeat rate** is the share with at least two included orders. "
             "**Median recency** is the median days since a customer's last observed order."
         )
         definition_rows = [
@@ -498,12 +498,19 @@ def show_methodology(data: dict) -> None:
         "Definitions apply consistently across the global filters. The source CSV is transformed into deployment-safe aggregates; raw customer records and addresses are never sent to the browser."
     )
     source = data["source"]
+    cleaning = data["cleaning"]
     st.subheader("Source contract")
     st.caption(
         f"Aggregate {data['aggregate_version']} · {source['filename']} · {source['rows']:,} rows · "
         f"{source['columns']} columns · {source['date_min']} — {source['date_max']}"
     )
     st.caption(f"SHA-256 · {source['sha256']}")
+    st.subheader("Plausibility filter")
+    st.info(
+        f"Headline metrics use {cleaning['field']} at or below ₹{cleaning['max_order_value_inr']:,}. "
+        f"The cutoff is the rounded IQR upper fence ({cleaning['source_valid_distribution']['upper_fence']:,.2f}); "
+        f"{cleaning['high_value_excluded_transactions']:,} source-valid transactions remain in the audit but are excluded from project analytics."
+    )
     st.subheader("Metric dictionary")
     definitions = data.get("definitions", {})
     for key, value in definitions.items():
@@ -542,7 +549,11 @@ def render_global_filters(data: dict, page: str) -> tuple[str, str]:
             market = st.selectbox("Clean market", data["filters"]["markets"], key="pl_market")
     with columns[2]:
         st.caption("Transaction rule")
-        st.button("Valid INR only ✓", disabled=True, key="pl_transaction_rule")
+        st.button(
+            f"INR + ₹{data['cleaning']['max_order_value_inr']:,} max ✓",
+            disabled=True,
+            key="pl_transaction_rule",
+        )
     with columns[3]:
         st.caption("Actions")
         st.button("↻ Reset", key="pl_reset_filters", on_click=reset_filter_state)
@@ -572,7 +583,10 @@ def render_sidebar(data: dict, flags: dict[str, bool]) -> str:
         )
         st.divider()
         st.button("Metric dictionary", key="pl_methodology", on_click=open_methodology)
-        st.caption(f"{data['quality']['valid_transactions']:,} audited transactions")
+        st.caption(
+            f"{data['quality']['valid_transactions']:,} source-valid · "
+            f"{data['cleaning']['analysis_transactions']:,} included transactions"
+        )
         st.caption("Public read-only analytics · no raw customer records")
         st.markdown(f"[Source, methods and support]({REPOSITORY_URL})")
         st.caption("Independent portfolio case study. Not affiliated with or endorsed by Zomato, Swiggy or another food-delivery company.")
@@ -585,15 +599,23 @@ def render_overview(data: dict, market: str, period: str) -> None:
     hero("Overview", "", data)
     scope = scope_payload(data, market, period)
     if scope["empty"]:
-        st.warning("No valid transactions are available for this market and period.")
+        st.warning("No included transactions are available for this market and period.")
         return
     metrics = scope["metrics"]
     cols = st.columns(5)
-    cols[0].metric("Valid transactions", fmt_int(metrics["valid_transactions"]), help="Distinct valid orders that pass the audited transaction rule.")
-    cols[1].metric("Gross sales", fmt_inr(metrics["gross_sales"]), help="Observed valid INR sales in the selected scope.")
-    cols[2].metric("Active customers", fmt_int(metrics["active_customers"]), help="Unique customers with at least one valid transaction in scope.")
-    cols[3].metric("Repeat customer rate", fmt_pct(metrics["repeat_rate"]), help="Customers with two or more valid transactions divided by active customers; not cohort retention.")
-    cols[4].metric("Avg. transaction value", fmt_inr(metrics["average_transaction_value"]), help="Gross sales divided by valid transactions; interpret carefully because source grain is unverified.")
+    cols[0].metric(
+        "Included transactions",
+        fmt_int(metrics["analysis_transactions"]),
+        help=f"Distinct source-valid orders with Order Value at or below ₹{data['cleaning']['max_order_value_inr']:,}.",
+    )
+    cols[1].metric("Filtered sales", fmt_inr(metrics["gross_sales"]), help="Positive INR sales from included analytical transactions; source-valid sales remain in Data Reliability for audit.")
+    cols[2].metric("Active customers", fmt_int(metrics["active_customers"]), help="Unique customers with at least one included transaction in scope.")
+    cols[3].metric("Repeat customer rate", fmt_pct(metrics["repeat_rate"]), help="Customers with two or more included transactions divided by active customers; not cohort retention.")
+    cols[4].metric("Avg. order value", fmt_inr(metrics["average_transaction_value"]), help="Filtered sales divided by included transactions. The median is shown in the cleaning note below.")
+    st.caption(
+        f"Plausibility-filtered scope · Order Value ≤ ₹{data['cleaning']['max_order_value_inr']:,} · "
+        f"median order value {fmt_inr(metrics['median_transaction_value'])}"
+    )
     left, right = st.columns([1.65, 1])
     with left:
         st.markdown('<span class="pl-section-kicker">Marketplace momentum</span>', unsafe_allow_html=True)
@@ -606,7 +628,7 @@ def render_overview(data: dict, market: str, period: str) -> None:
         )
         metric = "orders" if metric_label == "Transactions" else "sales"
         monthly = monthly_performance_frame(scope, metric)
-        value_title = "Valid transactions" if metric == "orders" else "Gross sales"
+        value_title = "Included transactions" if metric == "orders" else "Filtered sales"
         value_format = ",.0f"
         chart = (
             alt.Chart(monthly)
@@ -642,8 +664,8 @@ def render_overview(data: dict, market: str, period: str) -> None:
         st.caption(f"{insight['confidence']} confidence")
         st.markdown(
             f'<div class="pl-callout"><b>{insight["headline"]}</b><p>{insight["evidence"]}</p></div>'
-            '<div class="pl-note"><b>Interpret value with caution</b><br>'
-            'The average transaction value is unusually high for food delivery and may reflect a non-standard transaction grain.</div>'
+            f'<div class="pl-note"><b>Cleaning boundary</b><br>'
+            f'Values above ₹{data["cleaning"]["max_order_value_inr"]:,} are excluded from headline analytics because they sit beyond the rounded IQR upper fence. The raw-valid impact remains visible in Data Reliability.</div>'
             f'<div class="pl-note"><b>Recommended next analysis</b><br>{insight["action"]}</div>',
             unsafe_allow_html=True,
         )
@@ -661,7 +683,7 @@ def render_overview(data: dict, market: str, period: str) -> None:
             hide_index=True,
             column_config={
                 "Market": st.column_config.TextColumn(width="medium"),
-                "Gross sales": st.column_config.NumberColumn(format="₹%.0f"),
+                "Filtered sales": st.column_config.NumberColumn(format="₹%.0f"),
                 "Repeat rate": st.column_config.NumberColumn(format="percent"),
             },
         )
@@ -695,17 +717,20 @@ def render_overview(data: dict, market: str, period: str) -> None:
 
 def render_customers(data: dict, market: str, period: str) -> None:
     hero("Customer growth", "", data)
+    st.caption(
+        f"Customer metrics use the included analytical scope: Order Value ≤ ₹{data['cleaning']['max_order_value_inr']:,}."
+    )
     scope = scope_payload(data, market, period)
     if scope["empty"]:
-        st.warning("No valid transactions are available for this market and period.")
+        st.warning("No included transactions are available for this market and period.")
         return
     metrics = scope["metrics"]
     cols = st.columns(5)
-    cols[0].metric("Active customers", fmt_int(metrics["active_customers"]), help=f"Unique customers with a valid transaction in {market} · {period}.")
+    cols[0].metric("Active customers", fmt_int(metrics["active_customers"]), help=f"Unique customers with an included transaction in {market} · {period}.")
     cols[1].metric("New customers", fmt_int(metrics["new_customers"]), help="Customers first observed in the selected scope.")
-    cols[2].metric("Repeat customers", fmt_int(metrics["repeat_customers"]), help="Active customers with two or more valid transactions in this scope.")
+    cols[2].metric("Repeat customers", fmt_int(metrics["repeat_customers"]), help="Active customers with two or more included transactions in this scope.")
     cols[3].metric("Repeat customer rate", fmt_pct(metrics["repeat_rate"]), help="Repeat customers divided by active customers; distinct from cohort retention.")
-    cols[4].metric("Transactions / customer", f'{metrics["orders_per_customer"]:.2f}', help="Valid transactions divided by active customers.")
+    cols[4].metric("Transactions / customer", f'{metrics["orders_per_customer"]:.2f}', help="Included transactions divided by active customers.")
     left, right = st.columns([1.55, 1])
     with left:
         st.markdown('<span class="pl-section-kicker">Acquisition vs return</span>', unsafe_allow_html=True)
@@ -860,11 +885,14 @@ def render_customers(data: dict, market: str, period: str) -> None:
         "text/csv",
         key="pl_customer_segment_export",
     )
-    st.markdown('<div class="pl-note"><b>Interpretation boundary</b><br>Repeat customer rate is the share of active customers with at least two valid transactions in the selected scope. Cohort retention is the stronger view for judging whether acquisition compounds.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="pl-note"><b>Interpretation boundary</b><br>Repeat customer rate is the share of active customers with at least two included transactions in the selected scope. Cohort retention is the stronger view for judging whether acquisition compounds.</div>', unsafe_allow_html=True)
 
 
 def render_markets(data: dict, market: str, period: str) -> None:
     hero("Market demand", "", data)
+    st.caption(
+        f"Market metrics use the included analytical scope: Order Value ≤ ₹{data['cleaning']['max_order_value_inr']:,}."
+    )
     view = data["market_views"][period]
     # Market Demand is intentionally a comparison surface across all cleaned
     # markets. The global market selector is disabled for this page so a detail
@@ -985,7 +1013,7 @@ def render_markets(data: dict, market: str, period: str) -> None:
                 "Growth": row["growth_orders"],
                 "Customers": row["customers"],
                 "Repeat rate": row["repeat_rate"],
-                "Avg. txn value": row["average_transaction_value"],
+                "Avg. order value": row["average_transaction_value"],
                 "Confidence": row["confidence"],
             }
             for row in quadrant_rows
@@ -1039,7 +1067,7 @@ def render_markets(data: dict, market: str, period: str) -> None:
                 "Growth": st.column_config.NumberColumn(format="+.1f%", width="medium"),
                 "Customers": st.column_config.NumberColumn(format="%,.0f", width="medium"),
                 "Repeat rate": st.column_config.NumberColumn(format="percent", width="medium"),
-                "Avg. txn value": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
+                "Avg. order value": st.column_config.NumberColumn(format="₹%,.0f", width="medium"),
                 "Confidence": st.column_config.TextColumn(width="medium"),
             },
         )
@@ -1072,7 +1100,7 @@ def render_markets(data: dict, market: str, period: str) -> None:
     detail_cols[0].metric("Transaction growth", fmt_signed_pct(growth), f'{selected["previous_orders"]:,} → {selected["orders"]:,} transactions')
     detail_cols[1].metric("Customer reach", fmt_int(selected["customers"]))
     detail_cols[2].metric("Repeat rate", fmt_pct(selected["repeat_rate"]))
-    detail_cols[3].metric("Average transaction value", fmt_inr(selected["average_transaction_value"]))
+    detail_cols[3].metric("Average order value", fmt_inr(selected["average_transaction_value"]))
     detail_cols[4].metric("Transaction share", fmt_pct(selected["order_share"]))
 
     st.markdown('<span class="pl-section-kicker">Comparable movement</span>', unsafe_allow_html=True)
@@ -1121,7 +1149,7 @@ def render_markets(data: dict, market: str, period: str) -> None:
             "Growth": st.column_config.NumberColumn(format="+.1f%"),
             "Customers": st.column_config.NumberColumn(format="%,.0f"),
             "Repeat rate": st.column_config.NumberColumn(format="percent"),
-            "Avg. txn value": st.column_config.NumberColumn(format="₹%,.0f"),
+            "Avg. order value": st.column_config.NumberColumn(format="₹%,.0f"),
             "Txn share": st.column_config.NumberColumn(format="percent"),
         },
     )
@@ -1143,6 +1171,9 @@ def render_markets(data: dict, market: str, period: str) -> None:
 
 def render_cuisines(data: dict, market: str, period: str) -> None:
     hero("Cuisine gaps", "", data)
+    st.caption(
+        f"Cuisine metrics use the included analytical scope: Order Value ≤ ₹{data['cleaning']['max_order_value_inr']:,}."
+    )
     view = data["cuisine_views"][period]
     scoped_pairs = view["pairs"] if market == "All markets" else [row for row in view["pairs"] if row["market"] == market]
     if view["empty"] or not scoped_pairs:
@@ -1378,7 +1409,7 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
     if allocation_total is not None and covered_orders is not None:
         st.markdown(
             f'<div class="pl-note"><b>Allocation reconciliation</b><br>{allocation_total:,.1f} allocated transactions across '
-            f'{covered_orders:,} cuisine-covered valid orders. Every covered order contributes exactly 1.0 across its observed cuisines.</div>',
+            f'{covered_orders:,} cuisine-covered included orders. Every covered order contributes exactly 1.0 across its observed cuisines.</div>',
             unsafe_allow_html=True,
         )
 
@@ -1418,6 +1449,9 @@ def render_cuisines(data: dict, market: str, period: str) -> None:
 
 def render_decision_lab(data: dict, market: str, period: str) -> None:
     hero("Decision lab", "", data)
+    st.caption(
+        f"Decision Lab uses the included analytical scope: Order Value ≤ ₹{data['cleaning']['max_order_value_inr']:,}."
+    )
     view = data["cuisine_views"][period]
     pairs = view["pairs"] if market == "All markets" else [row for row in view["pairs"] if row["market"] == market]
     if view["empty"] or not pairs:
@@ -1637,24 +1671,31 @@ def render_decision_lab(data: dict, market: str, period: str) -> None:
 def render_reliability(data: dict) -> None:
     hero("Data reliability", "", data)
     quality = data["quality"]
+    cleaning = data["cleaning"]
     source = data["source"]
     cols = st.columns(5)
-    cols[0].metric("Valid transaction rate", fmt_pct(quality["valid_rate"]), f'{quality["valid_transactions"]:,} rows retained')
-    cols[1].metric("Rating coverage", fmt_pct(quality["rating_coverage"]), "Never imputed")
-    cols[2].metric("Menu coverage", fmt_pct(quality["menu_coverage"]), "Low-confidence analysis")
-    cols[3].metric("Restaurant match", fmt_pct(quality["restaurant_match_rate"]), "Source-provided match flag")
+    cols[0].metric("Source-valid rate", fmt_pct(quality["valid_rate"]), f'{quality["valid_transactions"]:,} rows pass source checks')
+    cols[1].metric("Analysis retention", fmt_pct(cleaning["analysis_retention_rate"]), f'{cleaning["analysis_transactions"]:,} included orders')
+    cols[2].metric("Rating coverage", fmt_pct(quality["rating_coverage"]), "Never imputed")
+    cols[3].metric("Menu coverage", fmt_pct(quality["menu_coverage"]), "Low-confidence analysis")
     schema_value = f'{source["columns"]} / {source["expected_columns"]}'
     cols[4].metric("Schema integrity", schema_value, f'{quality["duplicate_order_ids"]} duplicate order IDs')
 
     st.markdown('<span class="pl-section-kicker">Audit trail</span>', unsafe_allow_html=True)
     st.subheader("Transaction reconciliation")
     st.markdown(
-        f'<div class="pl-note"><b>{quality["raw_rows"]:,} raw rows − {quality["excluded_transactions"]:,} excluded rows '
-        f'= {quality["valid_transactions"]:,} valid transactions</b><br><small>Reconciliation is exact; source-level counts are not changed by page filters.</small></div>',
+        f'<div class="pl-note"><b>{quality["raw_rows"]:,} raw rows − {quality["excluded_transactions"]:,} source-invalid rows '
+        f'= {quality["valid_transactions"]:,} source-valid rows</b><br>'
+        f'<b>{quality["valid_transactions"]:,} source-valid rows − {cleaning["high_value_excluded_transactions"]:,} '
+        f'Order Value exclusions = {cleaning["analysis_transactions"]:,} included analytical transactions</b><br>'
+        f'<small>Source-valid sales {fmt_inr(cleaning["source_valid_sales"])} − excluded high-value sales '
+        f'{fmt_inr(cleaning["high_value_excluded_sales"])} = filtered sales {fmt_inr(cleaning["analysis_sales"])}. '
+        'The original source remains unchanged.</small></div>',
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="pl-callout"><b>Valid transaction rule</b><p>Order ID present · MM/DD/YYYY date parses · source flag true · sales &gt; 0 · currency = INR.</p></div>',
+        f'<div class="pl-callout"><b>Two-stage inclusion rule</b><p><b>Source-valid:</b> Order ID present · MM/DD/YYYY date parses · source flag true · sales &gt; 0 · currency = INR.<br>'
+        f'<b>Included analytical order:</b> source-valid and Order Value ≤ ₹{cleaning["max_order_value_inr"]:,}. Values above the cutoff remain in the local exclusion audit.</p></div>',
         unsafe_allow_html=True,
     )
 
@@ -1702,7 +1743,8 @@ def render_reliability(data: dict) -> None:
         st.markdown(
             f'<div class="pl-note"><b>Rows</b> {source["rows"]:,} · <b>Columns</b> {source["columns"]}<br>'
             f'<b>Date window</b> {source["date_min"]} — {source["date_max"]}<br><b>Date format</b> {source["date_format"]}<br>'
-            f'<b>Aggregate</b> {data["aggregate_version"]}<br><b>Market mapping</b> {data["location_mapping"]["mapped_rows"]:,} mapped · '
+            f'<b>Aggregate</b> {data["aggregate_version"]}<br><b>Order-value cutoff</b> ₹{cleaning["max_order_value_inr"]:,}<br>'
+            f'<b>Market mapping</b> {data["location_mapping"]["mapped_rows"]:,} mapped · '
             f'{data["location_mapping"]["unknown_rows"]:,} unknown · {data["location_mapping"]["high_confidence_rows"]:,} high-confidence</div>',
             unsafe_allow_html=True,
         )
@@ -1710,14 +1752,17 @@ def render_reliability(data: dict) -> None:
         st.code(source["sha256"], language="text")
 
     issues = pd.DataFrame(reliability_issue_rows(data))
-    issues = issues[["Issue", "Affected rows", "Severity", "Treatment"]].rename(columns={"Treatment": "Implemented treatment"})
+    issues = issues[["Issue", "Affected rows", "Sales impact (INR)", "Severity", "Treatment"]].rename(columns={"Treatment": "Implemented treatment"})
     st.markdown('<span class="pl-section-kicker">Known limitations</span>', unsafe_allow_html=True)
     st.subheader("Quality issues and metric treatment")
     st.dataframe(
         issues,
         width="stretch",
         hide_index=True,
-        column_config={"Affected rows": st.column_config.NumberColumn(format="%,.0f")},
+        column_config={
+            "Affected rows": st.column_config.NumberColumn(format="%,.0f"),
+            "Sales impact (INR)": st.column_config.NumberColumn(format="₹%,.0f"),
+        },
     )
     with st.expander("Responsible analytics boundary"):
         st.write("No delivery-time, cancellation, discount, payment, commission, funnel or campaign metrics are shown because those fields do not exist in the source. Demographic differences are descriptive only—not causal targeting recommendations. The public repository contains the derived aggregate, never the raw order-level dataset.")

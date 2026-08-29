@@ -1,6 +1,6 @@
 # Streamlit public deployment plan
 
-Updated: 28 August 2026
+Updated: 29 August 2026
 
 ## Executive decision
 
@@ -10,8 +10,9 @@ The repository deliberately contains one canonical runtime and one dependency ma
 
 ## Implemented product foundation
 
-- Aggregate contract version `1.1.0` with audited 36-column source validation.
-- Explicit valid-INR transaction rule, raw-denominator quality counts and checksum metadata.
+- Aggregate contract version `1.2.0` with audited 36-column source validation.
+- Shared source-validity rule plus inclusive `Order Value ≤ ₹7,500` plausibility filter, raw-denominator quality counts and checksum metadata.
+- Local ignored cleaned CSV and exclusion audit preserve row order and excluded values for rebuild reconciliation; headline analytics use the included analytical scope.
 - Deterministic location, cuisine and conservative restaurant-name mappings.
 - Pure Python analytics adapter in `streamlit_lib.py` with fail-loud contract validation.
 - Responsive Streamlit shell with global period/market filters, public-data boundary and metric dictionary.
@@ -24,19 +25,20 @@ The repository deliberately contains one canonical runtime and one dependency ma
 Local source CSV (ignored)
   → scripts/audit_source.py
   → scripts/build_analytics.py
-  → data/analytics.json + data/mappings/*.csv
+  → data/analytics.json + data/mappings/*.csv + local data/cleaned/*.csv
   → streamlit_lib.py validation and metric frames
   → streamlit_app.py workspaces
   → Streamlit Community Cloud
 ```
 
-The source CSV remains local. The checked-in aggregate carries only derived metrics, reviewable mappings, definitions and quality metadata required by the public app.
+The source CSV and cleaned row-level outputs remain local. The checked-in aggregate carries only derived metrics, reviewable mappings, definitions and quality metadata required by the public app.
 
 ## Metric and evidence contracts
 
 The adapter preserves the product definitions instead of recomputing ad hoc in the UI:
 
-- valid transactions, gross valid INR sales, active customers and average transaction value;
+- source-valid transactions and sales for audit, plus included transactions, filtered sales, active customers, median and average order value;
+- a full raw rows → source-valid rows → high-value exclusions → included analytical rows reconciliation;
 - repeat rate separately from cohort retention;
 - equal-length market growth windows with current/comparison sample thresholds;
 - equal `1/n` multi-cuisine allocation with additive reconciliation;

@@ -66,28 +66,28 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric],
             [
-                ("Valid transactions", "148,668"),
-                ("Gross sales", "₹98.7 Cr"),
-                ("Active customers", "77,584"),
-                ("Repeat customer rate", "56.6%"),
-                ("Avg. transaction value", "₹6,636"),
+                ("Included transactions", "126,519"),
+                ("Filtered sales", "₹14.0 Cr"),
+                ("Active customers", "71,947"),
+                ("Repeat customer rate", "50.2%"),
+                ("Avg. order value", "₹1,103"),
             ],
         )
         self.assertEqual(app.dataframe[0].value.shape, (5, 5))
         self.assertEqual(app.dataframe[-1].value.shape, (7, 8))
         app.radio(key="pl_overview_metric").set_value("Sales").run()
-        self.assertTrue(any("Gross sales · 33 monthly points" in item.value for item in app.caption))
+        self.assertTrue(any("Filtered sales · 33 monthly points" in item.value for item in app.caption))
 
         app.selectbox(key="pl_market").set_value("Bangalore").run()
         app.selectbox(key="pl_period").set_value("2020").run()
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric],
             [
-                ("Valid transactions", "3,029"),
-                ("Gross sales", "₹2.4 Cr"),
-                ("Active customers", "2,977"),
-                ("Repeat customer rate", "1.7%"),
-                ("Avg. transaction value", "₹7,919"),
+                ("Included transactions", "2,480"),
+                ("Filtered sales", "₹44.5 L"),
+                ("Active customers", "2,449"),
+                ("Repeat customer rate", "1.3%"),
+                ("Avg. order value", "₹1,796"),
             ],
         )
 
@@ -95,11 +95,11 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric],
             [
-                ("Active customers", "2,977"),
-                ("New customers", "2,645"),
-                ("Repeat customers", "52"),
-                ("Repeat customer rate", "1.7%"),
-                ("Transactions / customer", "1.02"),
+                ("Active customers", "2,449"),
+                ("New customers", "2,233"),
+                ("Repeat customers", "31"),
+                ("Repeat customer rate", "1.3%"),
+                ("Transactions / customer", "1.01"),
             ],
         )
         self.assertEqual(app.dataframe[0].value.shape, (6, 9))
@@ -112,17 +112,17 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric[:5]],
             [
-                ("Active cleaned markets", "211"),
+                ("Active cleaned markets", "210"),
                 ("Largest market", "Bangalore"),
                 ("Fastest eligible growth", "Guwahati"),
                 ("Highest repeat rate", "Bangalore"),
-                ("Top-five concentration", "44.5%"),
+                ("Top-five concentration", "44.7%"),
             ],
         )
         ranking = app.dataframe[0].value
-        self.assertEqual(ranking.shape, (19, 8))
+        self.assertEqual(ranking.shape, (18, 8))
         self.assertEqual(ranking.iloc[0]["Market"], "Bangalore")
-        self.assertEqual(ranking.iloc[0]["Transactions"], 6526)
+        self.assertEqual(ranking.iloc[0]["Transactions"], 5389)
 
         app.selectbox(key="pl_market_sort").set_value("Rank by growth").run()
         self.assertEqual(app.dataframe[0].value.iloc[0]["Market"], "Guwahati")
@@ -134,15 +134,16 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric],
             [
-                ("Valid transaction rate", "98.9%"),
+                ("Source-valid rate", "98.9%"),
+                ("Analysis retention", "85.1%"),
                 ("Rating coverage", "40.9%"),
                 ("Menu coverage", "8.1%"),
-                ("Restaurant match", "98.9%"),
                 ("Schema integrity", "36 / 36"),
             ],
         )
-        self.assertEqual(app.dataframe[0].value.shape, (5, 4))
-        self.assertIn("150,281 raw rows − 1,613 excluded rows = 148,668 valid transactions", " ".join(item.value for item in app.markdown))
+        self.assertEqual(app.dataframe[0].value.shape, (6, 5))
+        self.assertIn("150,281 raw rows − 1,613 source-invalid rows = 148,668 source-valid rows", " ".join(item.value for item in app.markdown))
+        self.assertIn("148,668 source-valid rows − 22,149 Order Value exclusions = 126,519 included analytical transactions", " ".join(item.value for item in app.markdown))
         self.assertEqual(app.code[0].value, self._source_sha())
 
     @staticmethod
@@ -158,12 +159,12 @@ class StreamlitAppSmokeTest(unittest.TestCase):
             [
                 ("Canonical cuisines", "110"),
                 ("Highest observed demand", "Chinese"),
-                ("Eligible opportunities", "80"),
+                ("Eligible opportunities", "71"),
                 ("Top opportunity signal", "Bangalore · Desserts"),
                 ("Cuisine field coverage", "98.9%"),
             ],
         )
-        self.assertEqual(app.dataframe[0].value.shape, (80, 11))
+        self.assertEqual(app.dataframe[0].value.shape, (71, 11))
         self.assertEqual(app.dataframe[0].value.iloc[0]["Market · Cuisine"], "Bangalore · Desserts")
         self.assertEqual(app.dataframe[1].value.shape, (7, 6))
         self.assertTrue(any(button.label == "Export cuisine evidence" for button in app.download_button))
@@ -175,12 +176,12 @@ class StreamlitAppSmokeTest(unittest.TestCase):
             [
                 ("Canonical cuisines", "110"),
                 ("Highest observed demand", "Chinese"),
-                ("Eligible opportunities", "34"),
-                ("Top opportunity signal", "Bangalore · South Indian"),
+                ("Eligible opportunities", "24"),
+                ("Top opportunity signal", "Bangalore · North Indian"),
                 ("Cuisine field coverage", "98.9%"),
             ],
         )
-        self.assertEqual(app.dataframe[0].value.shape, (34, 11))
+        self.assertEqual(app.dataframe[0].value.shape, (24, 11))
 
         app.selectbox(key="pl_cuisine_sort").set_value("Rank by demand").run()
         self.assertEqual(app.dataframe[0].value.iloc[0]["Market · Cuisine"], "Delhi · North Indian")
@@ -214,7 +215,7 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         app.slider(key="pl_decision_weight_gap").set_value(0).run()
         app.slider(key="pl_decision_weight_quality").set_value(0).run()
         self.assertFalse(app.exception)
-        self.assertEqual(app.dataframe[0].value.iloc[0]["Market"], "Delhi")
+        self.assertEqual(app.dataframe[0].value.iloc[0]["Market"], "Bangalore")
         self.assertTrue(any(value != "—" for value in app.dataframe[0].value["Move"].tolist()))
 
         app.text_input(key="pl_decision_scenario_name").set_value("Demand-led").run()

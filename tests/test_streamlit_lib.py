@@ -40,6 +40,8 @@ class StreamlitAnalyticsTest(unittest.TestCase):
         self.assertTrue(valid_data_contract(self.data))
         self.assertEqual(self.data["aggregate_version"], AGGREGATE_VERSION)
         self.assertEqual(self.data["quality"]["valid_transactions"], 148668)
+        self.assertEqual(self.data["quality"]["analysis_transactions"], 126519)
+        self.assertEqual(self.data["quality"]["high_value_excluded_transactions"], 22149)
         self.assertEqual(self.data["quality"]["missing_rating_rows"], 88755)
         self.assertEqual(self.data["quality"]["missing_menu_attribute_rows"], 138145)
 
@@ -54,7 +56,7 @@ class StreamlitAnalyticsTest(unittest.TestCase):
 
     def test_all_market_scope_reconciles_to_quality_total(self):
         scope = self.data["scopes"]["All markets|All years"]
-        self.assertEqual(scope["metrics"]["valid_transactions"], self.data["quality"]["valid_transactions"])
+        self.assertEqual(scope["metrics"]["analysis_transactions"], self.data["quality"]["analysis_transactions"])
 
     def test_weights_are_normalized(self):
         normalized = normalize_weights(DEFAULT_WEIGHTS)
@@ -69,14 +71,14 @@ class StreamlitAnalyticsTest(unittest.TestCase):
 
     def test_shared_evidence_helpers_match_default_counts(self):
         market_view = self.data["market_views"]["All years"]
-        self.assertEqual(len(eligible_market_rows(market_view["markets"])), 19)
+        self.assertEqual(len(eligible_market_rows(market_view["markets"])), 18)
         self.assertEqual(
             len(eligible_market_rows(self.data["market_views"]["2020"]["markets"])),
-            14,
+            13,
         )
 
         cuisine_view = self.data["cuisine_views"]["All years"]
-        self.assertEqual(len(eligible_cuisine_pairs(cuisine_view["pairs"])), 80)
+        self.assertEqual(len(eligible_cuisine_pairs(cuisine_view["pairs"])), 71)
 
     def test_evidence_tables_have_stable_parity_columns(self):
         cohort = customer_cohort_frame(self.data["scopes"]["All markets|All years"]["cohorts"])
@@ -88,60 +90,62 @@ class StreamlitAnalyticsTest(unittest.TestCase):
             list(lifecycle.columns),
             ["Segment", "Customers", "Share", "Orders / customer", "Sales / customer", "Repeat rate", "Median recency", "Suggested action"],
         )
-        self.assertEqual(lifecycle["Customers"].sum(), 77584)
+        self.assertEqual(lifecycle["Customers"].sum(), 71947)
 
     def test_phase_two_chart_builders_preserve_audited_series(self):
         scope = self.data["scopes"]["All markets|All years"]
         orders = monthly_performance_frame(scope, "orders")
         sales = monthly_performance_frame(scope, "sales")
         self.assertEqual(len(orders), 33)
-        self.assertEqual(orders.iloc[0]["Value"], 4238)
-        self.assertEqual(orders.iloc[-1]["Value"], 2731)
-        self.assertEqual(sales.iloc[0]["Value"], 26349356)
-        self.assertEqual(sales.iloc[-1]["Value"], 14711976)
+        self.assertEqual(orders.iloc[0]["Value"], 3656)
+        self.assertEqual(orders.iloc[-1]["Value"], 2353)
+        self.assertEqual(sales.iloc[0]["Value"], 4034983)
+        self.assertEqual(sales.iloc[-1]["Value"], 2637924)
         self.assertEqual(len(customer_mix_frame(scope)), 66)
         self.assertEqual(customer_mix_frame(scope).iloc[1]["Customers"], 0)
         self.assertEqual(
             frequency_frame(scope)["Customers"].tolist(),
-            [33660, 25319, 12306, 4565, 1734],
+            [35801, 22713, 9568, 2956, 909],
         )
         self.assertEqual(market_summary_frame(self.data).iloc[0]["Market"], "Bangalore")
-        self.assertEqual(market_summary_frame(self.data).iloc[0]["Transactions"], 14675)
+        self.assertEqual(market_summary_frame(self.data).iloc[0]["Transactions"], 11952)
 
     def test_phase_three_market_frames_match_default_eligibility(self):
         view = self.data["market_views"]["All years"]
         eligible = eligible_market_rows(view["markets"])
         ranking = market_ranking_frame(eligible)
-        self.assertEqual(ranking.shape, (19, 8))
-        self.assertEqual(list(ranking.columns), ["Market", "Transactions", "Growth", "Customers", "Repeat rate", "Avg. txn value", "Txn share", "Confidence"])
+        self.assertEqual(ranking.shape, (18, 8))
+        self.assertEqual(list(ranking.columns), ["Market", "Transactions", "Growth", "Customers", "Repeat rate", "Avg. order value", "Txn share", "Confidence"])
         self.assertEqual(ranking.iloc[0]["Market"], "Bangalore")
-        self.assertEqual(ranking.iloc[0]["Transactions"], 6526)
+        self.assertEqual(ranking.iloc[0]["Transactions"], 5389)
 
         pulse = market_monthly_frame(eligible[:4])
         self.assertEqual(list(pulse.columns), ["Market", "Month", "Transactions"])
         self.assertEqual(set(pulse["Market"]), {"Bangalore", "Delhi", "Pune", "Chennai"})
         totals = pulse.groupby("Market")["Transactions"].sum().to_dict()
-        self.assertEqual(totals["Bangalore"], 6526)
-        self.assertEqual(totals["Delhi"], 4358)
+        self.assertEqual(totals["Bangalore"], 5389)
+        self.assertEqual(totals["Delhi"], 3573)
 
     def test_reliability_issue_register_uses_raw_row_counts(self):
         issues = reliability_issue_rows(self.data)
-        self.assertEqual([row["Issue"] for row in issues], ["Zero sales", "Missing sales", "Unsupported currency", "Missing rating", "Missing menu attributes"])
-        self.assertEqual(issues[3]["Affected rows"], 88755)
-        self.assertEqual(issues[4]["Affected rows"], 138145)
+        self.assertEqual([row["Issue"] for row in issues], ["Zero sales", "Missing sales", "Unsupported currency", "Order value above ₹7,500", "Missing rating", "Missing menu attributes"])
+        self.assertEqual(issues[3]["Affected rows"], 22149)
+        self.assertEqual(issues[3]["Sales impact (INR)"], 847032211.0)
+        self.assertEqual(issues[4]["Affected rows"], 88755)
+        self.assertEqual(issues[5]["Affected rows"], 138145)
 
     def test_phase_four_cuisine_and_restaurant_frames_match_reference(self):
         view = self.data["cuisine_views"]["All years"]
         eligible = eligible_cuisine_pairs(view["pairs"])
         summary = cuisine_summary_frame(view["cuisines"][:10])
         self.assertEqual(summary.iloc[0]["Cuisine"], "Chinese")
-        self.assertEqual(summary.iloc[0]["Allocated txns"], 6250.0)
+        self.assertEqual(summary.iloc[0]["Allocated txns"], 5291.0)
         self.assertEqual(summary.shape, (10, 6))
 
         ranking = cuisine_ranking_frame(eligible)
-        self.assertEqual(ranking.shape, (80, 11))
+        self.assertEqual(ranking.shape, (71, 11))
         self.assertEqual(ranking.iloc[0]["Market · Cuisine"], "Bangalore · Desserts")
-        self.assertAlmostEqual(ranking.iloc[0]["Signal"], 96.613139)
+        self.assertAlmostEqual(ranking.iloc[0]["Signal"], 96.857143)
         self.assertEqual(
             list(ranking.columns),
             ["Market · Cuisine", "Signal", "Allocated txns", "Growth", "Customers", "Listings", "Demand / listing", "Rating cov.", "Menu cov.", "Confidence", "Recommended action"],
@@ -155,7 +159,7 @@ class StreamlitAnalyticsTest(unittest.TestCase):
         observations = restaurant_observation_frame(self.data["restaurant_observations"])
         self.assertEqual(observations.shape, (7, 6))
         self.assertEqual(observations.iloc[0]["Normalized name"], "domino s pizza")
-        self.assertEqual(observations.iloc[0]["Observed rows"], 435)
+        self.assertEqual(observations.iloc[0]["Observed rows"], 370)
 
     def test_rank_movement_is_positive_when_a_pair_moves_up(self):
         baseline = [{"market": "Bangalore", "cuisine": "Desserts", "rank": 4}]
@@ -169,17 +173,17 @@ class StreamlitAnalyticsTest(unittest.TestCase):
     def test_phase_five_decision_lab_default_and_scenario_contract(self):
         pairs = self.data["cuisine_views"]["All years"]["pairs"]
         baseline = score_decision_pairs(pairs, 100, DEFAULT_WEIGHTS, True)
-        self.assertEqual(len(baseline), 80)
+        self.assertEqual(len(baseline), 71)
         self.assertEqual((baseline[0]["market"], baseline[0]["cuisine"]), ("Bangalore", "Desserts"))
-        self.assertAlmostEqual(baseline[0]["lab_score"], 88.375)
+        self.assertAlmostEqual(baseline[0]["lab_score"], 88.87323943661973)
         current = add_rank_movement(
             score_decision_pairs(pairs, 100, {"demand": 50, "growth": 0, "reach": 0, "gap": 0, "quality": 0}, True),
             baseline,
         )
-        self.assertEqual((current[0]["market"], current[0]["cuisine"]), ("Delhi", "North Indian"))
+        self.assertEqual((current[0]["market"], current[0]["cuisine"]), ("Bangalore", "Chinese"))
         self.assertGreater(current[0]["rank_delta"], 0)
         frame = decision_frame(current)
-        self.assertEqual(frame.shape, (80, 16))
+        self.assertEqual(frame.shape, (71, 16))
         self.assertIn("Baseline rank", frame.columns)
         self.assertIn("Move", frame.columns)
         self.assertEqual(scenario_summary({"weights": DEFAULT_WEIGHTS}), "D25 · G25 · R20 · Gap15 · Q15")

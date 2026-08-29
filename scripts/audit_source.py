@@ -10,6 +10,23 @@ from pathlib import Path
 
 import pandas as pd
 
+try:
+    from scripts.data_quality import (
+        MAX_ORDER_VALUE_INR,
+        PLAUSIBILITY_METHOD,
+        PLAUSIBILITY_RULE,
+        build_quality_masks,
+        plausibility_profile,
+    )
+except ModuleNotFoundError:  # Direct ``python scripts/audit_source.py`` execution.
+    from data_quality import (
+        MAX_ORDER_VALUE_INR,
+        PLAUSIBILITY_METHOD,
+        PLAUSIBILITY_RULE,
+        build_quality_masks,
+        plausibility_profile,
+    )
+
 
 EXPECTED_COLUMNS = 36
 
@@ -21,26 +38,21 @@ def main() -> None:
 
     source = args.source.expanduser().resolve()
     frame = pd.read_csv(source, low_memory=False, encoding="utf-8-sig")
-    parsed_dates = pd.to_datetime(
-        frame["Order Date"], format="%m/%d/%Y", errors="coerce"
-    )
-    sales = pd.to_numeric(frame["Sales Amount"], errors="coerce")
-    quantity = pd.to_numeric(frame["Sales Quantity"], errors="coerce")
-    valid_flag = frame["Sales Amount Valid"].astype("string").str.upper().eq("TRUE")
-    currency = frame["Order Currency"].astype("string").str.upper().str.strip()
-    valid = (
-        frame["Order ID"].notna()
-        & parsed_dates.notna()
-        & valid_flag
-        & sales.notna()
-        & sales.gt(0)
-        & currency.eq("INR")
-    )
+    masks = build_quality_masks(frame)
+    parsed_dates = masks["order_date"]
+    sales = masks["sales"]
+    order_value = masks["order_value"]
+    quantity = masks["quantity"]
+    currency = masks["currency"]
+    source_valid = masks["source_valid"]
+    analysis_eligible = masks["analysis_eligible"]
+    high_value_excluded = masks["high_value_excluded"]
+    plausibility_excluded = masks["plausibility_excluded"]
 
-    audited = frame.loc[valid, ["Order ID", "User ID"]].copy()
-    audited["order_date"] = parsed_dates[valid]
-    audited["sales"] = sales[valid]
-    audited["quantity"] = quantity[valid]
+    audited = frame.loc[analysis_eligible, ["Order ID", "User ID"]].copy()
+    audited["order_date"] = parsed_dates[analysis_eligible]
+    audited["sales"] = sales[analysis_eligible]
+    audited["quantity"] = quantity[analysis_eligible]
     customer_orders = audited.groupby("User ID", dropna=False)["Order ID"].nunique()
     repeat_customers = int(customer_orders.ge(2).sum())
     active_customers = int(customer_orders.size)
@@ -71,9 +83,18 @@ def main() -> None:
             "invalid_dates": int(parsed_dates.isna().sum()),
         },
         "quality": {
-            "valid_transactions": int(valid.sum()),
-            "excluded_transactions": int((~valid).sum()),
-            "valid_transaction_rate": float(valid.mean()),
+            "valid_transactions": int(source_valid.sum()),
+            "excluded_transactions": int((~source_valid).sum()),
+            "valid_transaction_rate": float(source_valid.mean()),
+            "analysis_transactions": int(analysis_eligible.sum()),
+            "analysis_rate": float(analysis_eligible.sum() / source_valid.sum()) if source_valid.sum() else 0.0,
+            "plausibility_excluded_transactions": int(plausibility_excluded.sum()),
+            "high_value_excluded_transactions": int(high_value_excluded.sum()),
+            "invalid_order_value_excluded_transactions": int(masks["invalid_order_value_excluded"].sum()),
+            "source_valid_sales": float(sales[source_valid].sum()),
+            "analysis_sales": float(sales[analysis_eligible].sum()),
+            "plausibility_excluded_sales": float(sales[plausibility_excluded].sum()),
+            "high_value_excluded_sales": float(sales[high_value_excluded].sum()),
             "zero_sales_rows": int(sales.eq(0).sum()),
             "missing_sales_rows": int(sales.isna().sum()),
             "unsupported_currency_rows": int((currency.ne("INR") & currency.notna()).sum()),
@@ -84,12 +105,30 @@ def main() -> None:
             ),
         },
         "metrics": {
-            "gross_sales_inr": float(audited["sales"].sum()),
+            "source_valid_gross_sales_inr": float(sales[source_valid].sum()),
+            "analysis_gross_sales_inr": float(audited["sales"].sum()),
             "average_transaction_value_inr": float(audited["sales"].mean()),
+            "median_transaction_value_inr": float(order_value[analysis_eligible].median()),
             "active_customers": active_customers,
             "repeat_customers": repeat_customers,
             "repeat_customer_rate": repeat_customers / active_customers,
             "orders_per_customer": len(audited) / active_customers,
+        },
+        "cleaning": {
+            "field": "Order Value",
+            "rule": PLAUSIBILITY_RULE,
+            "method": PLAUSIBILITY_METHOD,
+            "max_order_value_inr": int(MAX_ORDER_VALUE_INR),
+            "source_valid_distribution": plausibility_profile(order_value[source_valid]),
+            "source_valid_transactions": int(source_valid.sum()),
+            "analysis_transactions": int(analysis_eligible.sum()),
+            "analysis_retention_rate": float(analysis_eligible.sum() / source_valid.sum()) if source_valid.sum() else 0.0,
+            "plausibility_excluded_transactions": int(plausibility_excluded.sum()),
+            "high_value_excluded_transactions": int(high_value_excluded.sum()),
+            "plausibility_excluded_sales": float(sales[plausibility_excluded].sum()),
+            "high_value_excluded_sales": float(sales[high_value_excluded].sum()),
+            "source_valid_sales": float(sales[source_valid].sum()),
+            "analysis_sales": float(sales[analysis_eligible].sum()),
         },
         "monthly": monthly.to_dict(orient="records"),
     }

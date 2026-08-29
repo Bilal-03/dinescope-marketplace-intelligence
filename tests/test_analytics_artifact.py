@@ -14,13 +14,27 @@ class AnalyticsArtifactContractTest(unittest.TestCase):
 
     def test_source_contract_and_reconciliation_are_exact(self):
         analytics = self.analytics
-        self.assertEqual(analytics["aggregate_version"], "1.1.0")
+        self.assertEqual(analytics["aggregate_version"], "1.2.0")
         self.assertEqual(analytics["source"]["rows"], 150_281)
         self.assertEqual(analytics["source"]["columns"], 36)
         self.assertEqual(analytics["source"]["expected_columns"], 36)
+        self.assertEqual(analytics["source"]["sha256"], "fc5ca0ca1043e3cfb17ab467a7b87bbcc0a516cd766e962b4850a202d5a88be7")
         self.assertTrue(analytics["source"]["schema_matches"])
         self.assertEqual(analytics["source"]["date_format"], "MM/DD/YYYY")
         self.assertEqual(analytics["quality"]["valid_transactions"], 148_668)
+        self.assertEqual(analytics["quality"]["analysis_transactions"], 126_519)
+        self.assertEqual(analytics["quality"]["high_value_excluded_transactions"], 22_149)
+        self.assertEqual(analytics["quality"]["invalid_order_value_excluded_transactions"], 0)
+        self.assertEqual(analytics["quality"]["analysis_sales"], 139_532_057)
+        self.assertEqual(analytics["quality"]["high_value_excluded_sales"], 847_032_211)
+        self.assertEqual(
+            analytics["quality"]["analysis_sales"] + analytics["quality"]["high_value_excluded_sales"],
+            analytics["quality"]["source_valid_sales"],
+        )
+        self.assertEqual(
+            analytics["quality"]["analysis_transactions"] + analytics["quality"]["high_value_excluded_transactions"],
+            analytics["quality"]["valid_transactions"],
+        )
         self.assertEqual(
             analytics["quality"]["valid_transactions"]
             + analytics["quality"]["excluded_transactions"],
@@ -30,14 +44,22 @@ class AnalyticsArtifactContractTest(unittest.TestCase):
         self.assertEqual(analytics["quality"]["missing_menu_attribute_rows"], 138_145)
         self.assertEqual(analytics["quality"]["duplicate_order_ids"], 0)
         self.assertEqual(analytics["quality"]["invalid_dates"], 0)
+        self.assertEqual(analytics["cleaning"]["max_order_value_inr"], 7_500)
+        self.assertEqual(analytics["cleaning"]["source_valid_distribution"]["q1"], 176)
+        self.assertEqual(analytics["cleaning"]["source_valid_distribution"]["q3"], 3_065)
+        self.assertEqual(analytics["cleaning"]["source_valid_distribution"]["upper_fence"], 7_398.5)
+        self.assertAlmostEqual(analytics["cleaning"]["analysis_retention_rate"], 126_519 / 148_668)
+        self.assertAlmostEqual(analytics["cleaning"]["high_value_excluded_sales_share"], 847_032_211 / 986_564_268)
 
     def test_commercial_metrics_reconcile(self):
         metrics = self.all_scope["metrics"]
-        self.assertEqual(metrics["gross_sales"], 986_564_268)
-        self.assertEqual(metrics["active_customers"], 77_584)
-        self.assertEqual(metrics["repeat_customers"], 43_924)
-        self.assertAlmostEqual(metrics["repeat_rate"], 43_924 / 77_584)
-        self.assertAlmostEqual(metrics["average_transaction_value"], 986_564_268 / 148_668)
+        self.assertEqual(metrics["analysis_transactions"], 126_519)
+        self.assertEqual(metrics["gross_sales"], 139_532_057)
+        self.assertEqual(metrics["active_customers"], 71_947)
+        self.assertEqual(metrics["repeat_customers"], 36_146)
+        self.assertAlmostEqual(metrics["repeat_rate"], 36_146 / 71_947)
+        self.assertAlmostEqual(metrics["average_transaction_value"], 139_532_057 / 126_519)
+        self.assertEqual(metrics["median_transaction_value"], 375)
 
     def test_customer_distributions_reconcile(self):
         self.assertEqual(

@@ -13,13 +13,30 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+try:
+    from scripts.data_quality import (
+        MAX_ORDER_VALUE_INR,
+        PLAUSIBILITY_METHOD,
+        PLAUSIBILITY_RULE,
+        build_quality_masks,
+        plausibility_profile,
+    )
+except ModuleNotFoundError:  # Direct ``python scripts/build_analytics.py`` execution.
+    from data_quality import (
+        MAX_ORDER_VALUE_INR,
+        PLAUSIBILITY_METHOD,
+        PLAUSIBILITY_RULE,
+        build_quality_masks,
+        plausibility_profile,
+    )
 
-AGGREGATE_VERSION = "1.1.0"
+AGGREGATE_VERSION = "1.2.0"
 EXPECTED_SOURCE_COLUMNS = 36
 REQUIRED_SOURCE_COLUMNS = {
     "Order Date",
     "Sales Amount",
     "Sales Quantity",
+    "Order Value",
     "Order Currency",
     "Sales Amount Valid",
     "Order ID",
@@ -326,7 +343,7 @@ def build_scope(scope_all: pd.DataFrame, selected: pd.DataFrame, label: str, per
         "empty": False,
         "range": [selected["order_date"].min().date().isoformat(), cutoff.date().isoformat()],
         "metrics": {
-            "valid_transactions": int(selected["order_id"].nunique()),
+            "analysis_transactions": int(selected["order_id"].nunique()),
             "gross_sales": float(selected["sales"].sum()),
             "active_customers": active,
             "new_customers": int(customer["customer_id"].isin(first_scope_order[first_scope_order.between(selected["order_date"].min(), cutoff)].index).sum()),
@@ -334,6 +351,7 @@ def build_scope(scope_all: pd.DataFrame, selected: pd.DataFrame, label: str, per
             "repeat_rate": repeat / active,
             "orders_per_customer": float(customer["orders"].mean()),
             "average_transaction_value": float(selected["sales"].sum() / selected["order_id"].nunique()),
+            "median_transaction_value": float(selected["order_value"].median()),
         },
         "monthly": monthly_rows,
         "frequency": bins,
@@ -341,7 +359,7 @@ def build_scope(scope_all: pd.DataFrame, selected: pd.DataFrame, label: str, per
         "cohorts": cohort_table(selected),
         "insight": {
             "headline": f"{top_segment} is the largest observed lifecycle segment",
-            "evidence": f"{repeat / active:.1%} of active customers placed at least two valid transactions in this filtered scope.",
+            "evidence": f"{repeat / active:.1%} of active customers placed at least two included transactions in this filtered scope.",
             "action": "Use cohort retention—not repeat rate alone—to judge whether acquisition is compounding.",
             "confidence": "Medium",
         },
@@ -584,24 +602,32 @@ def main() -> None:
     parser.add_argument("--mapping-output", type=Path, default=Path("data/mappings/location_mapping.csv"))
     parser.add_argument("--cuisine-mapping-output", type=Path, default=Path("data/mappings/cuisine_mapping.csv"))
     parser.add_argument("--restaurant-mapping-output", type=Path, default=Path("data/mappings/restaurant_name_mapping.csv"))
+    parser.add_argument(
+        "--cleaned-output",
+        type=Path,
+        default=Path("data/cleaned/zomato_business_complete_cleaned.csv"),
+    )
+    parser.add_argument(
+        "--exclusion-audit-output",
+        type=Path,
+        default=Path("data/cleaned/zomato_business_complete_exclusion_audit.csv"),
+    )
     args = parser.parse_args()
     source = args.source.expanduser().resolve()
 
     raw = pd.read_csv(source, low_memory=False, encoding="utf-8-sig")
     validate_source_frame(raw)
-    order_date = pd.to_datetime(raw["Order Date"], format="%m/%d/%Y", errors="coerce")
-    sales = pd.to_numeric(raw["Sales Amount"], errors="coerce")
-    quantity = pd.to_numeric(raw["Sales Quantity"], errors="coerce")
-    currency = raw["Order Currency"].astype("string").str.upper().str.strip()
-    valid_flag = raw["Sales Amount Valid"].astype("string").str.upper().eq("TRUE")
-    valid = (
-        raw["Order ID"].notna()
-        & order_date.notna()
-        & valid_flag
-        & sales.notna()
-        & sales.gt(0)
-        & currency.eq("INR")
-    )
+    masks = build_quality_masks(raw)
+    order_date = masks["order_date"]
+    sales = masks["sales"]
+    order_value = masks["order_value"]
+    quantity = masks["quantity"]
+    currency = masks["currency"]
+    source_valid = masks["source_valid"]
+    analysis_eligible = masks["analysis_eligible"]
+    high_value_excluded = masks["high_value_excluded"]
+    plausibility_excluded = masks["plausibility_excluded"]
+    plausibility_stats = plausibility_profile(order_value[source_valid])
 
     raw_market = raw["Restaurant City"].fillna("Unknown").astype(str).str.strip()
     location_mapping = build_location_mapping(raw_market)
@@ -609,17 +635,18 @@ def main() -> None:
     restaurant_mapping = build_restaurant_mapping(raw["Restaurant Name"], raw["Restaurant ID"])
     mapping_by_raw = location_mapping.set_index("raw_city")
     frame = pd.DataFrame({
-        "order_id": raw.loc[valid, "Order ID"].astype(str),
-        "order_date": order_date[valid],
-        "customer_id": raw.loc[valid, "User ID"].astype(str),
-        "sales": sales[valid],
-        "quantity": quantity[valid],
-        "raw_market": raw_market[valid],
-        "restaurant_id": raw.loc[valid, "Restaurant ID"].fillna("Unknown").astype(str),
-        "restaurant_name": raw.loc[valid, "Restaurant Name"].fillna("Unknown").astype(str),
-        "cuisine_raw": raw.loc[valid, "Restaurant Cuisine"].fillna("").astype(str),
-        "rating": pd.to_numeric(raw.loc[valid, "Restaurant Rating"], errors="coerce"),
-        "menu_item_count": pd.to_numeric(raw.loc[valid, "Menu_Item_Count"], errors="coerce"),
+        "order_id": raw.loc[analysis_eligible, "Order ID"].astype(str),
+        "order_date": order_date[analysis_eligible],
+        "customer_id": raw.loc[analysis_eligible, "User ID"].astype(str),
+        "sales": sales[analysis_eligible],
+        "order_value": order_value[analysis_eligible],
+        "quantity": quantity[analysis_eligible],
+        "raw_market": raw_market[analysis_eligible],
+        "restaurant_id": raw.loc[analysis_eligible, "Restaurant ID"].fillna("Unknown").astype(str),
+        "restaurant_name": raw.loc[analysis_eligible, "Restaurant Name"].fillna("Unknown").astype(str),
+        "cuisine_raw": raw.loc[analysis_eligible, "Restaurant Cuisine"].fillna("").astype(str),
+        "rating": pd.to_numeric(raw.loc[analysis_eligible, "Restaurant Rating"], errors="coerce"),
+        "menu_item_count": pd.to_numeric(raw.loc[analysis_eligible, "Menu_Item_Count"], errors="coerce"),
     })
     frame["normalized_restaurant_name"] = frame["restaurant_name"].map(normalize_restaurant_name)
     frame["has_rating"] = frame["rating"].notna()
@@ -670,11 +697,27 @@ def main() -> None:
     restaurant_observations.sort(key=lambda row: row["observed_rows"], reverse=True)
     restaurant_id_counts = raw["Restaurant ID"].dropna().astype(str).value_counts()
 
+    source_valid_sales = float(sales[source_valid].sum())
+    analysis_sales = float(sales[analysis_eligible].sum())
+    plausibility_excluded_sales = float(sales[plausibility_excluded].sum())
+    high_value_sales = float(sales[high_value_excluded].sum())
+    analysis_transactions = int(analysis_eligible.sum())
+    source_valid_transactions = int(source_valid.sum())
+
     quality = {
         "raw_rows": int(len(raw)),
-        "valid_transactions": int(valid.sum()),
-        "excluded_transactions": int((~valid).sum()),
-        "valid_rate": float(valid.mean()),
+        "valid_transactions": source_valid_transactions,
+        "excluded_transactions": int((~source_valid).sum()),
+        "valid_rate": float(source_valid.mean()),
+        "analysis_transactions": analysis_transactions,
+        "analysis_rate": analysis_transactions / source_valid_transactions if source_valid_transactions else 0.0,
+        "plausibility_excluded_transactions": int(plausibility_excluded.sum()),
+        "high_value_excluded_transactions": int(high_value_excluded.sum()),
+        "invalid_order_value_excluded_transactions": int(masks["invalid_order_value_excluded"].sum()),
+        "source_valid_sales": source_valid_sales,
+        "analysis_sales": analysis_sales,
+        "plausibility_excluded_sales": plausibility_excluded_sales,
+        "high_value_excluded_sales": high_value_sales,
         "zero_sales": int(sales.eq(0).sum()),
         "missing_sales": int(sales.isna().sum()),
         "unsupported_currency": int((currency.ne("INR") & currency.notna()).sum()),
@@ -702,6 +745,25 @@ def main() -> None:
             "date_max": order_date.max().date().isoformat(),
         },
         "quality": quality,
+        "cleaning": {
+            "field": "Order Value",
+            "rule": PLAUSIBILITY_RULE,
+            "method": PLAUSIBILITY_METHOD,
+            "max_order_value_inr": int(MAX_ORDER_VALUE_INR),
+            "source_valid_distribution": plausibility_stats,
+            "source_valid_transactions": source_valid_transactions,
+            "analysis_transactions": analysis_transactions,
+            "analysis_retention_rate": analysis_transactions / source_valid_transactions if source_valid_transactions else 0.0,
+            "plausibility_excluded_transactions": int(plausibility_excluded.sum()),
+            "high_value_excluded_transactions": int(high_value_excluded.sum()),
+            "high_value_excluded_rate": float(high_value_excluded.sum() / source_valid_transactions) if source_valid_transactions else 0.0,
+            "source_valid_sales": source_valid_sales,
+            "analysis_sales": analysis_sales,
+            "analysis_sales_retention_rate": analysis_sales / source_valid_sales if source_valid_sales else 0.0,
+            "plausibility_excluded_sales": plausibility_excluded_sales,
+            "high_value_excluded_sales": high_value_sales,
+            "high_value_excluded_sales_share": high_value_sales / source_valid_sales if source_valid_sales else 0.0,
+        },
         "filters": {"markets": ["All markets", *top_markets], "periods": ["All years", *map(str, years)]},
         "market_summary": market_summary,
         "market_views": market_views,
@@ -729,16 +791,34 @@ def main() -> None:
         },
         "scopes": scopes,
         "definitions": {
-            "valid_transactions": "Distinct orders with an ID, a parsed MM/DD/YYYY date, a true source-validity flag, positive sales, and INR currency.",
-            "repeat_rate": "Customers with at least two valid transactions in the filtered scope divided by active customers in that scope.",
+            "valid_transactions": "Source-valid distinct orders with an ID, a parsed MM/DD/YYYY date, a true source-validity flag, positive sales, and INR currency, before plausibility filtering.",
+            "analysis_transactions": f"Source-valid distinct orders with a positive {PLAUSIBILITY_RULE}; this cleaned scope powers all project metrics.",
+            "gross_sales": "Sum of positive INR Sales Amount for the plausibility-filtered analytical scope.",
+            "repeat_rate": "Customers with at least two included analytical transactions in the filtered scope divided by active customers in that scope.",
             "cohort_retention": "Customers active at cohort age m divided by customers first observed in that acquisition month within the filtered scope.",
-            "average_transaction_value": "Gross valid INR sales divided by valid transactions; not labelled AOV because the source grain is unverified.",
+            "average_transaction_value": "Plausibility-filtered INR sales divided by included analytical transactions; not labelled AOV because the source grain is unverified.",
+            "median_transaction_value": "Median Order Value among included analytical transactions in the filtered scope.",
             "rating_coverage": "Rows with a non-null Restaurant Rating divided by all source rows; this is an evidence-availability measure, not a quality score.",
             "menu_coverage": "Rows with a non-null Menu_Item_Count divided by all source rows; this is an evidence-availability measure, not a quality score.",
         },
     }
+    if args.cleaned_output.expanduser().resolve() == source:
+        raise ValueError("--cleaned-output must not overwrite the raw source CSV")
+    if args.exclusion_audit_output.expanduser().resolve() == source:
+        raise ValueError("--exclusion-audit-output must not overwrite the raw source CSV")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(output, default=scalar, allow_nan=False, separators=(",", ":")), encoding="utf-8")
+    args.cleaned_output.parent.mkdir(parents=True, exist_ok=True)
+    raw.loc[analysis_eligible].to_csv(args.cleaned_output, index=False)
+    exclusion_columns = ["Order ID", "Order Date", "Order Value", "Sales Quantity", "Restaurant City"]
+    exclusions = raw.loc[plausibility_excluded, exclusion_columns].copy()
+    exclusions["Exclusion Reason"] = np.where(
+        high_value_excluded.loc[plausibility_excluded],
+        f"Order Value above ₹{MAX_ORDER_VALUE_INR:,.0f}",
+        "Missing or non-positive Order Value",
+    )
+    args.exclusion_audit_output.parent.mkdir(parents=True, exist_ok=True)
+    exclusions.to_csv(args.exclusion_audit_output, index=False)
     args.mapping_output.parent.mkdir(parents=True, exist_ok=True)
     location_mapping.to_csv(args.mapping_output, index=False)
     args.cuisine_mapping_output.parent.mkdir(parents=True, exist_ok=True)
@@ -746,6 +826,8 @@ def main() -> None:
     args.restaurant_mapping_output.parent.mkdir(parents=True, exist_ok=True)
     restaurant_mapping.to_csv(args.restaurant_mapping_output, index=False)
     print(f"Wrote {args.output} ({args.output.stat().st_size:,} bytes)")
+    print(f"Wrote {args.cleaned_output} ({len(raw.loc[analysis_eligible]):,} rows)")
+    print(f"Wrote {args.exclusion_audit_output} ({len(exclusions):,} rows)")
     print(f"Wrote {args.mapping_output} ({len(location_mapping):,} mapping rows)")
     print(f"Wrote {args.cuisine_mapping_output} ({len(cuisine_mapping):,} mapping rows)")
     print(f"Wrote {args.restaurant_mapping_output} ({len(restaurant_mapping):,} repeat-name rows)")

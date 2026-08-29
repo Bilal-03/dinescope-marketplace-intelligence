@@ -39,17 +39,20 @@ The current aggregate is generated from 150,281 source rows and 36 columns.
 
 | Evidence | Verified value | Product implication |
 |---|---:|---|
-| Valid transactions | 148,668 | The KPI layer uses a transparent validity rule and preserves 1,613 exclusions. |
-| Gross valid sales | ₹986,564,268 | Sales are reported as gross valid INR sales, not net revenue. |
-| Active customers | 77,584 | Customer scope is based on distinct customers with at least one valid transaction. |
-| Repeat rate | 56.6% | Repeat means at least two valid transactions in the selected scope; it is not retention. |
+| Source-valid transactions | 148,668 | Source checks pass; 1,613 raw rows remain excluded from the source-valid baseline. |
+| Included analytical transactions | 126,519 | Headline analytics apply the inclusive `Order Value ≤ ₹7,500` plausibility rule. |
+| High-value exclusions | 22,149 | Values above the cutoff remain in the local exclusion audit and are omitted from project analytics. |
+| Source-valid sales | ₹986,564,268 | Preserved as the audit baseline; not used as the cleaned headline sales metric. |
+| Filtered sales | ₹139,532,057 | Cleaned headline sales after the plausibility filter; not net revenue. |
+| Active customers | 71,947 | Customer scope is based on distinct customers with at least one included analytical transaction. |
+| Repeat rate | 50.2% | Repeat means at least two included analytical transactions in the selected scope; it is not retention. |
 | Rating coverage | 41.0% | Quality context stays visible before a rating-led conclusion is made. |
 | Menu coverage | 8.1% | Menu-based supply comparisons are explicitly weak. |
 | Raw market labels | 822 | Localities are mapped to reviewed metro labels, with Unknown retained. |
 | Cuisine coverage | 98.9% | Multi-cuisine transactions are allocated proportionally so covered demand reconciles. |
 | Repeated restaurant IDs | 123 of 148,541 | Restaurant evidence is presented as observed listings, not durable outlet performance. |
 
-The source window is 4 October 2017 through 26 June 2020. Dates are parsed explicitly as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source.
+The source window is 4 October 2017 through 26 June 2020. Dates are parsed explicitly as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source. The `Order Value` cutoff is based on the rounded 1.5×IQR upper fence (Q1 ₹176, Q3 ₹3,065, raw fence ₹7,398.50). Excluded values are retained for audit but omitted from every project analytical view.
 
 ## Product decisions and trade-offs
 
@@ -63,7 +66,7 @@ Market growth requires equal-length windows and minimum current/comparison sampl
 
 ### Make cuisine demand additive
 
-When an order contains multiple cuisines, each unique canonical cuisine receives an equal `1/n` share of the order and sales value. Allocated demand therefore reconciles exactly to cuisine-covered valid transactions. This is an assumption for directional planning, not a claim about item-level mix.
+When an included order contains multiple cuisines, each unique canonical cuisine receives an equal `1/n` share of the order and filtered sales value. Allocated demand therefore reconciles exactly to cuisine-covered included transactions. This is an assumption for directional planning, not a claim about item-level mix.
 
 ### Treat restaurant names conservatively
 
@@ -77,7 +80,7 @@ There are no delivery-time, cancellation, discount, commission, funnel or campai
 
 ```text
 Source CSV (local and ignored)
-  → Python schema + validity audit
+  → Python schema + source-validity audit + plausibility filter
   → deployment-safe aggregate JSON + reviewable mapping CSVs
   → Streamlit adapter + session state + native tables/charts
   → public Streamlit Community Cloud app

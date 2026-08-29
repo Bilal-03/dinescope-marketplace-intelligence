@@ -50,20 +50,24 @@ The public Streamlit app has six connected workspaces:
 | **Customer growth** | Separate acquisition volume, repeat behaviour and actual cohort return. | Active/New/Repeat metrics, acquisition-versus-return trend, transaction frequency, lifecycle segmentation, M0–M6 cohort-retention table and segment evidence CSV. |
 | **Market demand** | Compare meaningful market scale and momentum without letting tiny bases lead. | Reviewed metro mapping, equal-length comparison windows, eligibility thresholds, confidence labels, scale × momentum quadrant, monthly pulse, ranked evidence table and CSV. |
 | **Cuisine gaps** | Find cuisine-market pairs worth validating while keeping supply evidence conservative. | Canonical taxonomy, additive 1/n cuisine allocation, opportunity score, demand heatmap, selected diagnostics, observed-listing context, evidence thresholds and CSV. |
-| **Data reliability** | Check whether a metric deserves to influence a decision. | Raw-versus-valid reconciliation, valid transaction rate, rating/menu/restaurant coverage, schema integrity, source fingerprint, checksum and issue treatment register. |
+| **Data reliability** | Check whether a metric deserves to influence a decision. | Raw-versus-source-valid-versus-included reconciliation, analysis retention, rating/menu/restaurant coverage, schema integrity, source fingerprint, checksum and issue treatment register. |
 | **Decision Lab** | Make prioritisation trade-offs explicit and compare scenarios. | Demand/growth/reach/gap/quality weights, confidence discounting, evidence guardrails, session-only presets, leader comparison, rank movement and metadata-rich decision brief export. |
 
 ## Evidence snapshot
 
-The published aggregate is generated from **150,281 source rows** and an audited **36-column contract**.
+The published aggregate is generated from **150,281 source rows** and an audited **36-column contract**. Headline analytics use a documented plausibility filter on `Order Value`.
 
 | Evidence | Verified value | How DineScope treats it |
 |---|---:|---|
-| Valid transactions | **148,668** | Only distinct orders that pass the explicit validity rule enter business KPIs. |
-| Excluded transactions | **1,613** | Exclusions remain visible and reconcile to the raw denominator; they are not silently dropped. |
-| Gross valid sales | **₹986,564,268** | Reported as gross valid INR sales, not net revenue or company financial reporting. |
-| Active customers | **77,584** | Distinct customers with at least one valid transaction in the selected scope. |
-| Repeat customer rate | **56.6%** | Customers with two or more valid transactions in scope; explicitly not cohort retention. |
+| Source-valid transactions | **148,668** | Distinct orders that pass the source validity rule before plausibility filtering. |
+| Source-invalid transactions | **1,613** | Exclusions remain visible and reconcile to the raw denominator; they are not silently dropped. |
+| Included analytical transactions | **126,519** | Source-valid orders with `Order Value ≤ ₹7,500`; these power all headline analytics. |
+| High-value exclusions | **22,149** | Values above the rounded IQR upper fence remain in the audit but are omitted from project metrics. |
+| Filtered sales | **₹139,532,057** | Headline sales from the included analytical scope, not net revenue or company financial reporting. |
+| Source-valid sales | **₹986,564,268** | Preserved as an audit baseline; not used as the cleaned headline sales metric. |
+| Average order value | **₹1,103** | Filtered sales divided by included analytical transactions; median order value is ₹375. |
+| Active customers | **71,947** | Distinct customers with at least one included analytical transaction in the selected scope. |
+| Repeat customer rate | **50.2%** | Customers with two or more included analytical transactions; explicitly not cohort retention. |
 | Rating coverage | **41.0%** | An evidence-availability measure shown beside interpretation, not a quality score. |
 | Menu coverage | **8.1%** | A deliberately visible limitation on menu-based supply comparisons. |
 | Raw market labels | **822** | Locality labels are mapped to reviewed metro labels with Unknown retained. |
@@ -84,7 +88,7 @@ Market growth uses equal-length current and comparison windows with minimum samp
 
 ### Multi-cuisine demand is additive by design
 
-If a transaction lists *n* unique canonical cuisines, each cuisine receives an equal `1/n` share of the transaction and sales value. Allocated demand therefore reconciles exactly to cuisine-covered valid transactions. This is a directional planning assumption, not item-level revenue attribution.
+If an included transaction lists *n* unique canonical cuisines, each cuisine receives an equal `1/n` share of the transaction and filtered sales value. Allocated demand therefore reconciles exactly to cuisine-covered included transactions. This is a directional planning assumption, not item-level revenue attribution.
 
 ### Restaurant identity is deliberately conservative
 
@@ -100,7 +104,7 @@ The source has no delivery-time, cancellation, discount, commission, funnel or c
 Local source CSV (never committed)
         │
         ▼
-Python schema gate + validity audit + deterministic mappings
+Python schema gate + source-validity audit + plausibility filter + deterministic mappings
         │
         ▼
 Deployment-safe aggregate JSON + mapping CSVs
@@ -142,14 +146,14 @@ DINESCOPE_FEATURE_FLAGS=shell_v2,markets_v2 .venv/bin/streamlit run streamlit_ap
 
 ### Rebuild the audited aggregate locally
 
-The raw CSV is intentionally local and ignored by Git. Mapping outputs are written to `data/mappings/`.
+The raw CSV is intentionally local and ignored by Git. Mapping outputs are written to `data/mappings/`; the cleaned source and exclusion audit are written to `data/cleaned/` and remain ignored by Git.
 
 ```bash
 .venv/bin/python scripts/audit_source.py /path/to/zomato_business_complete.csv
 .venv/bin/python scripts/build_analytics.py /path/to/zomato_business_complete.csv data/analytics.json
 ```
 
-The builder fails before processing when required fields are missing or the source does not match the audited schema. Never place the raw CSV, customer-level extracts or secrets in the public repository.
+The builder fails before processing when required fields are missing or the source does not match the audited schema. It writes `data/cleaned/zomato_business_complete_cleaned.csv` and `data/cleaned/zomato_business_complete_exclusion_audit.csv` by default without modifying the raw source. Never place the raw CSV, cleaned row-level extracts or secrets in the public repository.
 
 ## Verification and quality gates
 
@@ -174,7 +178,7 @@ The tests cover the aggregate contract, reconciliation, mappings, KPI parity, al
 
 Public artifacts are limited to:
 
-- `data/analytics.json` — derived aggregate contract v1.1.0.
+- `data/analytics.json` — derived aggregate contract v1.2.0 with source-valid and plausibility-filter audit metadata.
 - `data/mappings/*.csv` — reviewable location, cuisine and restaurant-name mappings.
 - `assets/brand/*` — DineScope logo, icon, favicon and social assets used by the Streamlit app and README.
 - `docs/screenshots/*` — aggregate-only product captures.

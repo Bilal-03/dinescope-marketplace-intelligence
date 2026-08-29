@@ -1,12 +1,12 @@
 # Public data boundary
 
-Updated: 28 August 2026
+Updated: 29 August 2026
 
 ## Approved public scope
 
 The owner explicitly approved publishing the deployment-safe analytics artifacts required by the public Streamlit app on 28 August 2026. The public app may include derived market, customer-behavior, cuisine-opportunity and data-quality aggregates after automated reconciliation checks pass.
 
-The current aggregate contract is version `1.1.0`. It includes source schema metadata and raw-row coverage counts for auditability; it does not include source-level records.
+The current aggregate contract is version `1.2.0`. It includes source schema metadata, raw/source-valid/analytical reconciliation and plausibility-filter metadata for auditability; it does not include source-level records.
 
 Approved public artifacts:
 
@@ -18,10 +18,11 @@ Approved public artifacts:
 Artifacts that remain private and must not be copied into the public repository or Streamlit runtime:
 
 - The raw source CSV and any equivalent order-level/customer-level extract.
+- `data/cleaned/*.csv` — local cleaned transactions and exclusion audit used for rebuild verification; these row-level files remain ignored and private.
 - Private hosting metadata and deployment configuration from retired site tooling.
 - `.streamlit/secrets.toml`, credentials, access tokens and local environment files.
 
-The raw source CSV is excluded independently by `.gitignore` and should never be committed.
+The raw source CSV and local cleaned row-level outputs are excluded independently by `.gitignore` and should never be committed or served publicly.
 
 ## What the public repository contains
 
@@ -36,5 +37,6 @@ privacy scan and disclaimer checks pass.
 
 Approved by: Project owner           Date: 28 August 2026
 Scope:       Deployment-safe aggregate, mapping artifacts and public
-             analytics screenshots; raw records and secrets excluded.
+             analytics screenshots; raw/cleaned row-level records and
+             secrets excluded.
 ```

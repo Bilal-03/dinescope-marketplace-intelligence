@@ -1,6 +1,6 @@
 # Release readiness
 
-Updated: 28 August 2026
+Updated: 29 August 2026
 Product: DineScope — Food Marketplace Intelligence
 
 ## Decision summary
@@ -28,13 +28,14 @@ The public Streamlit baseline is live and Phases 0–5 are complete: the aggrega
 
 ### Data and trust
 
-- [x] Source contract, checksum, date interpretation and validity rule are documented.
-- [x] Valid rows and excluded rows reconcile to the raw source.
-- [x] Gross sales, customer counts, repeat rate and coverage metrics reconcile to the aggregate.
+- [x] Source contract, checksum, date interpretation, shared validity rule and plausibility cutoff are documented.
+- [x] Raw rows → source-valid rows → high-value exclusions → included analytical rows reconcile exactly.
+- [x] Source-valid sales, filtered sales, customer counts, repeat rate, median order value and coverage metrics reconcile to the aggregate.
 - [x] Market, cuisine and restaurant mappings are reviewable CSV artifacts.
 - [x] Minimum evidence thresholds and confidence labels are visible in the product.
 - [x] Raw customer-level records and addresses are excluded from the browser payload.
 - [x] Public runtime is aggregate-only; raw customer/order records are not loaded or downloadable.
+- [x] Local cleaned transactions and exclusion audit remain ignored and are not served publicly.
 
 ### Engineering and experience
 

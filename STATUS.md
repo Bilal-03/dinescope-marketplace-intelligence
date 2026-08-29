@@ -1,11 +1,11 @@
 # DineScope implementation status
 
-Updated: 28 August 2026
+Updated: 29 August 2026
 
-## Current release: Public Streamlit full-parity baseline
+## Current release: Public Streamlit full-parity baseline with plausibility-filtered analytics
 
 - [x] Product framing, DineScope brand identity, repository and deployment-ready shell
-- [x] Source audit, schema/date contract, transaction exclusions, checksum and metric definitions
+- [x] Source audit, schema/date contract, source-validity and order-value plausibility exclusions, checksum and metric definitions
 - [x] Reproducible aggregate pipeline for deployment-safe analytics data
 - [x] Core KPIs, repeat logic, lifecycle segmentation and cohort-retention calculations
 - [x] Responsive design system, global filters, metric dictionary and empty/planned states
@@ -23,8 +23,10 @@ Updated: 28 August 2026
 
 - [x] 150,281 source rows and 36 columns reconcile
 - [x] Date interpretation is explicit: `MM/DD/YYYY`, 0 invalid dates
-- [x] 148,668 valid transactions plus 1,613 excluded rows reconcile to the raw source
-- [x] ₹986,564,268 gross valid INR sales reconciles
+- [x] 148,668 source-valid transactions plus 1,613 source-invalid rows reconcile to the raw source
+- [x] 126,519 included analytical transactions plus 22,149 high-value exclusions reconcile to source-valid rows
+- [x] ₹986,564,268 source-valid sales reconciles to ₹139,532,057 filtered sales plus ₹847,032,211 excluded sales
+- [x] No included analytical value exceeds the inclusive ₹7,500 cutoff; median order value is ₹375
 - [x] Repeat customer rate and cohort retention remain separate metrics
 - [x] Filters update all metrics and visualisations in the active workspace
 - [x] Unsupported operational fields are not fabricated
@@ -46,20 +48,20 @@ Updated: 28 August 2026
 
 ## Phase 0 — Data contract and product foundation
 
-- [x] Aggregate version `1.1.0` recorded in `data/analytics.json`
+- [x] Aggregate version `1.2.0` recorded in `data/analytics.json`
 - [x] Source schema requires the audited 36-column contract before regeneration
-- [x] `source.rows`, `quality.raw_rows` and valid/excluded transaction totals reconcile
+- [x] `source.rows`, `quality.raw_rows`, source-valid/excluded totals and analytical/high-value totals reconcile
 - [x] Raw-denominator missing-rating and missing-menu counts are explicit and tested: 88,755 and 138,145
 - [x] Python validators fail loudly on schema/version/reconciliation drift
 - [x] Shared eligibility, cohort, lifecycle, reliability and rank-movement helpers are covered by tests
-- [x] Raw source remains local and excluded; only derived aggregate/mapping artifacts are regenerated
+- [x] Raw source and cleaned/exclusion row-level outputs remain local and ignored; only aggregate/mapping artifacts are public
 
 ## Phase 1 — Streamlit shell and shared filters
 
 - [x] Navigation labels and page copy are implemented in the Streamlit shell
 - [x] Period and market filters persist in namespaced session state
 - [x] Market Demand uses a locked All cleaned markets comparison scope
-- [x] Locked Valid INR rule, source window, record count and public read-only boundary are visible
+- [x] Locked source-valid INR + ₹7,500 plausibility rule, source window, included record count and public read-only boundary are visible
 - [x] Reset restores All markets and All years without resetting the active workspace
 - [x] Metric dictionary dialog exposes aggregate version, definitions, checksum and evidence boundary
 - [x] `DINESCOPE_FEATURE_FLAGS` supports all-on defaults and comma-separated staged allowlists
@@ -67,7 +69,7 @@ Updated: 28 August 2026
 
 ## Phase 2 — Overview and Customer Growth
 
-- [x] Overview exposes five audited KPIs with definitions and exact Indian-format values
+- [x] Overview exposes five plausibility-filtered KPIs with definitions and exact Indian-format values
 - [x] Overview includes a 33-point Transactions/Sales Altair toggle with monthly tooltips
 - [x] Overview includes the decision brief, top-five source-market footprint, lifecycle table and reliability hand-off
 - [x] Customer Growth exposes Active, New, Repeat, Repeat rate and Transactions/customer KPIs
@@ -77,8 +79,8 @@ Updated: 28 August 2026
 
 ## Phase 3 — Reliability and Market Demand
 
-- [x] Data Reliability mirrors the five reference quality KPIs
-- [x] Transaction reconciliation makes raw − excluded = valid visible alongside the locked INR validity rule
+- [x] Data Reliability exposes source-valid rate, analysis retention, coverage and schema KPIs
+- [x] Transaction reconciliation makes raw → source-valid → high-value exclusions → included analytical rows visible alongside the locked two-stage rule
 - [x] Full source fingerprint, date format, aggregate version, mapping counts and SHA-256 checksum are exposed
 - [x] The issue register uses raw-row denominators for zero sales, missing sales, unsupported currency, missing rating and missing menu attributes
 - [x] Market Demand applies current/comparison eligibility at the selected threshold
