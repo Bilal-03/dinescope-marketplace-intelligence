@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import hashlib
 from pathlib import Path
 import uuid
 
@@ -11,6 +12,7 @@ import pandas as pd
 import streamlit as st
 
 from streamlit_lib import (
+    DATA_PATH,
     DEFAULT_WEIGHTS,
     add_rank_movement,
     customer_cohort_frame,
@@ -149,7 +151,14 @@ st.logo(
 
 
 @st.cache_data(show_spinner="Loading audited analytics…")
-def analytics() -> dict:
+def analytics(artifact_sha256: str) -> dict:
+    """Load analytics with cache invalidation tied to the published artifact.
+
+    Streamlit can retain cached values while pulling a new repository revision.
+    Including the artifact fingerprint prevents a previous contract version from
+    being reused after ``data/analytics.json`` changes.
+    """
+
     payload = load_analytics()
     if not valid_data_contract(payload):
         raise ValueError("The published analytics artifact does not satisfy the DineScope data contract.")
@@ -1769,7 +1778,7 @@ def render_reliability(data: dict) -> None:
 
 
 inject_styles()
-data = analytics()
+data = analytics(hashlib.sha256(DATA_PATH.read_bytes()).hexdigest())
 initialise_session_state(data)
 flags = parse_feature_flags()
 render_topbar(data, flags)
