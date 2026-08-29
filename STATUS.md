@@ -48,7 +48,7 @@ Updated: 29 August 2026
 
 ## Phase 0 — Data contract and product foundation
 
-- [x] Aggregate version `1.2.0` recorded in `data/analytics.json`
+- [x] Aggregate version `1.3.0` recorded in `data/analytics.json`
 - [x] Source schema requires the audited 36-column contract before regeneration
 - [x] `source.rows`, `quality.raw_rows`, source-valid/excluded totals and analytical/high-value totals reconcile
 - [x] Raw-denominator missing-rating and missing-menu counts are explicit and tested: 88,755 and 138,145
@@ -95,7 +95,7 @@ Updated: 29 August 2026
 - [x] Selected diagnostics expose signal, growth, reach, observed listings, demand-to-listing index and rating/menu coverage
 - [x] Eligible opportunity ranking supports opportunity, demand, growth and demand/listing sorting plus aggregate-only CSV export
 - [x] Restaurant identity audit exposes raw/normalized/repeated name counts and repeated IDs without claiming outlet performance
-- [x] Default all-years and 2020 KPI/table values are covered by pure helper tests and Streamlit AppTest
+- [x] Default all-years and 2026 KPI/table values are covered by pure helper tests and Streamlit AppTest
 
 ## Phase 5 — Decision Lab
 

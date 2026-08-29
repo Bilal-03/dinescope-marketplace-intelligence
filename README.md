@@ -74,7 +74,7 @@ The published aggregate is generated from **150,281 source rows** and an audited
 | Cuisine coverage | **98.9%** | Multi-cuisine demand is allocated proportionally so covered demand remains additive. |
 | Repeated restaurant IDs | **123 of 148,541** | Restaurant evidence is presented as observed listings, not durable outlet performance. |
 
-The observed source window is **4 October 2017 through 26 June 2020**. Dates are parsed as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source.
+The observed source window is **4 October 2023 through 26 June 2026**. Dates are parsed as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source.
 
 ## Product decisions and trade-offs
 
@@ -178,7 +178,7 @@ The tests cover the aggregate contract, reconciliation, mappings, KPI parity, al
 
 Public artifacts are limited to:
 
-- `data/analytics.json` — derived aggregate contract v1.2.0 with source-valid and plausibility-filter audit metadata.
+- `data/analytics.json` — derived aggregate contract v1.3.0 with source-valid and plausibility-filter audit metadata.
 - `data/mappings/*.csv` — reviewable location, cuisine and restaurant-name mappings.
 - `assets/brand/*` — DineScope logo, icon, favicon and social assets used by the Streamlit app and README.
 - `docs/screenshots/*` — aggregate-only product captures.

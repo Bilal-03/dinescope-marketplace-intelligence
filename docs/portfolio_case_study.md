@@ -52,7 +52,7 @@ The current aggregate is generated from 150,281 source rows and 36 columns.
 | Cuisine coverage | 98.9% | Multi-cuisine transactions are allocated proportionally so covered demand reconciles. |
 | Repeated restaurant IDs | 123 of 148,541 | Restaurant evidence is presented as observed listings, not durable outlet performance. |
 
-The source window is 4 October 2017 through 26 June 2020. Dates are parsed explicitly as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source. The `Order Value` cutoff is based on the rounded 1.5×IQR upper fence (Q1 ₹176, Q3 ₹3,065, raw fence ₹7,398.50). Excluded values are retained for audit but omitted from every project analytical view.
+The source window is 4 October 2023 through 26 June 2026. Dates are parsed explicitly as `MM/DD/YYYY`; duplicate order IDs and invalid dates are zero in the audited source. The `Order Value` cutoff is based on the rounded 1.5×IQR upper fence (Q1 ₹176, Q3 ₹3,065, raw fence ₹7,398.50). Excluded values are retained for audit but omitted from every project analytical view.
 
 ## Product decisions and trade-offs
 

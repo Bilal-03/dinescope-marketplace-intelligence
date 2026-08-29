@@ -73,7 +73,7 @@ class StreamlitAnalyticsTest(unittest.TestCase):
         market_view = self.data["market_views"]["All years"]
         self.assertEqual(len(eligible_market_rows(market_view["markets"])), 18)
         self.assertEqual(
-            len(eligible_market_rows(self.data["market_views"]["2020"]["markets"])),
+            len(eligible_market_rows(self.data["market_views"]["2026"]["markets"])),
             13,
         )
 

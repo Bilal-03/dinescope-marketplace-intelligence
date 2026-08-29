@@ -14,13 +14,15 @@ class AnalyticsArtifactContractTest(unittest.TestCase):
 
     def test_source_contract_and_reconciliation_are_exact(self):
         analytics = self.analytics
-        self.assertEqual(analytics["aggregate_version"], "1.2.0")
+        self.assertEqual(analytics["aggregate_version"], "1.3.0")
         self.assertEqual(analytics["source"]["rows"], 150_281)
         self.assertEqual(analytics["source"]["columns"], 36)
         self.assertEqual(analytics["source"]["expected_columns"], 36)
         self.assertEqual(analytics["source"]["sha256"], "fc5ca0ca1043e3cfb17ab467a7b87bbcc0a516cd766e962b4850a202d5a88be7")
         self.assertTrue(analytics["source"]["schema_matches"])
         self.assertEqual(analytics["source"]["date_format"], "MM/DD/YYYY")
+        self.assertEqual(analytics["source"]["date_min"], "2023-10-04")
+        self.assertEqual(analytics["source"]["date_max"], "2026-06-26")
         self.assertEqual(analytics["quality"]["valid_transactions"], 148_668)
         self.assertEqual(analytics["quality"]["analysis_transactions"], 126_519)
         self.assertEqual(analytics["quality"]["high_value_excluded_transactions"], 22_149)
@@ -73,9 +75,26 @@ class AnalyticsArtifactContractTest(unittest.TestCase):
         self.assertTrue(all(row["retention"][0] == 100 for row in self.all_scope["cohorts"]))
 
     def test_every_filter_combination_has_a_scope(self):
+        self.assertEqual(
+            self.analytics["filters"]["periods"],
+            ["All years", "2023", "2024", "2025", "2026"],
+        )
         for market in self.analytics["filters"]["markets"]:
             for period in self.analytics["filters"]["periods"]:
                 self.assertIn(f"{market}|{period}", self.analytics["scopes"])
+
+    def test_all_date_labels_use_the_presentation_years(self):
+        scope = self.all_scope
+        self.assertEqual(scope["range"], ["2023-10-04", "2026-06-26"])
+        self.assertEqual(scope["monthly"][0]["month"], "2023-10")
+        self.assertEqual(scope["monthly"][-1]["month"], "2026-06")
+        self.assertEqual(scope["cohorts"][0]["cohort"], "Oct 2023")
+
+        market_view = self.analytics["market_views"]["All years"]
+        self.assertEqual(market_view["current_window"], "28 Jun 2025–26 Jun 2026")
+        self.assertEqual(market_view["comparison_window"], "28 Jun 2024–27 Jun 2025")
+        self.assertEqual(market_view["markets"][0]["monthly_orders"][0]["month"], "2025-06")
+        self.assertEqual(self.analytics["scopes"]["All markets|2026"]["period"], "2026")
 
     def test_location_mapping_reconciles(self):
         mapping = self.analytics["location_mapping"]

@@ -10,7 +10,7 @@ The repository deliberately contains one canonical runtime and one dependency ma
 
 ## Implemented product foundation
 
-- Aggregate contract version `1.2.0` with audited 36-column source validation.
+- Aggregate contract version `1.3.0` with audited 36-column source validation.
 - Shared source-validity rule plus inclusive `Order Value ≤ ₹7,500` plausibility filter, raw-denominator quality counts and checksum metadata.
 - Local ignored cleaned CSV and exclusion audit preserve row order and excluded values for rebuild reconciliation; headline analytics use the included analytical scope.
 - Deterministic location, cuisine and conservative restaurant-name mappings.

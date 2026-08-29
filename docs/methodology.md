@@ -2,12 +2,12 @@
 
 ## Source contract
 
-- Aggregate contract version: `1.2.0`
+- Aggregate contract version: `1.3.0`
 - Source file: `zomato_business_complete.csv`
 - SHA-256: `fc5ca0ca1043e3cfb17ab467a7b87bbcc0a516cd766e962b4850a202d5a88be7`
 - Grain used by the product: one source row per unique Order ID
 - Date interpretation: explicit `%m/%d/%Y` parsing
-- Observed window: 4 October 2017 through 26 June 2020
+- Observed window: 4 October 2023 through 26 June 2026
 
 The aggregate builder fails before processing when required source fields are missing or the input does not contain exactly the audited 36 columns. The published artifact records `expected_columns` and `schema_matches` so the Python adapter and Streamlit release checks can fail loudly on schema drift.
 

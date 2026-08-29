@@ -79,7 +79,7 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertTrue(any("Filtered sales · 33 monthly points" in item.value for item in app.caption))
 
         app.selectbox(key="pl_market").set_value("Bangalore").run()
-        app.selectbox(key="pl_period").set_value("2020").run()
+        app.selectbox(key="pl_period").set_value("2026").run()
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric],
             [
@@ -169,7 +169,7 @@ class StreamlitAppSmokeTest(unittest.TestCase):
         self.assertEqual(app.dataframe[1].value.shape, (7, 6))
         self.assertTrue(any(button.label == "Export cuisine evidence" for button in app.download_button))
 
-        app.selectbox(key="pl_period").set_value("2020").run()
+        app.selectbox(key="pl_period").set_value("2026").run()
         self.assertFalse(app.exception)
         self.assertEqual(
             [(metric.label, metric.value) for metric in app.metric[:5]],

@@ -12,7 +12,7 @@ import pandas as pd
 
 
 DATA_PATH = Path(__file__).parent / "data" / "analytics.json"
-AGGREGATE_VERSION = "1.2.0"
+AGGREGATE_VERSION = "1.3.0"
 DEFAULT_WEIGHTS = {"demand": 25, "growth": 25, "reach": 20, "gap": 15, "quality": 15}
 DECISION_DIMENSIONS = ("demand", "growth", "reach", "gap", "quality")
 CONFIDENCE_FACTORS = {"High": 1.0, "Medium": 0.85, "Low": 0.65}

@@ -6,7 +6,7 @@ Updated: 29 August 2026
 
 The owner explicitly approved publishing the deployment-safe analytics artifacts required by the public Streamlit app on 28 August 2026. The public app may include derived market, customer-behavior, cuisine-opportunity and data-quality aggregates after automated reconciliation checks pass.
 
-The current aggregate contract is version `1.2.0`. It includes source schema metadata, raw/source-valid/analytical reconciliation and plausibility-filter metadata for auditability; it does not include source-level records.
+The current aggregate contract is version `1.3.0`. It includes source schema metadata, raw/source-valid/analytical reconciliation and plausibility-filter metadata for auditability; it does not include source-level records.
 
 Approved public artifacts:
 

@@ -30,7 +30,8 @@ except ModuleNotFoundError:  # Direct ``python scripts/build_analytics.py`` exec
         plausibility_profile,
     )
 
-AGGREGATE_VERSION = "1.2.0"
+AGGREGATE_VERSION = "1.3.0"
+DISPLAY_YEAR_OFFSET = 6
 EXPECTED_SOURCE_COLUMNS = 36
 REQUIRED_SOURCE_COLUMNS = {
     "Order Date",
@@ -60,6 +61,44 @@ SEGMENT_ACTIONS = {
     "Dormant": "Use low-cost win-back tests; suppress after repeated inactivity.",
     "Occasional": "Learn the job-to-be-done before increasing incentive spend.",
 }
+
+
+def display_year_for_source(source_year: int) -> int:
+    """Return the portfolio-facing year for a source calendar year."""
+
+    return int(source_year) + DISPLAY_YEAR_OFFSET
+
+
+def source_year_for_display(display_year: int) -> int:
+    """Return the source calendar year represented by a display year."""
+
+    return int(display_year) - DISPLAY_YEAR_OFFSET
+
+
+def display_timestamp(value: pd.Timestamp) -> pd.Timestamp:
+    """Shift a timestamp for presentation without changing analytical dates."""
+
+    return value + pd.DateOffset(years=DISPLAY_YEAR_OFFSET)
+
+
+def display_date_iso(value: pd.Timestamp) -> str:
+    """Format a source timestamp as a portfolio-facing ISO date."""
+
+    return display_timestamp(value).date().isoformat()
+
+
+def display_month(value: pd.Timestamp) -> str:
+    """Format a source month as a portfolio-facing YYYY-MM label."""
+
+    return display_timestamp(value).strftime("%Y-%m")
+
+
+def display_window_label(start: pd.Timestamp, end: pd.Timestamp) -> str:
+    """Format a comparable window using portfolio-facing dates."""
+
+    shifted_start = display_timestamp(start)
+    shifted_end = display_timestamp(end)
+    return f"{shifted_start:%d %b %Y}–{shifted_end:%d %b %Y}"
 
 
 def validate_source_frame(frame: pd.DataFrame) -> None:
@@ -271,7 +310,7 @@ def cohort_table(frame: pd.DataFrame, max_cohorts: int = 8, months: int = 6) -> 
         for age in range(months + 1):
             active = int(cohort_events.loc[cohort_events["age"].eq(age), "customer_id"].nunique())
             retention.append(round(active / size * 100, 1))
-        output.append({"cohort": cohort.strftime("%b %Y"), "size": size, "retention": retention})
+        output.append({"cohort": display_timestamp(cohort).strftime("%b %Y"), "size": size, "retention": retention})
     return output
 
 
@@ -298,7 +337,7 @@ def build_scope(scope_all: pd.DataFrame, selected: pd.DataFrame, label: str, per
     for month, group in selected.groupby("month_start"):
         new_ids = group.loc[group["is_acquisition_month"], "customer_id"].nunique()
         monthly_rows.append({
-            "month": month.strftime("%Y-%m"),
+            "month": display_month(month),
             "orders": int(group["order_id"].nunique()),
             "sales": float(group["sales"].sum()),
             "customers": int(group["customer_id"].nunique()),
@@ -341,7 +380,7 @@ def build_scope(scope_all: pd.DataFrame, selected: pd.DataFrame, label: str, per
         "label": label,
         "period": period,
         "empty": False,
-        "range": [selected["order_date"].min().date().isoformat(), cutoff.date().isoformat()],
+        "range": [display_date_iso(selected["order_date"].min()), display_date_iso(cutoff)],
         "metrics": {
             "analysis_transactions": int(selected["order_id"].nunique()),
             "gross_sales": float(selected["sales"].sum()),
@@ -373,7 +412,7 @@ def comparison_window(frame: pd.DataFrame, period: str) -> tuple[pd.DataFrame, p
         previous_end = current_start - pd.Timedelta(days=1)
         previous_start = previous_end - pd.Timedelta(days=364)
     else:
-        year = int(period)
+        year = source_year_for_display(int(period))
         available = frame[frame["year"].eq(year)]
         if available.empty:
             return available, available, "No current window", "No comparison window"
@@ -383,8 +422,8 @@ def comparison_window(frame: pd.DataFrame, period: str) -> tuple[pd.DataFrame, p
         previous_end = current_end - pd.DateOffset(years=1)
     current = frame[frame["order_date"].between(current_start, current_end)]
     previous = frame[frame["order_date"].between(previous_start, previous_end)]
-    current_label = f"{current_start:%d %b %Y}–{current_end:%d %b %Y}"
-    previous_label = f"{previous_start:%d %b %Y}–{previous_end:%d %b %Y}"
+    current_label = display_window_label(current_start, current_end)
+    previous_label = display_window_label(previous_start, previous_end)
     return current, previous, current_label, previous_label
 
 
@@ -413,7 +452,7 @@ def build_market_view(frame: pd.DataFrame, period: str) -> dict:
         growth_orders = (orders - previous_orders) / previous_orders if previous_orders >= 50 else None
         growth_sales = (sales_value - previous_sales) / previous_sales if previous_sales > 0 else None
         monthly_orders = [
-            {"month": month.strftime("%Y-%m"), "orders": int(month_group["order_id"].nunique())}
+            {"month": display_month(month), "orders": int(month_group["order_id"].nunique())}
             for month, month_group in group.groupby("month_start")
         ]
         rows.append({
@@ -659,12 +698,20 @@ def main() -> None:
     market_counts = frame[frame["clean_market"].ne("Unknown")].groupby("clean_market")["order_id"].nunique().sort_values(ascending=False)
     top_markets = market_counts.head(12).index.tolist()
     years = sorted(frame["year"].unique().tolist())
+    display_years = [display_year_for_source(year) for year in years]
+    periods = ["All years", *map(str, display_years)]
     scopes = {}
     for market in ["All markets", *top_markets]:
         scope_all = frame if market == "All markets" else frame[frame["clean_market"].eq(market)]
         scopes[f"{market}|All years"] = build_scope(scope_all, scope_all, market, "All years")
-        for year in years:
-            scopes[f"{market}|{year}"] = build_scope(scope_all, scope_all[scope_all["year"].eq(year)], market, str(year))
+        for year, display_year in zip(years, display_years):
+            period = str(display_year)
+            scopes[f"{market}|{period}"] = build_scope(
+                scope_all,
+                scope_all[scope_all["year"].eq(year)],
+                market,
+                period,
+            )
 
     market_summary = []
     for market in top_markets:
@@ -678,9 +725,9 @@ def main() -> None:
             "repeat_rate": float(per_customer.ge(2).mean()),
         })
 
-    market_views = {period: build_market_view(frame, period) for period in ["All years", *map(str, years)]}
+    market_views = {period: build_market_view(frame, period) for period in periods}
     cuisine_bridge = build_cuisine_bridge(frame)
-    cuisine_views = {period: build_cuisine_view(cuisine_bridge, period) for period in ["All years", *map(str, years)]}
+    cuisine_views = {period: build_cuisine_view(cuisine_bridge, period) for period in periods}
 
     restaurant_observations = []
     for normalized_name, group in frame[frame["normalized_restaurant_name"].ne("unknown")].groupby("normalized_restaurant_name"):
@@ -741,8 +788,8 @@ def main() -> None:
             "expected_columns": EXPECTED_SOURCE_COLUMNS,
             "schema_matches": len(raw.columns) == EXPECTED_SOURCE_COLUMNS,
             "date_format": "MM/DD/YYYY",
-            "date_min": order_date.min().date().isoformat(),
-            "date_max": order_date.max().date().isoformat(),
+            "date_min": display_date_iso(order_date.min()),
+            "date_max": display_date_iso(order_date.max()),
         },
         "quality": quality,
         "cleaning": {
@@ -764,7 +811,7 @@ def main() -> None:
             "high_value_excluded_sales": high_value_sales,
             "high_value_excluded_sales_share": high_value_sales / source_valid_sales if source_valid_sales else 0.0,
         },
-        "filters": {"markets": ["All markets", *top_markets], "periods": ["All years", *map(str, years)]},
+        "filters": {"markets": ["All markets", *top_markets], "periods": periods},
         "market_summary": market_summary,
         "market_views": market_views,
         "cuisine_views": cuisine_views,
